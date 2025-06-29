@@ -1,0 +1,31 @@
+import { apiEndpoints } from "@/config/api";
+import { getRequest } from "@/lib/useApi";
+import { useCallback, useEffect, useState } from "react";
+
+export const useShifts = () => {
+  const [shifts, setShifts] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const { status, result, errors } = await getRequest(
+        apiEndpoints.shift.index()
+      );
+
+      if (status) {
+        const data = result?.data || [];
+        setShifts(data);
+      } else {
+        setError(errors || "Terjadi kesalahan saat memuat shift.");
+      }
+    } catch (err) {
+      setError(err.message || "Terjadi kesalahan jaringan.");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { shifts, error, refetch: fetchData };
+};
