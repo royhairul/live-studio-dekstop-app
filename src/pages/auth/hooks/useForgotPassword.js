@@ -8,7 +8,7 @@ export function useForgotPassword() {
     mutationFn: (values) =>
       axios.post(apiEndpoints.auth.forgotPassword(), values),
     onSuccess: async (response) => {
-      const data = response.data.data;
+      const data = response.data;
       sessionStorage.setItem("email", data.email);
     },
   });
