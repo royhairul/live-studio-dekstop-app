@@ -85,9 +85,9 @@ export default function AccountCreatePage() {
     },
     onError: (error) => {
       console.error("error:", error);
-      toast.error(
-        error.message || "Terjadi kesalahan saat menambahkan cookies."
-      );
+      toast.error("Gagal membuat account.", {
+        description: "Invalid or expired cookies.",
+      });
     },
   });
 
@@ -119,10 +119,10 @@ export default function AccountCreatePage() {
                       <SelectGroup>
                         {studio.map((item) => (
                           <SelectItem
-                            key={String(item.ID)}
-                            value={String(item.ID)}
+                            key={String(item.id)}
+                            value={String(item.id)}
                           >
-                            {item.Name}
+                            {item.name}
                           </SelectItem>
                         ))}
                       </SelectGroup>
