@@ -6,7 +6,7 @@ import HostCreatePage from "@/pages/host/CreatePage";
 import AccountAllPage from "@/pages/account/AllPage";
 import AccountCreatePage from "@/pages/account/CreatePage";
 import FinanceDailyReportPage from "@/pages/finance/pages/daily-report-page";
-import HostSchedulePage from "@/pages/host/SchedulePage";
+import HostSchedulePage from "@/pages/schedule/pages/SchedulePage";
 import BankProductPage from "@/pages/riset/BankProductPage";
 import RisetProductPage from "@/pages/riset/ProductPage";
 import ForgotPasswordPage from "@/pages/auth/pages/forgot-password-page";
