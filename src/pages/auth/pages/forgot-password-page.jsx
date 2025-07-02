@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
       await forgotPasswordMutate.mutateAsync(values);
       navigate("/verify-otp");
     } catch (error) {
-      toast.error("Forgot password success", { description: error.message });
+      toast.error("Forgot password error", { description: error.message });
     }
   };
 
