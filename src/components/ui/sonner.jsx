@@ -12,7 +12,7 @@ const Toaster = ({ ...props }) => {
         classNames: {
           default: "!flex !gap-4 font-base",
           title: "!font-bold font-base",
-          description: "!font-medium font-base",
+          description: "!font-medium font-base capitalize",
         },
       }}
       icons={{
