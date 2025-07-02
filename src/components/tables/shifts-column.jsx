@@ -43,7 +43,7 @@ export const shiftColumns = [
   },
   {
     header: "ID",
-    accessorKey: "ID",
+    accessorKey: "id",
   },
   {
     header: "Shift",
@@ -82,7 +82,7 @@ export const shiftColumns = [
       const handleDelete = async () => {
         try {
           const { status, result } = await deleteRequest(
-            apiEndpoints.studio.delete(row.original.ID)
+            apiEndpoints.studio.delete(row.original.id)
           );
 
           if (!status) toast.error("Gagal menghapus studio");
@@ -99,7 +99,7 @@ export const shiftColumns = [
         <div className="flex gap-2">
           <Button size="icon" asChild>
             <Link
-              to={`/host/schedule/shift-management/${row.original.ID}/edit`}
+              to={`/host/schedule/shift-management/${row.original.id}/edit`}
             >
               <IconPencil />
             </Link>
