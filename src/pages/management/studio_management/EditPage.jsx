@@ -17,6 +17,7 @@ import {
 import { apiEndpoints, baseUrl } from "@/config/api";
 import { putRequest } from "@/lib/useApi";
 import { toast } from "sonner";
+import axios from "axios";
 
 export default function MStudioEditPage() {
   const navigate = useNavigate();
@@ -56,14 +57,14 @@ export default function MStudioEditPage() {
     try {
       // Fetch data for the specific studio
       async function fetchStudioData() {
-        const res = await fetch(`${baseUrl}/studio/${id}`);
-        const json = await res.json();
-        const studioData = json.data;
+        const res = await axios.get(apiEndpoints.studio.show(id));
+        const studioData = res.data.data;
+        console.log("Studio Data:", studioData);
 
         if (studioData) {
           form.reset({
-            name: studioData.Name,
-            address: studioData.Address,
+            name: studioData.name,
+            address: studioData.address,
           });
         }
       }

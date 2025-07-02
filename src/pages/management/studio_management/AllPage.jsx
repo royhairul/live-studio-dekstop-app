@@ -78,15 +78,15 @@ export default function MStudioAllPage() {
     },
     {
       header: "ID Studio",
-      accessorKey: "ID",
+      accessorKey: "id",
     },
     {
       header: "Nama Studio",
-      accessorKey: "Name",
+      accessorKey: "name",
     },
     {
       header: "Alamat",
-      accessorKey: "Address",
+      accessorKey: "address",
     },
     {
       id: "actions",
@@ -95,7 +95,7 @@ export default function MStudioAllPage() {
         const handleDelete = async () => {
           try {
             const { status, result } = await deleteRequest(
-              apiEndpoints.studio.delete(row.original.ID)
+              apiEndpoints.studio.delete(row.original.id)
             );
 
             if (!status) toast.error("Gagal menghapus studio");
@@ -110,7 +110,7 @@ export default function MStudioAllPage() {
         return (
           <div className="flex gap-2">
             <Button size="icon" asChild>
-              <Link to={`/setting/studio-management/${row.original.ID}/edit`}>
+              <Link to={`/setting/studio-management/${row.original.id}/edit`}>
                 <IconPencil />
               </Link>
             </Button>
@@ -128,7 +128,7 @@ export default function MStudioAllPage() {
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     Studio{" "}
-                    <strong>{row.original.Name || "(Tanpa Nama)"}</strong> akan
+                    <strong>{row.original.name || "(Tanpa Nama)"}</strong> akan
                     dihapus.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
