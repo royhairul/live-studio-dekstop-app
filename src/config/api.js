@@ -54,14 +54,14 @@ export const apiEndpoints = {
 
   // Schedule
   schedule: {
-    index: () => `${baseUrl}/host-schedule`,
-    create: () => `${baseUrl}/host-schedule`,
-    show: (id) => `${baseUrl}/host-schedule/${id}`,
-    edit: (id) => `${baseUrl}/host-schedule/${id}`,
-    delete: (id) => `${baseUrl}/host-schedule/${id}`,
-    switch: () => `${baseUrl}/host-schedule/switch`,
+    index: () => `${baseUrl}/schedule`,
+    create: () => `${baseUrl}/schedule`,
+    show: (id) => `${baseUrl}/schedule/${id}`,
+    edit: (id) => `${baseUrl}/schedule/${id}`,
+    delete: (id) => `${baseUrl}/schedule/${id}`,
+    switch: () => `${baseUrl}/schedule/switch`,
     scheduled: (date, shift_id) =>
-      `${baseUrl}/host-schedule/scheduled?date=${date}&shift_id=${shift_id}`,
+      `${baseUrl}/schedule/scheduled?date=${date}&shift_id=${shift_id}`,
   },
 
   // Schedule
