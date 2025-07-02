@@ -3,12 +3,11 @@ import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { IconUsersGroup, IconClockPlus } from "@tabler/icons-react";
-import { useState, useEffect } from "react";
 import { useShifts } from "@/hooks/shift/useShifts";
 import { shiftColumns } from "@/components/tables/shifts-column";
 
 export default function ShiftAllPage() {
-  const { shifts } = useShifts();
+  const { data: shifts } = useShifts();
   const breadcrumbs = [
     {
       icon: IconUsersGroup,

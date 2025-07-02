@@ -41,7 +41,6 @@ import { DatePicker } from "@/components/datepicker";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { useHostsGroupedByStudio } from "@/hooks/host/useHostsGroupedByStudio";
 import { useShifts } from "@/hooks/shift/useShifts";
 import { formatTime } from "@/helpers/formatTime";
 import { useScheduledHosts } from "@/hooks/host-schedule/useScheduledHosts";
@@ -53,20 +52,23 @@ import { apiEndpoints } from "@/config/api";
 import { useAttendances } from "./hooks/useAttendances";
 import { checkoutSchema } from "./schema/checkout-schema";
 import { cn } from "@/lib/utils";
+import { useHostsGroupedByStudio } from "./hooks/useHostsGroupByStudio";
+import { useHosts } from "../hooks/useHosts";
 
 export default function HostAttendancePage() {
   const queryClient = useQueryClient();
-  const { data: hostsByStudio } = useHostsGroupedByStudio();
+  const { data: hosts } = useHosts();
   const { data: attendances } = useAttendances();
-  const { shifts = [] } = useShifts();
+  const { data: shifts } = useShifts();
   const [selectedHosts, setSelectedHosts] = useState([]);
   const [selectedAttendances, setSelectedAttendances] = useState([]);
+
   const getSelectedHostNames = () => {
-    if (!hostsByStudio) return "";
-    return Object.values(hostsByStudio)
+    if (!hosts) return "";
+    return hosts
       .flat()
-      .filter((host) => selectedHosts.includes(host.ID))
-      .map((host) => host.Name)
+      .filter((host) => selectedHosts.includes(host.id))
+      .map((host) => host.name)
       .join(", ");
   };
 
@@ -75,7 +77,7 @@ export default function HostAttendancePage() {
     resolver: zodResolver(checkinSchema),
     defaultValues: {
       host_ids: [],
-      shift_id: 0,
+      shift_id: "",
       date: new Date().toISOString(),
       attendance: "checkIn",
     },
@@ -137,7 +139,12 @@ export default function HostAttendancePage() {
     },
   });
 
-  const handleCheckIn = async (values) => checkInMutation.mutate(values);
+  console.log(formCheckIn.formState.errors);
+
+  const handleCheckIn = async (values) => {
+    console.log("Check In Values:", values);
+    checkInMutation.mutate(values);
+  };
 
   const handleCheckOut = async (values) => checkOutMutation.mutate(values);
 
@@ -198,7 +205,7 @@ export default function HostAttendancePage() {
                         <FormLabel>Shift</FormLabel>
                         <Select
                           onValueChange={(val) => {
-                            field.onChange(Number(val));
+                            field.onChange(val);
                           }}
                           v
                           value={field.value ? String(field.value) : ""}
@@ -211,8 +218,8 @@ export default function HostAttendancePage() {
                           <SelectContent>
                             {shifts.map((shift) => (
                               <SelectItem
-                                key={shift.ID}
-                                value={String(shift.ID)}
+                                key={shift.id}
+                                value={String(shift.id)}
                               >
                                 {shift.name} ({formatTime(shift.start_time)} -{" "}
                                 {formatTime(shift.end_time)})
@@ -299,82 +306,53 @@ export default function HostAttendancePage() {
                                 </Label>
                               </div>
 
-                              <div className="space-y-3 pr-2">
-                                {hostsByStudio &&
-                                  Object.keys(hostsByStudio).map(
-                                    (studioName) => (
+                              <div className="gap-2 pr-2 divide-y divide-muted-foreground/20">
+                                {hosts &&
+                                  hosts.map((host) => {
+                                    const isScheduled = scheduledHosts.some(
+                                      (item) => item.host_id === host.ID
+                                    );
+                                    return (
                                       <div
-                                        key={studioName}
-                                        className="space-y-1"
+                                        key={host.id}
+                                        className="flex items-center gap-2 py-2"
                                       >
-                                        <h5 className="text-sm font-medium text-muted-foreground">
-                                          {studioName}
-                                        </h5>
-                                        <div className="grid gap-1 divide-y divide-muted-foreground/20">
-                                          {hostsByStudio[studioName].map(
-                                            (host) => {
-                                              const isScheduled =
-                                                scheduledHosts.some(
-                                                  (item) =>
-                                                    item.host_id === host.ID
-                                                );
-                                              return (
-                                                <div
-                                                  key={host.ID}
-                                                  className="py-2 flex items-center gap-2"
-                                                >
-                                                  <Checkbox
-                                                    id={`host-${host.ID}`}
-                                                    checked={selectedHosts.includes(
-                                                      host.ID
-                                                    )}
-                                                    onCheckedChange={(
-                                                      checked
-                                                    ) => {
-                                                      const newSelected =
-                                                        checked
-                                                          ? [
-                                                              ...selectedHosts,
-                                                              host.ID,
-                                                            ]
-                                                          : selectedHosts.filter(
-                                                              (id) =>
-                                                                id !== host.ID
-                                                            );
-
-                                                      setSelectedHosts(
-                                                        newSelected
-                                                      );
-                                                      // Update form value dengan array string
-                                                      field.onChange(
-                                                        newSelected
-                                                      );
-                                                    }}
-                                                  />
-                                                  <Label
-                                                    htmlFor={`host-${host.ID}`}
-                                                    className="w-full flex text-sm leading-none"
-                                                  >
-                                                    {host.Name}
-                                                    <div className="flex-1"></div>
-                                                    {isScheduled && (
-                                                      <Badge
-                                                        variant="secondary"
-                                                        className="bg-primary/10 text-primary"
-                                                      >
-                                                        <IconCalendarCheck />
-                                                        Scheduled
-                                                      </Badge>
-                                                    )}
-                                                  </Label>
-                                                </div>
-                                              );
-                                            }
+                                        <Checkbox
+                                          id={`host-${host.id}`}
+                                          checked={selectedHosts.includes(
+                                            host.id
                                           )}
-                                        </div>
+                                          onCheckedChange={(checked) => {
+                                            const newSelected = checked
+                                              ? [...selectedHosts, host.id]
+                                              : selectedHosts.filter(
+                                                  (id) => id !== host.id
+                                                );
+
+                                            setSelectedHosts(newSelected);
+                                            // Update form value dengan array string
+                                            field.onChange(newSelected);
+                                          }}
+                                        />
+                                        <Label
+                                          htmlFor={`host-${host.id}`}
+                                          className="w-full flex text-sm leading-none"
+                                        >
+                                          {host.name}
+                                          <div className="flex-1"></div>
+                                          {isScheduled && (
+                                            <Badge
+                                              variant="secondary"
+                                              className="bg-primary/10 text-primary"
+                                            >
+                                              <IconCalendarCheck />
+                                              Scheduled
+                                            </Badge>
+                                          )}
+                                        </Label>
                                       </div>
-                                    )
-                                  )}
+                                    );
+                                  })}
                               </div>
                             </div>
                           </PopoverContent>

@@ -24,20 +24,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { baseUrl } from "@/config/api";
 import { useStudios } from "@/hooks/studio/useStudios";
-import { useHosts } from "@/hooks/host/useHosts";
-import { useHostById } from "@/hooks/host/useHostById";
+import { useEditHost } from "./hooks/useEditHost";
+import { useHostById } from "./hooks/useHostById";
 
 export default function HostEditPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-  const { id } = useParams();
   const { studio } = useStudios();
-  const { host } = useHostById(id);
 
-  console.log(host);
+  const { id } = useParams();
+  const { data: host, isSuccess } = useHostById(id);
+  const editHostMutation = useEditHost(id);
 
   const formSchema = z.object({
     name: z.string().min(1, { message: "Host name is required." }),
@@ -54,6 +53,18 @@ export default function HostEditPage() {
     },
   });
 
+  useEffect(() => {
+    if (host && studio.length > 0) {
+      form.reset({
+        name: host.name,
+        phone: host.phone,
+        studio_id: String(host.studio_id),
+      });
+
+      console.log("studio", String(host.studio_id));
+    }
+  }, [host, studio, form]);
+
   const breadcrumbs = [
     {
       icon: IconUsersGroup,
@@ -65,41 +76,10 @@ export default function HostEditPage() {
     },
   ];
 
-  const handleEditHost = async (values) => {
-    try {
-      const result = await fetch(`${baseUrl}/host/${id}/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      const res = await result.json();
-
-      if (result.ok) {
-        navigate("/host/all");
-      } else {
-        form.setError("name", {
-          message: res?.message || "Something error.",
-        });
-      }
-    } catch (error) {
-      console.error("Edit Host error:", error);
-      form.setError("name", {
-        message: "Something error when edit data.",
-      });
-    }
+  const handleEditHost = (values) => {
+    console.log("Form Values:", values);
+    editHostMutation.mutate(values);
   };
-  useEffect(() => {
-    if (host) {
-      form.reset({
-        name: host.Name || "",
-        phone: host.Phone || "",
-        studio_id: String(host.StudioID || ""),
-      });
-    }
-  }, [host]);
 
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
@@ -173,10 +153,10 @@ export default function HostEditPage() {
                         <SelectGroup>
                           {studio.map((item) => (
                             <SelectItem
-                              key={String(item.ID)}
-                              value={String(item.ID)}
+                              key={String(item.id)}
+                              value={String(item.id)}
                             >
-                              {item.Name}
+                              {item.name}
                             </SelectItem>
                           ))}
                         </SelectGroup>

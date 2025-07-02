@@ -79,7 +79,7 @@ export default function ShiftCreatePage() {
   const handleCreateShift = async (values) => {
     console.log(JSON.stringify(values));
     try {
-      const response = await fetch(`${baseUrl}/shift/create`, {
+      const response = await fetch(`${baseUrl}/shift`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

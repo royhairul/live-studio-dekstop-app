@@ -20,35 +20,42 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { date, z } from "zod";
+import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { apiEndpoints, baseUrl } from "@/config/api";
 import { DatePicker } from "@/components/datepicker";
 import { toast } from "sonner";
 import { postRequest } from "@/lib/useApi";
 import { formatTime } from "@/helpers/formatTime";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useStudios } from "@/hooks/studio/useStudios";
 
 export default function HostScheduleCreatePage() {
   const navigate = useNavigate();
   const [host, setHost] = useState([]);
   const [studio, setStudio] = useState([]);
   const [shift, setShift] = useState([]);
-  const [date, setDate] = useState({ from: new Date(), to: new Date() });
+  const { studio: studioMain } = useStudios();
 
   const formSchema = z.object({
-    host_id: z.coerce.number().min(1, { message: "Host is required." }),
+    host_id: z.string(),
     shift_id: z.coerce.number().min(1, { message: "Shift is required." }),
+    studio_id: z.coerce.number().min(1, { message: "Studio is required." }),
     date: z.string(),
   });
+
+  const today = new Date();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       host_id: "",
       shift_id: "",
-      date: "",
+      studio_id: "",
+      date: today.toISOString(),
     },
   });
 
@@ -73,12 +80,12 @@ export default function HostScheduleCreatePage() {
         const res = await fetch(`${baseUrl}/host/group-by-studio`);
         const json = await res.json();
         const data = json.data;
-        const resources = Object.entries(data).map(([studioName, hosts]) => ({
-          id: studioName, // pakai nama studio sebagai ID (bisa disesuaikan)
-          title: studioName,
+        const resources = data.map(({ studio_id, studio_name, hosts }) => ({
+          id: studio_id, // pakai nama studio sebagai ID (bisa disesuaikan)
+          title: studio_name,
           children: hosts.map((host) => ({
-            id: host.ID,
-            title: host.Name,
+            id: host.id,
+            title: host.name,
           })),
         }));
         setHost(data);
@@ -111,34 +118,37 @@ export default function HostScheduleCreatePage() {
     return `${year}-${month}-${day}`;
   }
 
-  const handleCreateSchedule = async (values) => {
-    const payload = { ...values, date: formatDate(date.from) };
-    try {
-      // const response = await fetch(`${baseUrl}/host-schedule/create`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(payload),
-      // });
-
-      const { status, result, errors } = await postRequest(
-        apiEndpoints.schedule.create(),
-        payload
-      );
-
-      if (status) {
-        toast.success(result["message"]);
-        setTimeout(() => {
-          navigate("/host/schedule");
-        }, 3000);
+  const createScheduleMutation = useMutation({
+    mutationFn: async (values) =>
+      await axios.post(apiEndpoints.schedule.create(), values),
+    onSuccess: (res) => {
+      const response = res.data;
+      if (res.status === 201) {
+        console.log("Response data:", response);
+        toast.success("Buat Jadwal Baru", {
+          description: response["message"],
+          descriptionClassName: "capitalize",
+        });
+        navigate("/host/schedule");
       } else {
-        toast.error(result["error"]);
-        console.error("Error creating host:", errorData);
+        toast.error(response["error"]);
+        console.error("Error creating host:", response.errors);
       }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
+    },
+    onError: (error) => {
+      console.warn("Network error:", error);
+      console.warn("Network error:", error.response.data.details);
+      toast.error("Gagal membuat jadwal", {
+        description:
+          error.response?.data?.details ||
+          "Terjadi kesalahan saat membuat jadwal.",
+      });
+    },
+  });
+
+  const handleCreateSchedule = async (values) => {
+    console.log("Form values:", values);
+    createScheduleMutation.mutate(values);
   };
 
   return (
@@ -202,11 +212,42 @@ export default function HostScheduleCreatePage() {
                         <SelectGroup>
                           {shift.map((item) => (
                             <SelectItem
-                              key={String(item.ID)}
-                              value={String(item.ID)}
+                              key={String(item.id)}
+                              value={String(item.id)}
                             >
                               {item.name} ({formatTime(item.start_time)} {"-"}
                               {formatTime(item.end_time)})
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+            <FormField
+              control={form.control}
+              name="studio_id"
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Studio</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih Studio..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          {studioMain.map((item) => (
+                            <SelectItem
+                              key={String(item.id)}
+                              value={String(item.id)}
+                            >
+                              {item.name}
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -225,8 +266,13 @@ export default function HostScheduleCreatePage() {
                   <FormItem>
                     <FormLabel>Date</FormLabel>
                     <DatePicker
-                      value={date}
-                      onChange={(date) => setDate(date)}
+                      value={{
+                        from: field.value ? new Date(field.value) : new Date(),
+                        to: field.value ? new Date(field.value) : new Date(),
+                      }}
+                      onChange={(date) =>
+                        field.onChange(date.from.toISOString())
+                      }
                     />
                     <FormMessage />
                   </FormItem>

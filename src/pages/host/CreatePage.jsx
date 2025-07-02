@@ -24,13 +24,16 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
-import { baseUrl } from "@/config/api";
+import { apiEndpoints, baseUrl } from "@/config/api";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { toast } from "sonner";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { useCreateHost } from "./hooks/useCreateHost";
 
 export default function HostCreatePage() {
-  const navigate = useNavigate();
   const { studio, error } = useStudios();
+  const createHostMutation = useCreateHost();
 
   const formSchema = z.object({
     name: z.string().min(1, { message: "Host name is required." }),
@@ -58,31 +61,11 @@ export default function HostCreatePage() {
     },
   ];
 
-  const handleCreateHost = async (values) => {
-    console.log(JSON.stringify(values));
-    try {
-      const response = await fetch(`${baseUrl}/host`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (response.ok) {
-        navigate("/host/all");
-      } else {
-        const errorData = await response.json();
-        console.error("Error creating host:", errorData);
-      }
-    } catch (error) {
-      toast.error("Terjadi Kesalahan saat membuat host baru");
-    }
-  };
+  const handleCreateHost = (values) => createHostMutation.mutate(values);
 
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
-      <div className="p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md">
+      <div className="p-4 w-1/2 bg-white flex flex-col gap-4 rounded-lg shadow-md">
         <h2 className="font-semibold">Tambah Host Baru</h2>
 
         <Form {...form}>
@@ -149,10 +132,10 @@ export default function HostCreatePage() {
                         <SelectGroup>
                           {studio.map((item) => (
                             <SelectItem
-                              key={String(item.ID)}
-                              value={String(item.ID)}
+                              key={String(item.id)}
+                              value={String(item.id)}
                             >
-                              {item.Name}
+                              {item.name}
                             </SelectItem>
                           ))}
                         </SelectGroup>
