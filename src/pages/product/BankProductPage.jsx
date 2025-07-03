@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { IconBarrierBlock, IconShoppingBag } from "@tabler/icons-react";
 
-export default function TransactionProductPage() {
+export default function BankProductPage() {
   const breadcrumbs = [
     {
       icon: IconShoppingBag,
@@ -9,7 +9,7 @@ export default function TransactionProductPage() {
       url: "/riset/all",
     },
     {
-      label: "Transaksi Produk",
+      label: "Bank Produk",
     },
   ];
 
