@@ -91,7 +91,7 @@ const items = [
     children: [
       {
         title: "Daftar Produk",
-        url: "/product/all",
+        url: "/product/list",
         permission: PERMISSIONS.FINANCE.VIEW,
       },
       {
@@ -101,12 +101,12 @@ const items = [
       },
       {
         title: "Riset Produk",
-        url: "/riset/product",
+        url: "/product/research",
         permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
       },
       {
         title: "Bank Produk",
-        url: "/riset/bank-produk",
+        url: "/product",
         permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
       },
     ],
