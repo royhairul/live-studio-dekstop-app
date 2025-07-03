@@ -7,8 +7,8 @@ import AccountAllPage from "@/pages/account/AllPage";
 import AccountCreatePage from "@/pages/account/CreatePage";
 import FinanceDailyReportPage from "@/pages/finance/pages/daily-report-page";
 import HostSchedulePage from "@/pages/schedule/pages/SchedulePage";
-import BankProductPage from "@/pages/riset/BankProductPage";
-import RisetProductPage from "@/pages/riset/ProductPage";
+import BankProductPage from "@/pages/product/BankProductPage";
+import ResearchProductPage from "@/pages/product/ReseacrhProductPage";
 import ForgotPasswordPage from "@/pages/auth/pages/forgot-password-page";
 import VerifyTokenPage from "@/pages/auth/pages/verify-otp-page";
 import ResetPasswordPage from "@/pages/auth/pages/reset-password-page";
@@ -32,6 +32,7 @@ import HostDetailPage from "@/pages/host/DetailPage";
 import ShiftEditPage from "@/pages/host/schedule/shift-management/EditPage";
 import { financeRoutes } from "./finance.route";
 import { liveRoutes } from "./live.route";
+import { productRoutes } from "./product.route";
 
 export default function AppRouter() {
   const ProtectedRoute = () => {
@@ -137,6 +138,7 @@ export default function AppRouter() {
           element={<MRoleEditPage />}
         />
 
+        {productRoutes}
         {financeRoutes}
         {liveRoutes}
       </Route>
