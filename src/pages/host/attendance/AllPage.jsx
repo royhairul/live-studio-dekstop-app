@@ -111,15 +111,38 @@ export default function HostAttendancePage() {
       const data = response.data.data;
       toast.success(data["message"]);
 
+      console.warn(response);
+
       queryClient.invalidateQueries(["attendances"]);
 
       setSelectedHosts([]);
       formCheckIn.reset();
     },
     onError: (error) => {
-      console.error(error);
-      const errorMsg = error.response?.data?.message || "Gagal check-in";
-      toast.error(errorMsg);
+      const errors = error.response.data.details;
+
+      console.log(errors);
+
+      const successedHost = errors.results
+        .filter(({ status }) => status === "success")
+        .map(({ host_name }) => host_name);
+
+      const failedHost = errors.results
+        .filter(({ status }) => status === "failed")
+        .map(({ host_name }) => host_name);
+
+      console.log(successedHost);
+
+      if (successedHost.length > 0) {
+        toast.success(`${successedHost.join(", ")} telah melakukan check-in`);
+      } else {
+        toast.error("Gagal check-in", {
+          description:
+            failedHost.length > 0
+              ? `\n${failedHost.join(", ")}  belum melakukan checkout`
+              : "",
+        });
+      }
     },
   });
 
