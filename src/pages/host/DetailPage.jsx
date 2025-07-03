@@ -15,8 +15,10 @@ import {
   IconUserPlus,
   IconPencil,
   IconTrash,
+  IconCalendarCheck,
+  IconCalendarX,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { apiEndpoints, baseUrl } from "@/config/api";
 import {
   AlertDialog,
@@ -38,6 +40,7 @@ import axios from "axios";
 import { format } from "date-fns-tz";
 import { formatTime } from "@/helpers/formatTime";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function HostDetailPage() {
   const { studio } = useStudios();
@@ -49,15 +52,31 @@ export default function HostDetailPage() {
 
   const { user } = useUserById(host.ID);
 
-  const { data: attendances } = useQuery({
+  const { data: attendances, error } = useQuery({
     queryKey: ["attendances"],
     queryFn: async () => {
       const res = await axios.get(apiEndpoints.attendance.index());
-      return res.data.data;
+      return res.data;
     },
+    select: (data) => data?.data ?? [],
   });
 
-  console.log(attendances);
+  // Filtered attendance by host name
+  const filteredAttendances = useMemo(() => {
+    if (!attendances) return [];
+    return attendances.filter((attendance) => attendance.host_id == host.id);
+  }, [attendances, host]);
+
+  // const filteredAttendances = useMemo(() => {
+  //   if (!attendances || !Array.isArray(attendances)) return [];
+  //   if (!host?.ID) return [];
+
+  //   return attendances.data.filter(
+  //     (attendance) => attendance.host_name === host.name
+  //   );
+  // }, [attendances, host]);
+
+  // console.log(filteredAttendances);
 
   const breadcrumbs = [
     { icon: IconUsersGroup, label: "Host", url: "/host/all" },
@@ -89,18 +108,19 @@ export default function HostDetailPage() {
     },
     {
       header: "Tanggal",
-      cell: ({ row }) => <div>{row.original.checked_in.split("T")[0]}</div>,
+      // accessorKey: "check)"
+      cell: ({ row }) => <div>{row.original.check_in.split("T")[0]}</div>,
     },
     {
       header: "Check In",
       accessorKey: "checked_in",
-      cell: ({ row }) => <div>{formatTime(row.original.checked_in)}</div>,
+      cell: ({ row }) => <div>{formatTime(row.original.check_in)}</div>,
     },
     {
       header: "Check Out",
       accessorKey: "checked_out",
       cell: ({ row }) => {
-        const value = row.original.checked_out;
+        const value = row.original.check_out;
 
         return (
           <div>
@@ -117,10 +137,22 @@ export default function HostDetailPage() {
     },
     {
       header: "Catatan",
-      accessorKey: "Note",
+      accessorKey: "note",
       cell: ({ row }) => (
-        <Badge className="bg-primary/10 text-primary">
-          {row.original.Note}
+        <Badge
+          className={cn(
+            "capitalize ",
+            row.original.note == "sesuai jadwal"
+              ? "bg-primary/10 text-primary"
+              : "bg-amber-600/10 text-amber-600"
+          )}
+        >
+          {row.original.note == "sesuai jadwal" ? (
+            <IconCalendarCheck />
+          ) : (
+            <IconCalendarX />
+          )}
+          {row.original.note}
         </Badge>
       ),
     },
@@ -142,26 +174,26 @@ export default function HostDetailPage() {
                 Full name
               </dt>
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {host.Name}
+                {host.name}
               </dd>
             </div>
             <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <dt className="text-sm/8 font-semibold text-gray-900">Studio</dt>
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {host.Studio?.Name}
+                {host.studio_name}
               </dd>
             </div>
             <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <dt className="text-sm/8 font-semibold text-gray-900">Phone</dt>
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {host.Phone}
+                {host.phone}
               </dd>
             </div>
           </dl>
         </div>
       </div>
 
-      <DataTable columns={columns} data={attendances} />
+      <DataTable columns={columns} data={filteredAttendances} />
     </MainLayout>
   );
 }
