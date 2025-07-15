@@ -15,18 +15,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../schemas/login-schema";
 import { useLogin } from "../hooks/useLogin";
+import { useAuth } from "@/auth/AuthContext";
 
 export default function LoginPage() {
   const loginMutation = useLogin();
 
+  const { getRemembered } = useAuth();
+
+  const remembered = getRemembered();
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: remembered.email,
+      password: remembered.password,
+      rememberMe: remembered.rememberMe,
     },
   });
-
   const handleLogin = (values) => loginMutation.mutate(values);
 
   return (
@@ -92,12 +97,23 @@ export default function LoginPage() {
             />
 
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Checkbox id="rememberMe" />
-                <label htmlFor="rememberMe" className="text-xs font-medium">
-                  Remember Me
-                </label>
-              </div>
+              <FormField
+                control={form.control}
+                name="rememberMe"
+                render={({ field }) => (
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="rememberMe"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <label htmlFor="rememberMe" className="text-xs font-medium">
+                      Remember Me
+                    </label>
+                  </div>
+                )}
+              />
+
 
               <Link
                 to="/forgot-password"
@@ -120,6 +136,15 @@ export default function LoginPage() {
             </Button>
           </form>
         </Form>
+        <div className="flex justify-center items-center gap-2 pt-5">
+          <span className="text-xs font-medium">Don't have an account?</span>
+          <Link
+            to="/register"
+            className="text-xs font-semibold text-primary"
+          >
+            Create Account
+          </Link>
+        </div>
       </div>
     </AuthLayout>
   );

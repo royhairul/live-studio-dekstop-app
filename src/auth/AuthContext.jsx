@@ -2,6 +2,7 @@ import { apiEndpoints } from "@/config/api";
 import { getRequest } from "@/lib/useApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import Cookies from "js-cookie";
 import {
   createContext,
   useCallback,
@@ -10,6 +11,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { get } from "svelte/store";
 
 const AuthContext = createContext();
 
@@ -58,12 +60,32 @@ export const AuthProvider = ({ children }) => {
     queryClient.removeQueries(["auth", "me"]);
   };
 
+  const rememberMe = (email, password) => {
+    Cookies.set("email", email, { expires: 7 });
+    Cookies.set("password", password, { expires: 7 });
+  };
+
+  const clearRememberMe = () => {
+    Cookies.remove("email");
+    Cookies.remove("password");
+  };
+
+  const getRemembered = () => ({
+    email: Cookies.get("email") || "",
+    password: Cookies.get("password") || "",
+    rememberMe: !!Cookies.get("email"),
+  });
+
+
   const contextValue = useMemo(() => ({
     user,
     isLoading,
     isError,
     login,
     logout,
+    rememberMe,
+    clearRememberMe,
+    getRemembered,
     refetch: () => queryClient.invalidateQueries(["auth", "me"]),
   }));
 

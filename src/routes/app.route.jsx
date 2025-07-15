@@ -33,6 +33,7 @@ import ShiftEditPage from "@/pages/host/schedule/shift-management/EditPage";
 import { financeRoutes } from "./finance.route";
 import { liveRoutes } from "./live.route";
 import { productRoutes } from "./product.route";
+import RegisterPage from "@/pages/auth/pages/register-page";
 
 export default function AppRouter() {
   const ProtectedRoute = () => {
@@ -54,6 +55,7 @@ export default function AppRouter() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/verify-otp" element={<VerifyTokenPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />

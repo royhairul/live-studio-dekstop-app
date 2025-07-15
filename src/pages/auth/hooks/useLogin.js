@@ -6,15 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function useLogin() {
-  const { login } = useAuth();
+  const { login, rememberMe, clearRememberMe } = useAuth();
   const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (values) => axios.post(apiEndpoints.auth.login(), values),
-    onSuccess: async (response) => {
+    onSuccess: async (response, variables) => {
       const data = response.data.data;
 
       login(data.access_token);
+
+      if (variables.rememberMe) {
+        rememberMe(variables.email, variables.password);
+      } else {
+        clearRememberMe();
+      }
 
       toast.success("Login Success", { description: "Welcome Back" });
 

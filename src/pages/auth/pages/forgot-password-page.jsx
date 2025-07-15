@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
           className="pt-5 flex gap-2 items-center text-xs font-semibold text-primary underline"
         >
           <IconArrowLeft size={24} />
-          Kembali ke halaman Login
+          Back to Login
         </Link>
       </div>
     </AuthLayout>
