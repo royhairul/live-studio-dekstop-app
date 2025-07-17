@@ -30,8 +30,8 @@ const toLocalDateString = (date) =>
 
 
 export default function FinanceComissionPage() {
-    const { studio } = useStudios();
-    const [selectedStudioId, setSelectedStudioId] = useState("all");
+  const { studio } = useStudios();
+  const [selectedStudioId, setSelectedStudioId] = useState("all");
   const [dateRange, setDateRange] = useState({
     from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
     to: endOfWeek(today, { weekStartsOn: 1 }),
@@ -93,7 +93,21 @@ export default function FinanceComissionPage() {
     ...dynamicDateColumns,
   ];
 
+  const comissionRevenue = [
+    {
+      title : "Total Omset / Jam",
+      data : "100.000"
+    },
+    {
+      title : "Total Hasil Studio 5",
+      data : "1.000.000"
+    }
+  ]
 
+  const colorRevenue = {
+    bg : "primary",
+    text : "white",
+  }
   const { data, isLoading, isError, refetch, isFetching, error } = useQuery({
     queryKey: ["finance-daily-report", appliedDateRange],
     queryFn: async () => {
@@ -151,7 +165,7 @@ export default function FinanceComissionPage() {
 
 
       <div className="flex self-end gap-2">
-      <Button>Export</Button>
+        <Button>Export</Button>
         <Select
           value={selectedStudioId}
           onValueChange={(value) => setSelectedStudioId(value)}
@@ -170,27 +184,30 @@ export default function FinanceComissionPage() {
         </Select>
       </div>
 
-      {/* Loading/Error Handler */ }
-  {
-    isLoading ? (
-      <div className="text-center py-8">Loading...</div>
-    ) : isError ? (
-      <>
-        {console.log(error)}
-        <div className="text-center py-8 text-red-500">
-          Terjadi kesalahan.
-        </div>
-      </>
-    ) : (
-      <DataTablePinning
-        columns={columnReportDaily}
-        data={data}
-        pinning={["host", "omset", "omset-jam"]}
-      />
-    )
-  }
+      {/* Loading/Error Handler */}
+      {
+        isLoading ? (
+          <div className="text-center py-8">Loading...</div>
+        ) : isError ? (
+          <>
+            {console.log(error)}
+            <div className="text-center py-8 text-red-500">
+              Terjadi kesalahan.
+            </div>
+          </>
+        ) : (
+          <DataTablePinning
+            columns={columnReportDaily}
+            data={data}
+            pinning={["host", "omset", "omset-jam"]}
+          />
+        )
+      }
 
-  <RevenueCard />
+      <RevenueCard
+        color={colorRevenue}
+        data={comissionRevenue}
+      />
     </MainLayout >
   );
 }
