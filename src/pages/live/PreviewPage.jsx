@@ -45,6 +45,12 @@ import { useLocation } from "react-router-dom";
 
 const columnReportDaily = [
   {
+    id: "host",
+    accessorKey: "host",
+    header: () => <div className="pl-4 pr-8 font-semibold">Host</div>,
+    cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+  },
+  {
     id: "name",
     accessorKey: "name",
     header: () => <div className="pl-4 pr-8 font-semibold">Akun</div>,
@@ -218,6 +224,12 @@ const columnReportDaily = [
         : "-",
   },
   {
+    id: "detail",
+    accessorKey: "detail",
+    header: () => <div className="pl-4 pr-8 font-semibold">Detail</div>,
+    cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+  },
+  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
@@ -318,7 +330,7 @@ export default function LivePreviewPage() {
       <DataTablePinning
         columns={columnReportDaily}
         data={combinedData}
-        pinning={["name", "status", "studio", "oph"]}
+        pinning={["host" ,"name", "status"]}
       />
     </MainLayout>
   );

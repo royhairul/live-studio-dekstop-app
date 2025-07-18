@@ -95,11 +95,11 @@ export default function FinanceComissionPage() {
 
   const comissionRevenue = [
     {
-      title : "Total Omset / Jam",
+      title : "Omset / Jam",
       data : "100.000"
     },
     {
-      title : "Total Hasil Studio 5",
+      title : "Hasil Studio 5",
       data : "1.000.000"
     }
   ]

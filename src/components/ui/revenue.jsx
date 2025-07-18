@@ -14,7 +14,7 @@ const RevenueCard = ({color, data}) => {
     if (!Array.isArray(data) || data.length === 0) return null;
 
   return (
-    <div className={`bg-${color.bg} text-${color.text} rounded-3xl p-6 shadow-xl`}>
+    <div className={`bg-${color.bg} text-${color.text} rounded-3xl p-6 shadow-xl w-full`}>
       <div className="text-center">
         <p className="text-xl font-bold mb-6">Total</p>
 
