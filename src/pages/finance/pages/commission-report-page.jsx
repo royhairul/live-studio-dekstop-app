@@ -1,264 +1,151 @@
 import MainLayout from "@/layouts/main-layout";
-import { DataTable } from "@/components/data-table";
 import { DataTablePinning } from "@/components/data-table-pinning";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { IconDots, IconReportAnalytics } from "@tabler/icons-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { IconReportMoney } from "@tabler/icons-react";
 import { DatePicker } from "@/components/Datepicker";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiEndpoints } from "@/config/api";
+import axios from "axios";
+import { differenceInDays } from "date-fns";
+import RevenueCard from "@/components/ui/revenue";
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, isValid } from "date-fns";
+import { id as localeID } from "date-fns/locale";
+import { useStudios } from "@/hooks/studio/useStudios";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-const columnCommission = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    header: () => <div className="ml-10">Nama Host</div>,
-    accessorKey: "name",
-  },
-  {
-    header: "Tanggal",
-    accessorKey: "date",
-  },
-  {
-    header: "Studio",
-    accessorKey: "studio",
-  },
-  {
-    header: "Order",
-    accessorKey: "order",
-  },
-  {
-    header: "Commission",
-    accessorKey: "commission",
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
+const today = new Date();
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <IconDots />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+const getTimeDim = (from, to) => {
+  const diffDays = differenceInDays(to, from);
+  if (diffDays <= 0) return "1d";
+  return `${diffDays}d`;
+};
+
+const toLocalDateString = (date) =>
+  new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0];
+
+
+
+export default function FinanceComissionPage() {
+  const { studio } = useStudios();
+  const [selectedStudioId, setSelectedStudioId] = useState("all");
+  const [dateRange, setDateRange] = useState({
+    from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
+    to: endOfWeek(today, { weekStartsOn: 1 }),
+  });
+
+  const [appliedDateRange, setAppliedDateRange] = useState({
+    from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
+    to: endOfWeek(today, { weekStartsOn: 1 }),     // Minggu
+  });
+
+
+  const isValidRange =
+    appliedDateRange?.from instanceof Date &&
+    appliedDateRange?.to instanceof Date &&
+    isValid(appliedDateRange.from) &&
+    isValid(appliedDateRange.to);
+
+  const dynamicDateColumns = isValidRange
+    ? eachDayOfInterval({
+      start: appliedDateRange.from,
+      end: appliedDateRange.to,
+    }).map((date) => ({
+      accessorKey: format(date, "yyyy-MM-dd"),
+      header: () => (
+        <div className="font-semibold text-center">
+          <p>{format(date, "EEEE", { locale: localeID })}</p>
+          <p>{format(date, "dd/MM/yyyy")}</p>
+        </div>
+      ),
+      cell: ({ getValue }) =>
+        Number(getValue()).toLocaleString("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          minimumFractionDigits: 0,
+        }),
+    }))
+    : [];
+
+  const columnReportDaily = [
+    {
+      id: "host",
+      accessorKey: "host",
+      header: () => <div className=" font-semibold bg-primary text-white rounded-2xl py-3 "><p className="text-center">HOST</p></div>,
+      cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+    },
+    {
+      id: "omset",
+      accessorKey: "omset",
+      header: () => <div className=" font-semibold bg-primary text-white rounded-2xl py-3 "><p className="text-center">OMSET</p></div>,
+      cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+    },
+    {
+      id: "omset-jam",
+      accessorKey: "omset-jam",
+      header: () => <div className=" font-semibold bg-primary text-white rounded-2xl py-3 "><p className="text-center">OMSET/JAM</p></div>,
+      cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+    },
+
+    ...dynamicDateColumns,
+  ];
+
+  const comissionRevenue = [
+    {
+      title : "Omset / Jam",
+      data : "100.000"
+    },
+    {
+      title : "Hasil Studio 5",
+      data : "1.000.000"
+    }
+  ]
+
+  const colorRevenue = {
+    bg : "primary",
+    text : "white",
+  }
+  const { data, isLoading, isError, refetch, isFetching, error } = useQuery({
+    queryKey: ["finance-daily-report", appliedDateRange],
+    queryFn: async () => {
+      const payload = {
+        page: 1,
+        pageSize: 100,
+        orderBy: "",
+        sort: "",
+        timeDim: getTimeDim(appliedDateRange.from, appliedDateRange.to),
+        endDate: toLocalDateString(appliedDateRange.to),
+      };
+      console.log(payload);
+      const res = await axios.post(apiEndpoints.finance.daily(), payload);
+      return res.data.data.flatMap((shop) =>
+        (shop.reportLive ?? []).map((item) => ({
+          name: shop.name,
+          ...item,
+        }))
       );
     },
-  },
-];
-const columnReportDaily = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    id: "name",
-    accessorKey: "name",
-    header: () => (
-      <div className="pl-4 w-xs font-semibold text-primary">Nama Host</div>
-    ),
-    cell: ({ row, getValue }) => (
-      <div className="pl-4" key={row.original.id}>
-        {getValue()}
-      </div>
-    ),
-  },
-  {
-    id: "date",
-    header: () => (
-      <div className="w-xs font-semibold text-primary">Tanggal</div>
-    ),
-    accessorKey: "date",
-  },
-  {
-    header: "Studio",
-    accessorKey: "studio",
-  },
-  {
-    header: "Studio",
-    accessorKey: "studio",
-  },
-  {
-    header: "Studio",
-    accessorKey: "studio",
-  },
-  {
-    header: "Studio",
-    accessorKey: "studio",
-  },
-  {
-    header: "Studio",
-    accessorKey: "studio",
-  },
-  {
-    header: "Studio",
-    accessorKey: "studio",
-  },
-  {
-    header: "Order",
-    accessorKey: "order",
-  },
-  {
-    header: "Order",
-    accessorKey: "order",
-  },
-  {
-    header: "Order",
-    accessorKey: "order",
-  },
-  {
-    header: "Order",
-    accessorKey: "order",
-  },
-  {
-    header: "Order",
-    accessorKey: "order",
-  },
-  {
-    header: "Sales",
-    accessorKey: "sales",
-  },
-  {
-    header: "Paid",
-    accessorKey: "paid",
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
+  });
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <IconDots />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
-
-const data = [
-  {
-    name: "John Doe",
-    phone: "081234567890",
-    studio: "Studio 1",
-  },
-  {
-    name: "Alice Smith",
-    phone: "082198765432",
-    studio: "Studio 2",
-  },
-  {
-    name: "David Lee",
-    phone: "083112233445",
-    studio: "Studio 1",
-  },
-  {
-    name: "Luna Malik",
-    phone: "085556677889",
-    studio: "Studio 3",
-  },
-  {
-    name: "Carlos Vega",
-    phone: "087712345678",
-    studio: "Studio 1",
-  },
-];
-
-export default function FinanceCommissionReportPage() {
-  const [selected, setSelected] = useState("report-commission");
+  const handleApplyClick = () => {
+    console.log("Button Terapkan diklik");
+    console.log("Tanggal dipilih:", dateRange.to);
+    console.log(data);
+    setAppliedDateRange(dateRange);
+    refetch();
+  };
 
   const breadcrumbs = [
     {
-      icon: IconReportAnalytics,
-      label: "Riset",
-      url: "/riset/all",
+      icon: IconReportMoney,
+      label: "Keuangan",
+      url: "/finance/all",
     },
     {
-      label: "Riset Keuangan",
+      label: "Laporan Komisi",
     },
   ];
 
@@ -266,30 +153,61 @@ export default function FinanceCommissionReportPage() {
     <MainLayout breadcrumbs={breadcrumbs}>
       {/* Action Button */}
       <div className="flex gap-2">
-        <DatePicker />
-
-        <div className="flex-1"></div>
-        <div className="self-end">
-          <Select value={selected} onValueChange={setSelected}>
-            <SelectTrigger className="w-[180px] border-secondary/20 shadow-secondary/10">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="report-commission">Laporan Komisi</SelectItem>
-              <SelectItem value="report-daily">Laporan Harian</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <DatePicker
+          withRange="true"
+          value={dateRange}
+          onChange={setDateRange}
+        />
+        <Button onClick={handleApplyClick} disabled={isFetching}>
+          {isFetching ? "Memuat..." : "Terapkan"}
+        </Button>
       </div>
 
-      {/* Table */}
-      {/* <DataTable
-        columns={
-          selected == "report-commission" ? columnCommission : columnReportDaily
-        }
-        data={data}
-      /> */}
-      <DataTablePinning columns={columnReportDaily} data={data} />
-    </MainLayout>
+
+      <div className="flex self-end gap-2">
+        <Button>Export</Button>
+        <Select
+          value={selectedStudioId}
+          onValueChange={(value) => setSelectedStudioId(value)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Pilih Studio" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Studio</SelectItem>
+            {studio.map((s) => (
+              <SelectItem key={s.id} value={String(s.id)}>
+                {s.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Loading/Error Handler */}
+      {
+        isLoading ? (
+          <div className="text-center py-8">Loading...</div>
+        ) : isError ? (
+          <>
+            {console.log(error)}
+            <div className="text-center py-8 text-red-500">
+              Terjadi kesalahan.
+            </div>
+          </>
+        ) : (
+          <DataTablePinning
+            columns={columnReportDaily}
+            data={data}
+            pinning={["host", "omset", "omset-jam"]}
+          />
+        )
+      }
+
+      <RevenueCard
+        color={colorRevenue}
+        data={comissionRevenue}
+      />
+    </MainLayout >
   );
 }

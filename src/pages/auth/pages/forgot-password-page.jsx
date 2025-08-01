@@ -3,7 +3,6 @@ import { IconArrowLeft, IconMail } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { baseUrl } from "@/config/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -16,10 +15,12 @@ import {
 import { forgotPasswordSchema } from "../schemas/forgot-password-schema";
 import { useForgotPassword } from "../hooks/useForgotPassword";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export default function ForgotPasswordPage() {
   const forgotPasswordMutate = useForgotPassword();
   const navigate = useNavigate();
+  const [Loading, setLoading ] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(forgotPasswordSchema),
@@ -30,10 +31,13 @@ export default function ForgotPasswordPage() {
 
   const handleReset = async (values) => {
     try {
+      setLoading(true);
       await forgotPasswordMutate.mutateAsync(values);
       navigate("/verify-otp");
     } catch (error) {
       toast.error("Forgot password error", { description: error.message });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,7 +84,7 @@ export default function ForgotPasswordPage() {
               type="submit"
               className="text-white font-semibold text-base bg-primary"
             >
-              Reset Password
+              {Loading ? "Sending..." : "Send OTP"}
             </Button>
           </form>
         </Form>

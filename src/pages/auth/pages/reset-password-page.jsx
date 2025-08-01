@@ -4,17 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { baseUrl } from "@/config/api";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useState } from "react";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const otp = sessionStorage.getItem("otp");
 
   const formSchema = z
@@ -40,9 +40,9 @@ export default function ResetPasswordPage() {
   });
 
   const handleResetPassword = async (values) => {
-    console.log(otp);
     try {
-      const result = await fetch(`${baseUrl}/reset-password`, {
+      setLoading(true);
+      const result = await fetch(`${baseUrl}/auth/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
         body: JSON.stringify({
           otp: otp,
           password: values.password,
-          confirm_password: values.confirmPassword,
+          confirmPassword: values.confirmPassword,
         }),
       });
 
@@ -82,6 +82,8 @@ export default function ResetPasswordPage() {
       form.setError("password", {
         message: "Something error.",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -151,7 +153,7 @@ export default function ResetPasswordPage() {
               type="submit"
               className="text-white font-semibold text-base bg-primary"
             >
-              Submit
+              {loading ? "Loading..." : "Reset Password"}
             </Button>
           </form>
         </Form>

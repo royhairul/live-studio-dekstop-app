@@ -8,7 +8,7 @@ export function useRegister() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (values) => axios.post(apiEndpoints.host.create(), values),
+    mutationFn: (values) => axios.post(apiEndpoints.auth.register(), values),
     onSuccess: async () => {
 
       toast.success("Register Success", { description: "Welcome to LINCY" });

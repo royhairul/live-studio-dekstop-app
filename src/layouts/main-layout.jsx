@@ -30,13 +30,15 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/auth/AuthContext";
 
 export default function MainLayout({ breadcrumbs, children }) {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -47,8 +49,13 @@ export default function MainLayout({ breadcrumbs, children }) {
     <>
       <SidebarProvider>
         <AppSidebar />
-        <main className="p-4 w-4/5 flex flex-col gap-4 bg-gray-100">
-          <div className="w-full bg-white py-4 px-4 flex items-center rounded-md shadow-sm">
+        <main className={cn(isSidebarOpen? "w-4/5" : "w-full","p-4 flex flex-col gap-4 bg-gray-100 overflow-auto")}>
+        <div className="w-full bg-white py-4 px-4 flex items-center rounded-md shadow-sm">
+          <SidebarTrigger
+              className="bg-transparent hover:bg-accent/10 mr-3"
+              onClick={() => setIsSidebarOpen(prev => !prev)}
+            />
+
             <Breadcrumb>
               <BreadcrumbList>
                 {breadcrumbs.map((item, index) => {
@@ -91,9 +98,6 @@ export default function MainLayout({ breadcrumbs, children }) {
                 type="text"
                 placeholder="Cari.."
                 className={"bg-gray-300/40 border-none"}
-              />
-              <SidebarTrigger
-                className={cn("bg-transparent hover:bg-accent/10")}
               />
               <Button
                 size="icon"

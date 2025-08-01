@@ -8,12 +8,12 @@ export const apiEndpoints = {
 
   // Auth
   auth: {
-    login: () => `${baseUrl}/login`,
-    register: () => `${baseUrl}/register`,
-    forgotPassword: () => `${baseUrl}/forgot-password`,
-    verifyOTP: () => `${baseUrl}/verify-otp`,
-    resetPassword: () => `${baseUrl}/reset-password`,
-    logout: () => `${baseUrl}/logout`, // lowercase konsisten
+    login: () => `${baseUrl}/auth/login`,
+    register: () => `${baseUrl}/auth/register`,
+    forgotPassword: () => `${baseUrl}/auth/forgot-password`,
+    verifyOTP: () => `${baseUrl}/auth/verify-otp`,
+    resetPassword: () => `${baseUrl}/auth/reset-password`,
+    logout: () => `${baseUrl}/logout`, 
   },
 
   // User

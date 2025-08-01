@@ -3,7 +3,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { IconCalendar } from "@tabler/icons-react";
-
+import { startOfWeek, endOfWeek, subWeeks } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,10 +25,8 @@ export function DatePicker({
   onChange,
   withRange = false,
   presets = [
-    { label: "Today", offset: 0 },
-    { label: "Yesterday", offset: -1 },
-    { label: "2 Days Ago", offset: -2 },
-    { label: "A Week Ago", offset: -7 },
+    { label: "This Week", value: "range:this-week" },
+    { label: "Last Week", value: "range:last-week" },
   ],
 }) {
   const getLocalDate = () =>
@@ -42,6 +40,13 @@ export function DatePicker({
   const selectedDate = value || internalDate;
 
   const handleChange = (newDate) => {
+    if (newDate?.from && !newDate?.to) {
+      newDate = {
+        from: newDate.from,
+        to: newDate.from,
+      };
+    }
+
     if (!value) {
       setInternalDate(newDate);
     }
@@ -82,21 +87,35 @@ export function DatePicker({
         {presets.length > 0 && (
           <Select
             onValueChange={(value) => {
-              const offset = parseInt(value);
-              const baseDate = getLocalDate();
-              const date = new Date(
-                baseDate.setDate(baseDate.getDate() + offset)
-              );
+              const today = getLocalDate();
 
-              handleChange({ from: date, to: withRange ? date : undefined });
+              if (value.startsWith("offset:")) {
+                const offset = parseInt(value.split(":")[1]);
+                const offsetDate = new Date(today.setDate(today.getDate() + offset));
+                handleChange({ from: offsetDate, to: withRange ? offsetDate : undefined });
+              }
+
+              if (value === "range:this-week") {
+                const start = startOfWeek(today, { weekStartsOn: 1 }); // Senin
+                const end = endOfWeek(today, { weekStartsOn: 1 });     // Minggu
+                handleChange({ from: start, to: end });
+              }
+
+              if (value === "range:last-week") {
+                const lastWeekDate = subWeeks(today, 1);
+                const start = startOfWeek(lastWeekDate, { weekStartsOn: 1 });
+                const end = endOfWeek(lastWeekDate, { weekStartsOn: 1 });
+                handleChange({ from: start, to: end });
+              }
             }}
+
           >
             <SelectTrigger className="bg-secondary text-white">
               <SelectValue placeholder="Shortcut" />
             </SelectTrigger>
             <SelectContent position="popper">
               {presets.map((preset, idx) => (
-                <SelectItem key={idx} value={preset.offset.toString()}>
+                <SelectItem key={idx} value={preset.value}>
                   {preset.label}
                 </SelectItem>
               ))}

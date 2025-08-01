@@ -59,7 +59,6 @@ export default function AppRouter() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-
         {/* Host */}
         <Route path="/host/all" element={<HostAllPage />} />
         <Route path="/host/create" element={<HostCreatePage />} />
