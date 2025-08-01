@@ -116,6 +116,11 @@ const items = [
         url: "/finance/commission-report",
         permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
       },
+      {
+        title: "Laporan Hasil",
+        url: "/finance/result-report",
+        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
+      }
     ],
   },
   {
@@ -172,12 +177,12 @@ export function AppSidebar() {
     return items
       .map((item) => ({
         ...item,
-        children: item.children.filter((child) =>
-          hasPermission(user, child.permission)
-        ),
+        // children: item.children.filter((child) =>
+        //   hasPermission(user, child.permission)
+        // ),
       }))
       .filter((item) => item.children.length > 0);
-  }, [user]);
+  }, []);
 
   const initialActiveMenu = useMemo(() => {
     const newMenus = {};
