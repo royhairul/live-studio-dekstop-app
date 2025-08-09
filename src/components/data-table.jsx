@@ -78,7 +78,7 @@ export function DataTable({ columns, data }) {
       <div className="flex items-center py-4">
         <Input
           icon={<IconSearch />}
-          placeholder="Search..."
+          placeholder="Cari..."
           // value={table.getColumn("name")?.getFilterValue() ?? ""}
           // onChange={(event) =>
           //   table.getColumn("name")?.setFilterValue(event.target.value)
@@ -88,7 +88,7 @@ export function DataTable({ columns, data }) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="ml-auto">
-              Columns <IconChevronDown />
+              Kolom <IconChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

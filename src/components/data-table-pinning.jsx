@@ -49,7 +49,7 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 
-export function DataTablePinning({ columns, pinning = [], data }) {
+export function DataTablePinning({ columns, pinning = [], data = [], customButton = null }) {
   const [sorting, setSorting] = React.useState();
   const [columnFilters, setColumnFilters] = React.useState();
   const [columnVisibility, setColumnVisibility] = React.useState();
@@ -92,7 +92,8 @@ export function DataTablePinning({ columns, pinning = [], data }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 justify-between">
+
         <Input
           icon={<IconSearch />}
           placeholder="Search..."
@@ -102,6 +103,10 @@ export function DataTablePinning({ columns, pinning = [], data }) {
           // }
           className="max-w-sm bg-white"
         />
+        <div className="flex gap-2">
+
+        {customButton && customButton}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="ml-auto">
@@ -128,6 +133,8 @@ export function DataTablePinning({ columns, pinning = [], data }) {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
+
       </div>
       <div className="pb-4 shadow-sm rounded-lg border border-gray-400/50">
         <Table>
@@ -146,16 +153,16 @@ export function DataTablePinning({ columns, pinning = [], data }) {
                       className={cn(
                         "w-[150px] min-w-[150px] max-w-[150px]",
                         pinnedIndex !== -1 &&
-                          "sticky z-20 shadow-md bg-gray-50 "
+                        "sticky z-20 shadow-md bg-gray-50 "
                       )}
                       style={pinnedIndex !== -1 ? { left: leftValue } : {}}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}

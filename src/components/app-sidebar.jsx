@@ -65,6 +65,11 @@ const items = [
         url: "/host/attendance/all",
         permission: PERMISSIONS.SCHEDULE_HOST.VIEW,
       },
+      {
+        title: "Performa Host",
+        url: "/host/perform",
+        permission: PERMISSIONS.HOST.CREATE,
+      },
     ],
   },
   {

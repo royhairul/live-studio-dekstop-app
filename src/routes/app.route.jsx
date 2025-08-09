@@ -34,6 +34,8 @@ import { financeRoutes } from "./finance.route";
 import { liveRoutes } from "./live.route";
 import { productRoutes } from "./product.route";
 import RegisterPage from "@/pages/auth/pages/register-page";
+import HostPerformPage from "@/pages/host/perform/host-perform-page";
+import HostDetailPerformPage from "@/pages/host/perform/detail-page";
 
 export default function AppRouter() {
   const ProtectedRoute = () => {
@@ -65,6 +67,8 @@ export default function AppRouter() {
         <Route path="/host/:id/detail" element={<HostDetailPage />} />
         <Route path="/host/:id/edit" element={<HostEditPage />} />
         <Route path="/host/schedule" element={<HostSchedulePage />} />
+        <Route path="/host/perform" element={<HostPerformPage />} />
+        <Route path="/host/perform-detail" element={<HostDetailPerformPage />} />
 
         {/* Host Schedule */}
         <Route

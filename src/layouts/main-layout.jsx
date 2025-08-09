@@ -49,9 +49,12 @@ export default function MainLayout({ breadcrumbs, children }) {
     <>
       <SidebarProvider>
         <AppSidebar />
-        <main className={cn(isSidebarOpen? "w-4/5" : "w-full","p-4 flex flex-col gap-4 bg-gray-100 overflow-auto")}>
-        <div className="w-full bg-white py-4 px-4 flex items-center rounded-md shadow-sm">
-          <SidebarTrigger
+        <main className={cn(
+          isSidebarOpen ? "w-[80%]" : "w-full",
+          "p-4 flex-1 flex-col gap-4 bg-gray-100 overflow-auto transition-[width] duration-300 ease-in-out"
+        )}>
+          <div className="w-full bg-white py-4 px-4 flex items-center rounded-md shadow-sm mb-4">
+            <SidebarTrigger
               className="bg-transparent hover:bg-accent/10 mr-3"
               onClick={() => setIsSidebarOpen(prev => !prev)}
             />

@@ -131,9 +131,6 @@ export default function FinanceComissionPage() {
   });
 
   const handleApplyClick = () => {
-    console.log("Button Terapkan diklik");
-    console.log("Tanggal dipilih:", dateRange.to);
-    console.log(data);
     setAppliedDateRange(dateRange);
     refetch();
   };
