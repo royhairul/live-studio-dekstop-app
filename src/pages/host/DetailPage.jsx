@@ -17,6 +17,7 @@ import {
   IconTrash,
   IconCalendarCheck,
   IconCalendarX,
+  IconId,
 } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { apiEndpoints, baseUrl } from "@/config/api";
@@ -79,8 +80,9 @@ export default function HostDetailPage() {
   // console.log(filteredAttendances);
 
   const breadcrumbs = [
-    { icon: IconUsersGroup, label: "Host", url: "/host/all" },
-    { label: "Detail Host" },
+    { icon: IconId, label: "Master", url: "/management/host" },
+    { label: "Daftar Host" , url: "/management/host"},
+    { label: `Detail ${host.name}` },
   ];
 
   const columns = [

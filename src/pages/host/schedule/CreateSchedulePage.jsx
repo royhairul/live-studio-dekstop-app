@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconUsersGroup } from "@tabler/icons-react";
+import { IconSettings, IconUsersGroup } from "@tabler/icons-react";
 import {
   Form,
   FormLabel,
@@ -61,16 +61,16 @@ export default function HostScheduleCreatePage() {
 
   const breadcrumbs = [
     {
-      icon: IconUsersGroup,
-      label: "Host",
-      url: "/host/all",
+      icon: IconSettings,
+      label: "Setting",
+      url: "/setting/schedule",
     },
     {
-      label: "Jadwal Host",
-      url: "/host/schedule",
+      label: "Jadwal",
+      url: "/setting/schedule",
     },
     {
-      label: "Create",
+      label: "Tambah Jadwal",
     },
   ];
 
@@ -129,7 +129,7 @@ export default function HostScheduleCreatePage() {
           description: response["message"],
           descriptionClassName: "capitalize",
         });
-        navigate("/host/schedule");
+        navigate("/setting/schedule");
       } else {
         toast.error(response["error"]);
         console.error("Error creating host:", response.errors);

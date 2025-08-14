@@ -1,10 +1,8 @@
-import index from "@event-calendar/time-grid";
-
-export const baseUrl = "http://localhost:8080/api";
-export const baseWsUrl = "http://localhost:8080/api";
+export const baseUrl = import.meta.env.VITE_API_URL;
+export const baseWsUrl = import.meta.env.VITE_API_URL;
 
 export const apiEndpoints = {
-  me: () => `${baseUrl}/me`,
+  me: () => `${baseUrl}/auth/me`,
 
   // Auth
   auth: {
@@ -47,10 +45,10 @@ export const apiEndpoints = {
   // Account
   account: {
     index: () => `${baseUrl}/account/shopee`,
-    create: () => `${baseUrl}/account/shopee`,
+    create: () => `${baseUrl}/account/`,
     show: (id) => `${baseUrl}/account/${id}`,
     edit: (id) => `${baseUrl}/account/${id}`,
-    delete: (id) => `${baseUrl}/account/shopee/${id}`,
+    delete: (id) => `${baseUrl}/account/${id}`,
   },
 
   // Schedule

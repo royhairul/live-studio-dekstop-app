@@ -41,10 +41,6 @@ export default function LiveGraphReportPage() {
       label: "Live",
     },
     {
-      label: "Laporan",
-      url: "/live/report",
-    },
-    {
       label: "Grafik",
     },
   ];

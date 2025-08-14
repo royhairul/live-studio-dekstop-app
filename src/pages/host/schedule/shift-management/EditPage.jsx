@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconUsersGroup } from "@tabler/icons-react";
+import { IconSettings, IconUsersGroup } from "@tabler/icons-react";
 import {
   Form,
   FormLabel,
@@ -63,20 +63,16 @@ export default function ShiftEditPage() {
 
   const breadcrumbs = [
     {
-      icon: IconUsersGroup,
-      label: "Host",
-      url: "/host/all",
-    },
-    {
-      label: "Jadwal Host",
-      url: "/host/schedule",
+      icon: IconSettings,
+      label: "Setting",
+      url: "/setting/shift",
     },
     {
       label: "Shift",
-      url: "/host/schedule/shift-management/all",
+      url: "/setting/shift",
     },
     {
-      label: "Edit",
+      label: `Edit Shift ${shift?.name}`,
     },
   ];
 
@@ -90,7 +86,7 @@ export default function ShiftEditPage() {
       if (status) {
         toast.success(result["message"]);
         setTimeout(() => {
-          navigate("/host/schedule/shift-management/all");
+          navigate("/setting/shift");
         }, 3000);
       } else {
         toast.error(result);

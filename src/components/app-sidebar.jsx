@@ -31,6 +31,8 @@ import {
   IconSettings,
   IconReportMoney,
   IconTemperatureSnow,
+  IconUsers,
+  IconChartLine,
 } from "@tabler/icons-react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -41,52 +43,42 @@ import { hasPermission } from "@/helpers/hasPermissions";
 
 const items = [
   {
-    icon: IconUsersGroup,
-    title: "Host",
-    url: "/host/all",
+    icon: IconIdBadge,
+    title: "Live",
+    url: "/live/preview",
     children: [
       {
-        title: "Daftar Host",
-        url: "/host/all",
-        permission: PERMISSIONS.HOST.VIEW,
+        title: "Preview",
+        url: "/live/preview",
+        permission: PERMISSIONS.LIVE.VIEW,
       },
       {
-        title: "Buat Host",
-        url: "/host/create",
-        permission: PERMISSIONS.HOST.CREATE,
-      },
-      {
-        title: "Jadwal Host",
-        url: "/host/schedule",
-        permission: PERMISSIONS.SCHEDULE_HOST.VIEW,
-      },
-      {
-        title: "Presensi Host",
-        url: "/host/attendance/all",
-        permission: PERMISSIONS.SCHEDULE_HOST.VIEW,
-      },
-      {
-        title: "Performa Host",
-        url: "/host/perform",
-        permission: PERMISSIONS.HOST.CREATE,
+        title: "Grafik",
+        url: "/live/graph",
+        permission: PERMISSIONS.LIVE.REPORT,
       },
     ],
   },
   {
-    icon: IconId,
-    title: "Akun",
-    url: "/account/all",
+    icon: IconChartLine,
+    title: "Performa",
+    url: "/perform/all",
     children: [
       {
-        title: "Daftar Akun",
-        url: "/account/all",
-        permission: PERMISSIONS.ACCOUNT.VIEW,
+        title: "Host",
+        url: "/perform/host",
+        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
       },
       {
-        title: "Tambah Akun",
-        url: "/account/create",
-        permission: PERMISSIONS.ACCOUNT.CREATE,
+        title: "Akun",
+        url: "/perform/account",
+        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
       },
+      {
+        title: "Studio",
+        url: "/perform/studio",
+        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
+      }
     ],
   },
   {
@@ -106,88 +98,92 @@ const items = [
       },
     ],
   },
+  // {
+  //   icon: IconUsersGroup,
+  //   title: "Host",
+  //   url: "/host/all",
+  //   children: [
+  //     {
+  //       title: "Daftar Host",
+  //       url: "/host/all",
+  //       permission: PERMISSIONS.HOST.VIEW,
+  //     },
+  //     {
+  //       title: "Jadwal Host",
+  //       url: "/host/schedule",
+  //       permission: PERMISSIONS.SCHEDULE_HOST.VIEW,
+  //     },
+  //   ],
+  // },
   {
-    icon: IconReportMoney,
-    title: "Keuangan",
-    url: "/finance/all",
+    icon: IconId,
+    title: "Master",
+    url: "/master/all",
     children: [
       {
-        title: "Laporan Harian",
-        url: "/finance/daily-report",
-        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
+        title: "Kelola Host",
+        url: "/management/host",
+        permission: PERMISSIONS.HOST.VIEW,
       },
       {
-        title: "Laporan Komisi",
-        url: "/finance/commission-report",
-        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
+        title: "Kelola Akun",
+        url: "/management/account",
+        permission: PERMISSIONS.ACCOUNT.VIEW,
       },
       {
-        title: "Laporan Hasil",
-        url: "/finance/result-report",
-        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
-      }
+        title: "Kelola Pengguna",
+        url: "/management/user",
+        permission: PERMISSIONS.USER.VIEW,
+      },
+      {
+        title: "Kelola Studio",
+        url: "/management/studio",
+        permission: PERMISSIONS.STUDIO.VIEW,
+      },
+      
     ],
   },
-  {
-    icon: IconIdBadge,
-    title: "Live",
-    url: "/live/preview",
-    children: [
-      {
-        title: "Preview",
-        url: "/live/preview",
-        permission: PERMISSIONS.LIVE.VIEW,
-      },
-      {
-        title: "Laporan",
-        url: "/live/report",
-        permission: PERMISSIONS.LIVE.REPORT,
-      },
-      {
-        title: "Grafik Laporan",
-        url: "/live/report/graph",
-        permission: PERMISSIONS.LIVE.REPORT,
-      },
-    ],
-  },
+
+
   {
     icon: IconSettings,
     title: "Setting",
     url: "/setting/all",
     children: [
       {
-        title: "Management User",
-        url: "/setting/user-management",
-        permission: PERMISSIONS.USER.VIEW,
+        title: "Jadwal",
+        url: "/setting/schedule",
+        permission: PERMISSIONS.SHIFT.VIEW,
       },
       {
-        title: "Management Studio",
-        url: "/setting/studio-management",
-        permission: PERMISSIONS.STUDIO.VIEW,
+        title: "Shift",
+        url: "/setting/shift",
+        permission: PERMISSIONS.SHIFT.VIEW,
       },
       {
-        title: "Management Role",
-        url: "/setting/role-management",
+        title: "Role",
+        url: "/setting/role",
         permission: PERMISSIONS.ROLE.VIEW,
-      },
+      }
     ],
   },
 ];
 
 export function AppSidebar() {
   const { user } = useAuth();
+  
   const location = useLocation();
 
   const filteredItems = useMemo(() => {
     return items
       .map((item) => ({
         ...item,
-        // children: item.children.filter((child) =>
-        //   hasPermission(user, child.permission)
-        // ),
+        children: item.children.filter((child) =>
+          hasPermission(user, child.permission)
+        ),
       }))
       .filter((item) => item.children.length > 0);
-  }, []);
+  }, [user]);
 
   const initialActiveMenu = useMemo(() => {
     const newMenus = {};
@@ -223,14 +219,14 @@ export function AppSidebar() {
             <p className="text-xs text-muted-foreground">Welcome,</p>
             <p className="text-lg font-medium">{user?.name || "Guest"}</p>
             <p className="text-xs font-semibold text-primary">
-              @{user?.username || "Guest"}
+              @{user?.role || "Guest"}
             </p>
           </div>
         </div>
       </SidebarHeader>
 
       <SidebarContent className="scrollbar-hide">
-        <SidebarMenuItem className="list-none">
+        <SidebarMenuItem className="list-none flex flex-col gap-2">
           <SidebarMenuButton
             isActive={location.pathname === "/dashboard"}
             asChild
@@ -238,6 +234,15 @@ export function AppSidebar() {
             <Link to="/dashboard">
               <IconLayoutGridFilled />
               <span>Dashboard</span>
+            </Link>
+          </SidebarMenuButton>
+          <SidebarMenuButton
+            isActive={location.pathname === "/attendance"}
+            asChild
+          >
+            <Link to="/attendance">
+              <IconUsers />
+              <span>Kehadiran</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

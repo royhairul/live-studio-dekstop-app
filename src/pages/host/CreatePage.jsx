@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconUsersGroup } from "@tabler/icons-react";
+import { IconId, IconUsersGroup } from "@tabler/icons-react";
 import {
   Form,
   FormLabel,
@@ -52,9 +52,13 @@ export default function HostCreatePage() {
 
   const breadcrumbs = [
     {
-      icon: IconUsersGroup,
-      label: "Host",
-      url: "/host/all",
+      icon: IconId,
+      label: "Master",
+      url: "/management/host",
+    },
+    {
+      label: "Daftar Host",
+      url: "/management/host",
     },
     {
       label: "Tambah Host",

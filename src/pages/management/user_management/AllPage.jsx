@@ -8,6 +8,7 @@ import {
   IconUserPlus,
   IconSettings,
   IconFlag,
+  IconId,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import {
@@ -43,12 +44,12 @@ export default function MUserAllPage() {
 
   const breadcrumbs = [
     {
-      icon: IconSettings,
-      label: "Setting",
-      url: "/account/all",
+      icon: IconId,
+      label: "Master",
+      url: "/management/user",
     },
     {
-      label: "User Management",
+      label: "Daftar Pengguna",
     },
   ];
 

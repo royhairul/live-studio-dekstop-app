@@ -99,7 +99,7 @@ export const shiftColumns = [
         <div className="flex gap-2">
           <Button size="icon" asChild>
             <Link
-              to={`/host/schedule/shift-management/${row.original.id}/edit`}
+              to={`/setting/shift/edit/${row.original.id}`}
             >
               <IconPencil />
             </Link>

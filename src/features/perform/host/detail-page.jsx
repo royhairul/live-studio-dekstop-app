@@ -18,7 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { IconUsersGroup } from "@tabler/icons-react";
+import { IconChartLine, IconUsersGroup } from "@tabler/icons-react";
 import InitialsAvatar from "@/components/initials-avatar";
 import StatCard from "@/components/ui/stat-card";
 import { DataTable } from "@/components/data-table";
@@ -26,17 +26,16 @@ import { DataTable } from "@/components/data-table";
 export default function HostDetailPerformPage() {
     const breadcrumbs = [
         {
-            icon: IconUsersGroup,
-            label: "Host",
-            url: "/host/all",
-        },
-        {
-            icon: IconUsersGroup,
+            icon: IconChartLine,
             label: "Performa",
-            url: "/host/perform",
+            url: "/perform/host",
         },
         {
-            label: "Detail Performa",
+            label: "Host",
+            url: "/perform/host",
+        },
+        {
+            label: "Detail",
         },
     ];
 

@@ -59,11 +59,11 @@ export default function MRoleAllPage() {
     {
       icon: IconSettings,
       label: "Setting",
-      url: "/setting/user-management",
+      url: "/setting/role",
     },
     {
-      url: "/setting/role-management",
-      label: "Role Management",
+      url: "/setting/role",
+      label: "Role",
     },
   ];
 
@@ -131,7 +131,7 @@ export default function MRoleAllPage() {
         return (
           <div className="flex gap-2">
             <Button size="icon" asChild>
-              <Link to={`/setting/role-management/${row.original.id}/edit`}>
+              <Link to={`/setting/role/edit/${row.original.id}`}>
                 <IconPencil />
               </Link>
             </Button>
@@ -176,7 +176,7 @@ export default function MRoleAllPage() {
       {/* Action Button */}
       <div className="flex gap-2">
         <Button variant="default" className="w-max" asChild>
-          <Link to="/setting/role-management/create">
+          <Link to="/setting/role/create">
             <IconFlagPlus />
             Tambah Role
           </Link>

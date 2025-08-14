@@ -68,10 +68,8 @@ export default function StudioFinanceList({viewMode}) {
 
     return (
         <div>
-            {/* Render berdasarkan view mode */}
             {viewMode === "card" ? (
                 <div className="grid sm:grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
-                    {/* StudioFinanceCard di sini */}
                     <StudioFinanceCard />
                 </div>
             ) : (

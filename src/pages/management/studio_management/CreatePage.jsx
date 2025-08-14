@@ -2,6 +2,7 @@ import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
+  IconId,
   IconReplaceUser,
   IconSettings,
   IconUsersGroup,
@@ -41,13 +42,13 @@ export default function MStudioCreatePage() {
 
   const breadcrumbs = [
     {
-      icon: IconSettings,
-      label: "Setting",
-      url: "/account/all",
+      icon: IconId,
+      label: "Master",
+      url: "/management/studio",
     },
     {
-      label: "Studio Management",
-      url: "/setting/studio-management",
+      label: "Daftar Studio",
+      url: "/management/studio",
     },
     {
       label: "Buat Studio",
@@ -62,7 +63,7 @@ export default function MStudioCreatePage() {
       );
       if (status) {
         toast.success(result["message"]);
-        navigate("/setting/studio-management");
+        navigate("/management/studio");
       } else {
         toast.error(result);
       }

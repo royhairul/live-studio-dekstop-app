@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
   const [token, setToken] = useState(() =>
     localStorage.getItem("access_token")
-  );
+  );  
 
   const fetchUser = useCallback(async () => {
     if (!token) return null;
@@ -28,7 +28,10 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(apiEndpoints.me(), {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return response.data;
+      console.log(response.data.data);
+      
+      return response.data.data;
+      
     } catch (error) {
       if (error.response?.status === 401) {
         logout();

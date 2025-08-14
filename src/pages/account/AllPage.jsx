@@ -55,8 +55,8 @@ export default function AccountAllPage() {
   const breadcrumbs = [
     {
       icon: IconId,
-      label: "Akun",
-      url: "/account/all",
+      label: "Master",
+      url: "/management/account",
     },
     {
       label: "Daftar Akun",
@@ -205,7 +205,7 @@ export default function AccountAllPage() {
       {/* Action Button */}
       <div className="flex gap-2">
         <Button variant="default" className="w-max" asChild>
-          <Link to="/account/create">
+          <Link to="/management/account/create">
             <IconDatabasePlus />
             Tambah Akun
           </Link>

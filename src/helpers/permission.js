@@ -50,4 +50,9 @@ export const PERMISSIONS = {
     EDIT: "role_edit",
     DELETE: "role_delete",
   },
+  PERFORM: {
+    HOST: "host_perform",
+    ACCOUNT: "account_perform",
+    STUDIO: "studio_perform",
+  },
 };

@@ -32,11 +32,11 @@ export default function MRoleCreatePage() {
     {
       icon: IconSettings,
       label: "Setting",
-      url: "/setting/user-management",
+      url: "/setting/role",
     },
     {
-      url: "/setting/role-management",
-      label: "Role Management",
+      url: "/setting/role",
+      label: "Role",
     },
     {
       label: "Create",
@@ -69,7 +69,7 @@ export default function MRoleCreatePage() {
 
       if (status) {
         toast.success("Create Role Successfully");
-        setTimeout(() => navigate("/setting/role-management"), 3000);
+        setTimeout(() => navigate("/setting/role"), 3000);
       } else {
         toast.error("Failed to create role.");
         form.setError(errors);

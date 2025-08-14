@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconSettings, IconUsersGroup } from "@tabler/icons-react";
+import { IconId, IconSettings, IconUsersGroup } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -67,12 +67,16 @@ export default function HostEditPage() {
 
   const breadcrumbs = [
     {
-      icon: IconUsersGroup,
-      label: "Host",
-      url: "/host/all",
+      icon: IconId,
+      label: "Master",
+      url: "/management/host",
     },
     {
-      label: "Edit Host",
+      label: "Daftar Host",
+      url: "/management/host",
+    },
+    {
+      label: `Edit ${host?.name}`,
     },
   ];
 

@@ -2,7 +2,7 @@ import MainLayout from "@/layouts/main-layout";
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { IconUsersGroup, IconClockPlus } from "@tabler/icons-react";
+import { IconUsersGroup, IconClockPlus, IconSettings } from "@tabler/icons-react";
 import { useShifts } from "@/hooks/shift/useShifts";
 import { shiftColumns } from "@/components/tables/shifts-column";
 
@@ -10,13 +10,9 @@ export default function ShiftAllPage() {
   const { data: shifts } = useShifts();
   const breadcrumbs = [
     {
-      icon: IconUsersGroup,
-      label: "Host",
-      url: "/host/all",
-    },
-    {
-      label: "Jadwal Host",
-      url: "/host/schedule",
+      icon: IconSettings,
+      label: "Setting",
+      url: "/setting/shift",
     },
     {
       label: "Shift",
@@ -28,7 +24,7 @@ export default function ShiftAllPage() {
       {/* Action Button */}
       <div className="flex gap-2">
         <Button variant="default" className="w-max" asChild>
-          <Link to="/host/schedule/shift-management/create">
+          <Link to="/setting/shift/create">
             <IconClockPlus />
             Tambah Shift
           </Link>

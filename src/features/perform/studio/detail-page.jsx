@@ -1,7 +1,7 @@
 "use client";
 
 import MainLayout from "@/layouts/main-layout";
-import { IconReportAnalytics } from "@tabler/icons-react";
+import { IconChartLine, IconReportAnalytics } from "@tabler/icons-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/ui/stat-card";
@@ -26,7 +26,7 @@ const toLocalDateString = (date) =>
         .toISOString()
         .split("T")[0];
 
-export default function ComissionDailyDetailPage() {
+export default function StudioPerformDetailPage() {
 
     const [dateRange, setDateRange] = useState({
         from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
@@ -65,12 +65,16 @@ export default function ComissionDailyDetailPage() {
     };
     const breadcrumbs = [
         {
-            icon: IconReportAnalytics,
-            label: "Riset",
-            url: "/riset/all",
+            icon: IconChartLine,
+            label: "Perform",
+            url: "/perform/studio",
         },
         {
-            label: "Riset Produk",
+            label: "Studio",
+            url: "/perform/studio",
+        },
+        {
+            label: "Detail",
         },
     ];
 

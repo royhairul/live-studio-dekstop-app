@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconSearch, IconUsersGroup } from "@tabler/icons-react";
+import { IconChartLine, IconSearch, IconUsersGroup } from "@tabler/icons-react";
 import { useState } from "react";
 import { differenceInDays, endOfWeek, startOfWeek } from "date-fns";
 import axios from "axios";
@@ -9,8 +9,7 @@ import { apiEndpoints } from "@/config/api";
 import { useQuery } from "@tanstack/react-query";
 import { DatePicker } from "@/components/Datepicker";
 import { DataTable } from "@/components/data-table";
-import { useHosts } from "../hooks/useHosts";
-import { de } from "date-fns/locale";
+import { useHosts } from "../../../pages/host/hooks/useHosts";
 
 const today = new Date();
 
@@ -122,12 +121,12 @@ export default function HostPerformPage() {
     };
     const breadcrumbs = [
         {
-            icon: IconUsersGroup,
-            label: "Host",
-            url: "/host/all",
+            icon: IconChartLine,
+            label: "Performa",
+            url: "/perform/host",
         },
         {
-            label: "Performa",
+            label: "Host",
         },
     ];
     return (

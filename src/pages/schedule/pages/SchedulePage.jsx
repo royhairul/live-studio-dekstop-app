@@ -10,6 +10,7 @@ import {
   IconClockPlus,
   IconClockCog,
   IconSwitchHorizontal,
+  IconSettings,
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import { baseUrl } from "@/config/api";
@@ -69,12 +70,12 @@ export default function HostSchedulePage() {
 
   const breadcrumbs = [
     {
-      icon: IconUsersGroup,
-      label: "Host",
-      url: "/host/all",
+      icon: IconSettings,
+      label: "Setting",
+      url: "/setting/schedule",
     },
     {
-      label: "Jadwal Host",
+      label: "Jadwal",
     },
   ];
 
@@ -249,21 +250,15 @@ export default function HostSchedulePage() {
     <MainLayout breadcrumbs={breadcrumbs}>
       <div className="flex gap-2 mb-4">
         <Button variant="default" className="w-max" asChild>
-          <Link to="/host/schedule/create">
+          <Link to="/setting/schedule/create">
             <IconCalendarPlus />
             Tambah Jadwal
           </Link>
         </Button>
         <Button variant="default" className="w-max" asChild>
-          <Link to="/host/schedule/shift-management/all">
-            <IconClockCog />
-            Manajemen Shift
-          </Link>
-        </Button>
-        <Button variant="default" className="w-max" asChild>
-          <Link to="/host/schedule/switch">
+          <Link to="/setting/schedule/switch">
             <IconSwitchHorizontal />
-            Switch Jadwal
+            Tukar Jadwal
           </Link>
         </Button>
       </div>

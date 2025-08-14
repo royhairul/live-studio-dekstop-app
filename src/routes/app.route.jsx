@@ -5,10 +5,7 @@ import HostAllPage from "@/pages/host/AllPage";
 import HostCreatePage from "@/pages/host/CreatePage";
 import AccountAllPage from "@/pages/account/AllPage";
 import AccountCreatePage from "@/pages/account/CreatePage";
-import FinanceDailyReportPage from "@/pages/finance/pages/daily-report-page";
 import HostSchedulePage from "@/pages/schedule/pages/SchedulePage";
-import BankProductPage from "@/pages/product/BankProductPage";
-import ResearchProductPage from "@/pages/product/ReseacrhProductPage";
 import ForgotPasswordPage from "@/pages/auth/pages/forgot-password-page";
 import VerifyTokenPage from "@/pages/auth/pages/verify-otp-page";
 import ResetPasswordPage from "@/pages/auth/pages/reset-password-page";
@@ -30,12 +27,14 @@ import MRoleAllPage from "@/pages/management/role_management/AllPage";
 import HostAttendancePage from "@/pages/host/attendance/AllPage";
 import HostDetailPage from "@/pages/host/DetailPage";
 import ShiftEditPage from "@/pages/host/schedule/shift-management/EditPage";
-import { financeRoutes } from "./finance.route";
+import { performRoutes } from "./perform.route";
 import { liveRoutes } from "./live.route";
 import { productRoutes } from "./product.route";
 import RegisterPage from "@/pages/auth/pages/register-page";
-import HostPerformPage from "@/pages/host/perform/host-perform-page";
-import HostDetailPerformPage from "@/pages/host/perform/detail-page";
+import HostPerformPage from "@/features/perform/host/host-perform-page";
+import HostDetailPerformPage from "@/features/perform/host/detail-page";
+import { settingRoutes } from "./setting.route";
+import { masterRoutes } from "./master.route";
 
 export default function AppRouter() {
   const ProtectedRoute = () => {
@@ -61,91 +60,12 @@ export default function AppRouter() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-        {/* Host */}
-        <Route path="/host/all" element={<HostAllPage />} />
-        <Route path="/host/create" element={<HostCreatePage />} />
-        <Route path="/host/:id/detail" element={<HostDetailPage />} />
-        <Route path="/host/:id/edit" element={<HostEditPage />} />
-        <Route path="/host/schedule" element={<HostSchedulePage />} />
-        <Route path="/host/perform" element={<HostPerformPage />} />
-        <Route path="/host/perform-detail" element={<HostDetailPerformPage />} />
-
-        {/* Host Schedule */}
-        <Route
-          path="/host/schedule/create"
-          element={<HostScheduleCreatePage />}
-        />
-        <Route
-          path="/host/schedule/:id/edit"
-          element={<HostScheduleEditPage />}
-        />
-        <Route
-          path="/host/schedule/switch"
-          element={<HostScheduleSwitchPage />}
-        />
-
-        {/* Host Shift Management */}
-        <Route
-          path="/host/schedule/shift-management/all"
-          element={<ShiftAllPage />}
-        />
-        <Route
-          path="/host/schedule/shift-management/create"
-          element={<ShiftCreatePage />}
-        />
-        <Route
-          path="/host/schedule/shift-management/:id/edit"
-          element={<ShiftEditPage />}
-        />
-
-        {/* Host Attendance */}
-        <Route path="/host/attendance/all" element={<HostAttendancePage />} />
-
-        {/* Route AKUN */}
-        <Route path="/account/all" element={<AccountAllPage />} />
-        <Route path="/account/create" element={<AccountCreatePage />} />
-
-        {/* Router RISET */}
-        {/* <Route path="/riset/product" element={<RisetProductPage />} />
-        <Route path="/riset/finance" element={<FinanceDailyReportPage />} />
-        <Route path="/riset/bank-produk" element={<BankProductPage />} /> */}
-
-        {/* Setting ~ User Management */}
-        <Route path="/setting/user-management" element={<MUserAllPage />} />
-        <Route
-          path="/setting/user-management/create"
-          element={<MUserCreatePage />}
-        />
-        <Route
-          path="/setting/user-management/:id/edit"
-          element={<MUserEditPage />}
-        />
-
-        {/* Setting ~ Studio Management */}
-        <Route path="/setting/studio-management" element={<MStudioAllPage />} />
-        <Route
-          path="/setting/studio-management/create"
-          element={<MStudioCreatePage />}
-        />
-        <Route
-          path="/setting/studio-management/:id/edit"
-          element={<MStudioEditPage />}
-        />
-
-        {/* Setting ~ Role Management */}
-        <Route path="/setting/role-management" element={<MRoleAllPage />} />
-        <Route
-          path="/setting/role-management/create"
-          element={<MRoleCreatePage />}
-        />
-        <Route
-          path="/setting/role-management/:id/edit"
-          element={<MRoleEditPage />}
-        />
-
-        {productRoutes}
-        {financeRoutes}
+        <Route path="/attendance" element={<HostAttendancePage />} /> 
         {liveRoutes}
+        {performRoutes}
+        {productRoutes}
+        {masterRoutes}
+        {settingRoutes}
       </Route>
     </Routes>
   );

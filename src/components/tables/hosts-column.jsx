@@ -28,13 +28,13 @@ function HostActionsCell({ host }) {
   return (
     <div className="flex gap-2">
       <Button size="icon" asChild>
-        <Link to={`/host/${host.id}/detail`}>
+        <Link to={`/management/host/${host.id}`}>
           <IconListDetails />
         </Link>
       </Button>
 
       <Button size="icon" asChild>
-        <Link to={`/host/${host.id}/edit`}>
+        <Link to={`/management/host/edit/${host.id}`}>
           <IconPencil />
         </Link>
       </Button>

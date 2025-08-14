@@ -44,12 +44,12 @@ export default function MStudioAllPage() {
 
   const breadcrumbs = [
     {
-      icon: IconSettings,
-      label: "Setting",
-      url: "/account/all",
+      icon: IconId,
+      label: "Master",
+      url: "/management/studio",
     },
     {
-      label: "Studio Management",
+      label: "Daftar Studio",
     },
   ];
 
@@ -110,7 +110,7 @@ export default function MStudioAllPage() {
         return (
           <div className="flex gap-2">
             <Button size="icon" asChild>
-              <Link to={`/setting/studio-management/${row.original.id}/edit`}>
+              <Link to={`/management/studio/edit/${row.original.id}`}>
                 <IconPencil />
               </Link>
             </Button>
@@ -155,7 +155,7 @@ export default function MStudioAllPage() {
       {/* Action Button */}
       <div className="flex gap-2">
         <Button variant="default" className="w-max" asChild>
-          <Link to="/setting/studio-management/create">
+          <Link to="/management/studio/create">
             <IconCategoryPlus />
             Tambah Studio
           </Link>

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { IconUsersGroup, IconUserPlus } from "@tabler/icons-react";
+import { IconUsersGroup, IconUserPlus, IconId } from "@tabler/icons-react";
 import { useState } from "react";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { useHosts } from "./hooks/useHosts";
@@ -27,7 +27,7 @@ export default function HostAllPage() {
       : hosts;
 
   const breadcrumbs = [
-    { icon: IconUsersGroup, label: "Host", url: "/host/all" },
+    { icon: IconId, label: "Master", url: "/management/host" },
     { label: "Daftar Host" },
   ];
 
@@ -36,7 +36,7 @@ export default function HostAllPage() {
       {/* Action Buttons */}
       <div className="flex gap-2 mb-4">
         <Button asChild>
-          <Link to="/host/create">
+          <Link to="/management/host/create">
             <IconUserPlus />
             Tambah Host
           </Link>

@@ -11,6 +11,7 @@ import {
     IconArrowAutofitUp,
     IconArrowRight,
     IconCards,
+    IconChartLine,
     IconReportAnalytics,
     IconSearch,
     IconShoppingCart,
@@ -24,18 +25,18 @@ import { StudioFinanceCard } from "@/components/studio-finance-card";
 import { Input } from "@/components/ui/input";
 import StudioFinanceList from "@/components/studio-finance-list";
 
-export default function ComissionDailyPage() {
+export default function StudioPerformPage() {
     const [studio, setStudio] = useState("studio1");
     const [viewMode, setViewMode] = useState("card");
 
     const breadcrumbs = [
         {
-            icon: IconReportAnalytics,
-            label: "Riset",
-            url: "/riset/all",
+            icon: IconChartLine,
+            label: "Performa",
+            url: "/perform/studio",
         },
         {
-            label: "Riset Produk",
+            label: "Studio",
         },
     ];
 

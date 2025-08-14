@@ -13,7 +13,7 @@ export function useEditHost(id) {
     onSuccess: async (response) => {
       const res = response.data;
       toast.success("Edit Host", { description: res.message });
-      navigate("/host/all");
+      navigate("/management/host");
     },
 
     onError: (error) => {

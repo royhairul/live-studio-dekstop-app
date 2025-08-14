@@ -13,8 +13,8 @@ export function useLogin() {
     mutationFn: (values) => axios.post(apiEndpoints.auth.login(), values),
     onSuccess: async (response, variables) => {
       const data = response.data.data;
-
-      login(data.access_token);
+      
+      login(data.accessToken);
 
       if (variables.rememberMe) {
         rememberMe(variables.email, variables.password);

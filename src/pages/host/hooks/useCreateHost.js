@@ -12,7 +12,7 @@ export function useCreateHost() {
     onSuccess: async (response) => {
       const res = response.data;
       toast.success("Buat Host", { description: res.message });
-      navigate("/host/all");
+      navigate("/management/host");
     },
     onError: (error) => {
       let errorMsg = "Terjadi kesalahan. Silahkan coba lagi.";

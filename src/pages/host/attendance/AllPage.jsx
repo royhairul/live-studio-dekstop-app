@@ -96,12 +96,8 @@ export default function HostAttendancePage() {
   const breadcrumbs = [
     {
       icon: IconUsersGroup,
-      label: "Host",
-      url: "/host/all",
-    },
-    {
       label: "Presensi Host",
-    },
+    }
   ];
 
   const checkInMutation = useMutation({
