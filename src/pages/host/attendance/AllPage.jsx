@@ -54,12 +54,14 @@ import { checkoutSchema } from "./schema/checkout-schema";
 import { cn } from "@/lib/utils";
 import { useHostsGroupedByStudio } from "./hooks/useHostsGroupByStudio";
 import { useHosts } from "../hooks/useHosts";
+import { useStudios } from "@/hooks/studio/useStudios";
 
 export default function HostAttendancePage() {
   const queryClient = useQueryClient();
   const { data: hosts } = useHosts();
   const { data: attendances } = useAttendances();
   const { data: shifts } = useShifts();
+  const { studio } = useStudios();
   const [selectedHosts, setSelectedHosts] = useState([]);
   const [selectedAttendances, setSelectedAttendances] = useState([]);
 
@@ -97,7 +99,7 @@ export default function HostAttendancePage() {
     {
       icon: IconUsersGroup,
       label: "Presensi Host",
-    }
+    },
   ];
 
   const checkInMutation = useMutation({
@@ -146,7 +148,8 @@ export default function HostAttendancePage() {
     mutationFn: (values) =>
       axios.post(apiEndpoints.attendance.checkOut(), values),
     onSuccess: (response) => {
-      const data = response.data;
+      console.log("Data", response.data.data);
+      const data = response.data.data;
       toast.success(data["message"]);
 
       queryClient.invalidateQueries(["attendances"]);
@@ -252,6 +255,68 @@ export default function HostAttendancePage() {
                   />
 
                   <FormField
+                    control={formCheckIn.control}
+                    name="studio_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Studio</FormLabel>
+                        <Select
+                          onValueChange={(val) => {
+                            field.onChange(val);
+                          }}
+                          v
+                          value={field.value ? String(field.value) : ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Pilih Studio..." />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {studio.map((s) => (
+                              <SelectItem key={s.id} value={String(s.id)}>
+                                {s.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={formCheckIn.control}
+                    name="host_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Host</FormLabel>
+                        <Select
+                          onValueChange={(val) => {
+                            field.onChange(val);
+                          }}
+                          v
+                          value={field.value ? String(field.value) : ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Pilih Host..." />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {hosts.map((host) => (
+                              <SelectItem key={host.id} value={String(host.id)}>
+                                {host.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* <FormField
                     control={formCheckIn.control}
                     name="host_ids"
                     render={({ field }) => (
@@ -379,7 +444,7 @@ export default function HostAttendancePage() {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <Button
                     type="submit"
                     className="w-full text-white bg-primary"
