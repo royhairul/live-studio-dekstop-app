@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconChartLine, IconSearch, IconUsersGroup } from "@tabler/icons-react";
+import { IconArrowRight, IconChartLine, IconSearch, IconUsersGroup } from "@tabler/icons-react";
 import { useState } from "react";
 import { differenceInDays, endOfWeek, startOfWeek } from "date-fns";
 import axios from "axios";
@@ -10,6 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { DatePicker } from "@/components/Datepicker";
 import { DataTable } from "@/components/data-table";
 import { useHosts } from "../../../pages/host/hooks/useHosts";
+import PerformTable from "@/components/perform-table";
+import { Link } from "react-router-dom";
 
 const today = new Date();
 
@@ -29,61 +31,65 @@ export default function HostPerformPage() {
     const { data: hosts, refetch } = useHosts();
     const [selectedStudioId, setSelectedStudioId] = useState("all");
 
-    const performHostColumn = [
+    const performColumns = [
         {
-            id: "nama",
-            accessorKey: "nama",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Nama</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "name",
+            header: "Nama Host",
+            enableGlobalFilter: true,
+            cell: ({ row }) => row.original.name,
         },
         {
-            id: "durasi",
-            accessorKey: "durasi",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Total Durasi</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "totalDuration",
+            header: "Total Durasi",
+            cell: ({ row }) => {
+                const totalSec = row.original.total_duration; 
+                const hours = Math.floor(totalSec / 3600);
+                const minutes = Math.floor((totalSec % 3600) / 60);
+                return `${hours}j ${minutes}m`;
+            }
         },
         {
-            id: "sale",
-            accessorKey: "sale",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Total Sale</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "totalPaid",
+            header: "Total Paid",
+            cell: ({ row }) => {
+                const value = row.original.total_paid;
+                return new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                }).format(value);
+            },
         },
         {
-            id: "paid",
-            accessorKey: "paid",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Total Paid</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "totalSale",
+            header: "Total Sale",
+            cell: ({ row }) => {
+                const value = row.original.total_sales;
+                return new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                }).format(value);
+            },
         },
         {
-            id: "detail",
-            accessorKey: "detail",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Detail</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "action",
+            header: "Detail Host",
+            cell: ({ row }) => (
+                <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
+                    <Link
+                        to={`/perform/host/detail/${row.original.id}`}
+                        className="flex items-center gap-2"
+                    >
+                        Detail Host
+                        <IconArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
+                </Button>
+
+            ),
         },
-    ]
-    const performHostData = [
-        {
-            id: "1",
-            nama: "Host 1",
-            durasi: "08:00:00",
-            sale: "Rp. 1.000.000",
-            paid: "Rp. 200.000",
-        },
-        {
-            id: "2",
-            nama: "Host 2",
-            durasi: "08:00:00",
-            sale: "Rp. 1.000.000",
-            paid: "Rp. 200.000",
-        },
-        {
-            id: "3",
-            nama: "Host 3",
-            durasi: "08:00:00",
-            sale: "Rp. 1.000.000",
-            paid: "Rp. 200.000",
-        },
-    ]
+    ];
+
 
     const [dateRange, setDateRange] = useState({
         from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
@@ -105,16 +111,15 @@ export default function HostPerformPage() {
                 timeDim: getTimeDim(appliedDateRange.from, appliedDateRange.to),
                 endDate: toLocalDateString(appliedDateRange.to),
             };
-            console.log(payload);
-            const res = await axios.post(apiEndpoints.finance.daily(), payload);
-            return res.data.data.flatMap((shop) =>
-                (shop.reportLive ?? []).map((item) => ({
-                    name: shop.name,
-                    ...item,
-                }))
-            );
+
+            const res = await axios.get(apiEndpoints.perform.host());
+
+            return res.data.data;
         },
     });
+
+
+
     const handleApplyClick = () => {
         setAppliedDateRange(dateRange);
         refetch();
@@ -149,7 +154,7 @@ export default function HostPerformPage() {
                     </div>
                 </div>
 
-                <DataTable columns={performHostColumn} data={performHostData} />
+                <PerformTable columns={performColumns} data={data} />
             </div>
         </MainLayout>
     );

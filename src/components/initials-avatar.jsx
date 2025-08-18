@@ -64,19 +64,6 @@ export default function InitialsAvatarCard({
                 {/* Name & Studio */}
                 <h3 className="text-white font-bold p-2">{name}</h3>
                 {studio && <p className="text-white/80">{studio}</p>}
-
-                {/* Action buttons */}
-                <div className="flex gap-3 pt-2">
-                    <button className="p-2 hover:bg-primary hover:cursor-pointer rounded-full transition">
-                        <IconPencil className="h-6 w-6 text-white" />
-                    </button>
-                    <button className="p-2 hover:bg-primary hover:cursor-pointer rounded-full transition">
-                        <IconTrash className="h-6 w-6 text-white" />
-                    </button>
-                </div>
-
-                {/* Border bawah pendek */}
-                <div className="absolute bottom-0 h-0.5 bg-accent-foreground w-24 rounded-full z-0"></div>
             </div>
 
             {/* Lapisan Tumpukan */}

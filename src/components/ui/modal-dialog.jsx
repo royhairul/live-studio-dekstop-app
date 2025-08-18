@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SearchSelectAkun } from "./search-select"
+import { DatePicker } from "../Datepicker"
 
 export function DialogIklan() {
     return (
@@ -36,6 +37,10 @@ export function DialogIklan() {
                         <div className="grid gap-3">
                             <Label htmlFor="iklan">Iklan</Label>
                             <Input className="border-accent" id="iklan" name="iklan" placeholder="50000" />
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="tanggal">Tanggal</Label>
+                            <DatePicker />
                         </div>
                     </div>
                     <DialogFooter>

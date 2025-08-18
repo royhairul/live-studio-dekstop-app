@@ -45,7 +45,6 @@ const items = [
   {
     icon: IconIdBadge,
     title: "Live",
-    url: "/live/preview",
     children: [
       {
         title: "Preview",
@@ -62,7 +61,6 @@ const items = [
   {
     icon: IconChartLine,
     title: "Performa",
-    url: "/perform/all",
     children: [
       {
         title: "Host",
@@ -78,13 +76,17 @@ const items = [
         title: "Studio",
         url: "/perform/studio",
         permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
-      }
+      },
+      {
+        title: "Target",
+        url: "/perform/target",
+        permission: PERMISSIONS.FINANCE.RESEARCH_VIEW,
+      },
     ],
   },
   {
     icon: IconShoppingBag,
     title: "Transaksi",
-    url: "/product/all",
     children: [
       {
         title: "Daftar Produk",
@@ -118,7 +120,6 @@ const items = [
   {
     icon: IconId,
     title: "Master",
-    url: "/master/all",
     children: [
       {
         title: "Kelola Host",
@@ -148,7 +149,6 @@ const items = [
   {
     icon: IconSettings,
     title: "Setting",
-    url: "/setting/all",
     children: [
       {
         title: "Jadwal",
