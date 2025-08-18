@@ -14,6 +14,14 @@ export const apiEndpoints = {
     logout: () => `${baseUrl}/logout`,
   },
 
+  perform: {
+    host: () => `${baseUrl}/performa/host`,
+    hostDetail: (id) => `${baseUrl}/performa/host/${id}`,
+    studio: () => `${baseUrl}/perform/studio`,
+    studioDetail: (id) => `${baseUrl}/perform/studio/${id}`,
+    account: () => `${baseUrl}/perform/account`,
+  },
+
   // User
   user: {
     index: () => `${baseUrl}/user`,

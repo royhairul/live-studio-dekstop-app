@@ -6,15 +6,17 @@ import { Route } from "react-router-dom";
 import AccountPerformPage from "@/features/perform/account/account-perform-page";
 import StudioPerformPage from "@/features/perform/studio/studio-perform-page";
 import StudioPerformDetailPage from "@/features/perform/studio/detail-page";
+import TargetPage from "@/features/perform/target/target-page";
 
 export const performRoutes = (
   <>
     <Route path="/finance/daily-report" element={<FinanceDailyReportPage />} />
     <Route path="/finance/commission-report" element={<FinanceCommissionReportPage />} />
     <Route path="/perform/studio" element={<StudioPerformPage />} />
-    <Route path="/perform/studio/detail" element={<StudioPerformDetailPage />} />
+    <Route path="/perform/studio/detail/:id" element={<StudioPerformDetailPage />} />
     <Route path="/perform/host" element={<HostPerformPage />} />
-    <Route path="/perform/host/detail" element={<HostDetailPerformPage />} />
+    <Route path="/perform/host/detail/:id" element={<HostDetailPerformPage />} />
     <Route path="/perform/account" element={<AccountPerformPage />} />
+    <Route path="/perform/target" element={<TargetPage />} />
   </>
 );
