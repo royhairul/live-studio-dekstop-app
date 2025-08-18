@@ -11,7 +11,7 @@ export const apiEndpoints = {
     forgotPassword: () => `${baseUrl}/auth/forgot-password`,
     verifyOTP: () => `${baseUrl}/auth/verify-otp`,
     resetPassword: () => `${baseUrl}/auth/reset-password`,
-    logout: () => `${baseUrl}/logout`, 
+    logout: () => `${baseUrl}/logout`,
   },
 
   // User
@@ -44,8 +44,8 @@ export const apiEndpoints = {
 
   // Account
   account: {
-    index: () => `${baseUrl}/account/shopee`,
-    create: () => `${baseUrl}/account/`,
+    index: () => `${baseUrl}/account`,
+    create: () => `${baseUrl}/account`,
     show: (id) => `${baseUrl}/account/${id}`,
     edit: (id) => `${baseUrl}/account/${id}`,
     delete: (id) => `${baseUrl}/account/${id}`,
