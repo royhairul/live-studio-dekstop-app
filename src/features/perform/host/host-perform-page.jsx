@@ -29,7 +29,6 @@ const toLocalDateString = (date) =>
 export default function HostPerformPage() {
 
     const { data: hosts, refetch } = useHosts();
-    const [selectedStudioId, setSelectedStudioId] = useState("all");
 
     const performColumns = [
         {

@@ -7,9 +7,17 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { apiEndpoints } from "@/config/api";
 import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { endOfWeek, startOfWeek } from "date-fns";
+import { useHosts } from "@/hooks/host/useHosts";
+import { DatePicker } from "@/components/Datepicker";
+import { Button } from "@/components/ui/button";
+
+const today = new Date();
 
 export default function HostDetailPerformPage() {
     const id = useParams().id;
+    const { data: hosts, refetch } = useHosts();
 
     const breadcrumbs = [
         {
@@ -61,8 +69,20 @@ export default function HostDetailPerformPage() {
             return res.data.data;
         },
     })
+    const [dateRange, setDateRange] = useState({
+        from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
+        to: endOfWeek(today, { weekStartsOn: 1 }),
+    });
 
-    console.log(data);
+    const [appliedDateRange, setAppliedDateRange] = useState({
+        from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
+        to: endOfWeek(today, { weekStartsOn: 1 }),     // Minggu
+    });
+
+    const handleApplyClick = () => {
+        setAppliedDateRange(dateRange);
+        refetch();
+    };
 
     const totalMinutes = data?.total_duration || 0;
     const hours = Math.floor(totalMinutes / 60);
@@ -84,10 +104,23 @@ export default function HostDetailPerformPage() {
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             <div className="p-4 bg-white rounded-lg shadow-md">
-                <div className="">
-                    <h2 className="font-bold text-xl">Data Laporan Detail Host</h2>
-                    <p className="text-accent/60 text-sm">Update Informasi Laporan Detail Host</p>
+                <div className="flex justify-between">
+                    <div className="">
+                        <h2 className="font-bold text-xl">Data Laporan Detail Host</h2>
+                        <p className="text-accent/60 text-sm">Update Informasi Laporan Detail Host</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <DatePicker
+                            withRange="true"
+                            value={dateRange}
+                            onChange={setDateRange}
+                        />
+                        <Button onClick={handleApplyClick} disabled={isFetching}>
+                            {isFetching ? "Memuat..." : "Terapkan"}
+                        </Button>
+                    </div>
                 </div>
+
                 <div className="flex w-full gap-4 items-start mt-5 ">
                     <InitialsAvatar name={`${data?.name}` || "Roy"} studio={`${data?.studio || "Studio Ghaib"}`} />
 

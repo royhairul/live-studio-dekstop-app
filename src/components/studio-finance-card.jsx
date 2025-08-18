@@ -6,7 +6,7 @@ export function StudioFinanceCard({
     total = "Rp. 2.300.000",
     gmv = "Rp. 2.300.000",
     komisi = "Rp. 2.300.000",
-    detailUrl = "#/finance/result-report",
+    detailUrl = "#/perform/studio/detail/1",
 }) {
     return (
         <div className="flex-col gap-2 w-full bg-foreground justify-end rounded-xl border-gray-200 border-1 overflow-hidden shadow-lg">
