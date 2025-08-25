@@ -41,7 +41,7 @@ export default function HostPerformPage() {
             accessorKey: "totalDuration",
             header: "Total Durasi",
             cell: ({ row }) => {
-                const totalSec = row.original.total_duration; 
+                const totalSec = row.original.total_duration;
                 const hours = Math.floor(totalSec / 3600);
                 const minutes = Math.floor((totalSec % 3600) / 60);
                 return `${hours}j ${minutes}m`;
@@ -75,15 +75,14 @@ export default function HostPerformPage() {
             accessorKey: "action",
             header: "Detail Host",
             cell: ({ row }) => (
-                <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
-                    <Link
-                        to={`/perform/host/detail/${row.original.id}`}
-                        className="flex items-center gap-2"
-                    >
+                <Link
+                    to={`/perform/host/detail/${row.original.id}`}
+                >
+                    <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
                         Detail Host
                         <IconArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-                    </Link>
-                </Button>
+                    </Button>
+                </Link>
 
             ),
         },

@@ -167,13 +167,13 @@ export default function MUserAllPage() {
     <MainLayout breadcrumbs={breadcrumbs}>
       <div className="flex gap-2">
         <Button variant="default" className="w-max" asChild>
-          <Link to="/setting/user-management/create">
+          <Link to="/management/user/create">
             <IconUserPlus />
             Tambah User
           </Link>
         </Button>
         <Button variant="default" className="w-max" asChild>
-          <Link to="/setting/role-management">
+          <Link to="/setting/role">
             <IconFlag />
             Management Role
           </Link>

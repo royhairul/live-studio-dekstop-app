@@ -74,7 +74,6 @@ export default function HostAttendancePage() {
       .join(", ");
   };
 
-  const [date, setDate] = useState({ from: new Date(), to: new Date() });
   const formCheckIn = useForm({
     resolver: zodResolver(checkinSchema),
     defaultValues: {
@@ -198,26 +197,6 @@ export default function HostAttendancePage() {
                   onSubmit={formCheckIn.handleSubmit(handleCheckIn)}
                   className="flex flex-col gap-4"
                 >
-                  <FormField
-                    control={formCheckIn.control}
-                    name="date"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Tanggal</FormLabel>
-                        <DatePicker
-                          value={date}
-                          onChange={(val) => {
-                            setDate(val);
-                            formCheckIn.setValue(
-                              "date",
-                              val?.from?.toISOString() ?? ""
-                            );
-                          }}
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
 
                   <FormField
                     control={formCheckIn.control}

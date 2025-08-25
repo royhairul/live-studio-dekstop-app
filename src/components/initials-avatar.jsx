@@ -1,5 +1,3 @@
-import { IconPencil, IconTrash } from "@tabler/icons-react";
-import { PencilIcon, TrashIcon } from "lucide-react";
 import React, { useMemo } from "react";
 
 function stringToColor(str) {

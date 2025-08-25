@@ -8,6 +8,7 @@ import {
     IconSpeedboat,
     IconBrandSpeedtest,
     IconShoppingBag,
+    IconAd,
 } from "@tabler/icons-react";
 
 const iconMap = {
@@ -16,7 +17,8 @@ const iconMap = {
     speaker: IconSpeakerphone,
     wallet: IconWallet,
     speed: IconBrandSpeedtest,
-    shopbag: IconShoppingBag
+    shopbag: IconShoppingBag,
+    ad: IconAd
 };
 
 const StatCard = ({

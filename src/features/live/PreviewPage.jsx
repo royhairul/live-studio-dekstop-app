@@ -1,47 +1,23 @@
 import MainLayout from "@/layouts/main-layout";
-import { DataTable } from "@/components/data-table";
 import { DataTablePinning } from "@/components/data-table-pinning";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  IconBadge,
-  IconCheck,
+  IconArrowRight,
   IconCircleDashedCheck,
   IconCircleDashedMinus,
-  IconDots,
   IconHelp,
   IconIdBadge,
-  IconReportMoney,
 } from "@tabler/icons-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { DatePicker } from "@/components/Datepicker";
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { apiEndpoints } from "@/config/api";
-import axios from "axios";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { differenceInDays, format } from "date-fns";
 import { useAccounts } from "@/hooks/account/useAccounts";
 import { Badge } from "@/components/ui/badge";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const columnReportDaily = [
   {
@@ -80,21 +56,6 @@ const columnReportDaily = [
         )}
       </div>
     ),
-  },
-  {
-    id: "oph",
-    header: () => <div className="pr-8 font-semibold">Omset Per Jam</div>,
-    cell: ({ row }) =>
-      row.original.reportLive?.[0]?.omsetPerHour
-        ? Number(row.original.reportLive[0].omsetPerHour).toLocaleString(
-            "id-ID",
-            {
-              style: "currency",
-              currency: "IDR",
-              minimumFractionDigits: 0,
-            }
-          )
-        : "-",
   },
   {
     id: "relive",
@@ -199,13 +160,13 @@ const columnReportDaily = [
     cell: ({ row }) =>
       row.original.reportLive?.[0]?.placedSales
         ? Number(row.original.reportLive[0].placedSales).toLocaleString(
-            "id-ID",
-            {
-              style: "currency",
-              currency: "IDR",
-              minimumFractionDigits: 0,
-            }
-          )
+          "id-ID",
+          {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+          }
+        )
         : "-",
   },
   {
@@ -214,49 +175,45 @@ const columnReportDaily = [
     cell: ({ row }) =>
       row.original.reportLive?.[0]?.confirmedSales
         ? Number(row.original.reportLive[0].confirmedSales).toLocaleString(
-            "id-ID",
-            {
-              style: "currency",
-              currency: "IDR",
-              minimumFractionDigits: 0,
-            }
-          )
+          "id-ID",
+          {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+          }
+        )
         : "-",
   },
   {
-    id: "detail",
-    accessorKey: "detail",
-    header: () => <div className="pl-4 pr-8 font-semibold">Detail</div>,
-    cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+    id: "oph",
+    header: () => <div className="pr-8 font-semibold">Omset Per Jam</div>,
+    cell: ({ row }) =>
+      row.original.reportLive?.[0]?.omsetPerHour
+        ? Number(row.original.reportLive[0].omsetPerHour).toLocaleString(
+          "id-ID",
+          {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+          }
+        )
+        : "-",
   },
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
+    id: "action",
+    accessorKey: "action",
+    header: "Detail",
+    cell: ({ row }) => (
+      <Link
+        to={`/live/preview-detail`}
+      >
+        <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
+          Detail
+          <IconArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+        </Button>
+      </Link>
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <IconDots />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    ),
   },
 ];
 
@@ -313,16 +270,11 @@ export default function LivePreviewPage() {
     reportLive: reports[acc.name] || acc.reportLive || [], // real-time jika ada, fallback null/[]
   }));
 
-  console.log(combinedData);
-
   const breadcrumbs = [
     {
       icon: IconIdBadge,
-      label: "Live",
-    },
-    {
-      label: "Preview",
-    },
+      label: "Live Preview",
+    }
   ];
 
   return (
@@ -330,7 +282,7 @@ export default function LivePreviewPage() {
       <DataTablePinning
         columns={columnReportDaily}
         data={combinedData}
-        pinning={["host" ,"name", "status"]}
+        pinning={["host", "name", "status"]}
       />
     </MainLayout>
   );

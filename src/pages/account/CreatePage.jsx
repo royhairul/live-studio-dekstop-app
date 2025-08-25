@@ -32,6 +32,7 @@ import { Value } from "@radix-ui/react-select";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { Label } from "recharts";
 
 export default function AccountCreatePage() {
   const { studio } = useStudios();
@@ -42,7 +43,7 @@ export default function AccountCreatePage() {
     {
       icon: IconId,
       label: "Akun",
-      url: "/account/all",
+      url: "/management/account",
     },
     {
       label: "Tambah Akun",
@@ -52,6 +53,7 @@ export default function AccountCreatePage() {
   const formSchema = z.object({
     studio_id: z.coerce.number().min(1, { message: "Studio is required." }),
     cookie: z.string().min(1, { message: "Cookies are required." }),
+    device: z.string().optional(),
   });
 
   const form = useForm({
@@ -59,6 +61,7 @@ export default function AccountCreatePage() {
     defaultValues: {
       studio_id: "",
       cookie: "",
+      device: "",
     },
   });
 
@@ -93,69 +96,101 @@ export default function AccountCreatePage() {
 
   const handleCreate = (values) => createAccountMutation.mutate(values);
 
-  return (
-    <MainLayout breadcrumbs={breadcrumbs}>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleCreate)}
-          className="w-max p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md"
-        >
-          <h2 className="font-semibold">Tambah Akun Baru</h2>
+return (
+  <MainLayout breadcrumbs={breadcrumbs}>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleCreate)}
+        className="max-w-xl w-full mx-auto p-6 bg-white flex flex-col gap-6 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <h2 className="text-xl font-bold text-gray-800 border-b pb-3">
+          Tambah Akun Baru
+        </h2>
 
-          <FormField
-            control={form.control}
-            name="studio_id"
-            render={({ field }) => {
-              return (
-                <FormItem>
-                  <FormLabel>Studio</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Pilih Studio..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        {studio.map((item) => (
-                          <SelectItem
-                            key={String(item.id)}
-                            value={String(item.id)}
-                          >
-                            {item.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-
-          <FormField
-            control={form.control}
-            name="cookie"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cookies</FormLabel>
+        {/* Studio */}
+        <FormField
+          control={form.control}
+          name="studio_id"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm font-medium text-gray-700">
+                Studio
+              </FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <Textarea
-                    className="w-lg"
-                    placeholder="Masukkan Cookies..."
-                    rows={5}
-                    {...field}
-                  />
+                  <SelectTrigger className="w-full rounded-xl border-gray-300 transition">
+                    <SelectValue placeholder="Pilih Studio..." />
+                  </SelectTrigger>
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                <SelectContent>
+                  <SelectGroup>
+                    {studio.map((item) => (
+                      <SelectItem
+                        key={String(item.id)}
+                        value={String(item.id)}
+                      >
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <Button className="w-full text-white bg-primary">Submit</Button>
-        </form>
-      </Form>
-    </MainLayout>
-  );
+        {/* Device (opsional) */}
+        <FormField
+          control={form.control}
+          name="device"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm font-medium text-gray-700">
+                Device <span className="text-gray-400">(opsional)</span>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Contoh: Samsung A52"
+                  className="rounded-xl border-gray-300 transition"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Cookies */}
+        <FormField
+          control={form.control}
+          name="cookie"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm font-medium text-gray-700">
+                Cookies
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  className="rounded-xl border-gray-300 transition w-full"
+                  placeholder="Masukkan Cookies..."
+                  rows={5}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Submit button */}
+        <Button
+          className="w-full text-white bg-primary hover:bg-primary/90 rounded-xl py-2.5 text-sm font-medium shadow-md transition"
+        >
+          Submit
+        </Button>
+      </form>
+    </Form>
+  </MainLayout>
+);
 }

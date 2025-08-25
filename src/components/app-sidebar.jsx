@@ -42,22 +42,22 @@ import { PERMISSIONS } from "@/helpers/permission";
 import { hasPermission } from "@/helpers/hasPermissions";
 
 const items = [
-  {
-    icon: IconIdBadge,
-    title: "Live",
-    children: [
-      {
-        title: "Preview",
-        url: "/live/preview",
-        permission: PERMISSIONS.LIVE.VIEW,
-      },
-      {
-        title: "Grafik",
-        url: "/live/graph",
-        permission: PERMISSIONS.LIVE.REPORT,
-      },
-    ],
-  },
+  // {
+  //   icon: IconIdBadge,
+  //   title: "Live",
+  //   children: [
+  //     {
+  //       title: "Preview",
+  //       url: "/live/preview",
+  //       permission: PERMISSIONS.LIVE.VIEW,
+  //     },
+  //     {
+  //       title: "Grafik",
+  //       url: "/live/graph",
+  //       permission: PERMISSIONS.LIVE.REPORT,
+  //     },
+  //   ],
+  // },
   {
     icon: IconChartLine,
     title: "Performa",
@@ -243,6 +243,15 @@ export function AppSidebar() {
             <Link to="/attendance">
               <IconUsers />
               <span>Kehadiran</span>
+            </Link>
+          </SidebarMenuButton>
+          <SidebarMenuButton
+            isActive={location.pathname === "/live/preview"}
+            asChild
+          >
+            <Link to="/live/preview">
+              <IconIdBadge />
+              <span>Live</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

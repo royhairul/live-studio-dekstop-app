@@ -66,7 +66,7 @@ export function ListCard() {
     );
 
     return (
-        <div className="flex gap-4 w-full">
+        <div className="flex gap-2 w-full">
             {/* Left Section */}
             <div className=" w-full bg-white rounded-2xl p-4 shadow-sm">
                 <h3 className="text-2xl font-semibold">Live Dashboard</h3>

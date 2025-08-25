@@ -1,82 +1,100 @@
 import { StudioFinanceCard } from "./studio-finance-card";
 import { DataTable } from "./data-table";
+import PerformTable from "./perform-table";
+import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
+import { IconArrowRight } from "@tabler/icons-react";
 
-export default function StudioFinanceList({viewMode}) {
+export default function StudioFinanceList({ viewMode }) {
     const performDetailHostColumn = [
         {
-            id: "akun",
-            accessorKey: "akun",
+            id: "studio",
+            accessorKey: "studio",
             header: () => (
                 <div className="font-semibold text-accent">
-                    <p className="text-center">Nama Akun</p>
+                    <p className="">Studio</p>
                 </div>
             ),
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ getValue }) => <div className="">{getValue()}</div>,
         },
         {
-            id: "durasi-live",
-            accessorKey: "durasi-live",
+            id: "gmv",
+            accessorKey: "gmv",
             header: () => (
                 <div className="font-semibold text-accent">
-                    <p className="text-center">Durasi Live</p>
+                    <p className="">Total GMV</p>
                 </div>
             ),
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ getValue }) => <div className="">{getValue()}</div>,
         },
         {
-            id: "pesanan-dibayar",
-            accessorKey: "pesanan-dibayar",
+            id: "komisi",
+            accessorKey: "komisi",
             header: () => (
                 <div className="font-semibold text-accent">
-                    <p className="text-center">Pesanan Dibayar</p>
+                    <p className="">Total Komisi</p>
                 </div>
             ),
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ getValue }) => <div className="">{getValue()}</div>,
         },
         {
-            id: "pesanan-dikirim",
-            accessorKey: "pesanan-dikirim",
+            id: "iklan",
+            accessorKey: "iklan",
             header: () => (
                 <div className="font-semibold text-accent">
-                    <p className="text-center">Pesanan Dikirim</p>
+                    <p className="">Total Iklan + PPN</p>
                 </div>
             ),
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ getValue }) => <div className="">{getValue()}</div>,
+        },
+        {
+            accessorKey: "action",
+            header: "Detail Studio",
+            cell: ({ row }) => (
+                <Link
+                    to={`/perform/studio/detail/${row.original.id}`}
+                >
+                    <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
+                        Detail Studio
+                        <IconArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </Button>
+                </Link>
+            ),
         },
     ];
 
     const performDetailHostData = [
         {
-            akun: "STUDIO 1",
-            "durasi-live": "4 Jam",
-            "pesanan-dibayar": "Rp. 4.500.000",
-            "pesanan-dikirim": "Rp. 4.000.000",
+            "id": "1",
+            "studio": "STUDIO 1",
+            "gmv": "Rp. 10.000.000",
+            "komisi": "Rp. 4.500.000",
+            "iklan": "Rp. 4.000.000",
         },
         {
-            akun: "STUDIO 2",
-            "durasi-live": "3 Jam",
-            "pesanan-dibayar": "Rp. 5.100.000",
-            "pesanan-dikirim": "Rp. 4.700.000",
+            "id": "2",
+            "studio": "STUDIO 2",
+            "gmv": "Rp. 10.000.000",
+            "komisi": "Rp. 5.100.000",
+            "iklan": "Rp. 4.700.000",
         },
         {
-            akun: "STUDIO 3",
-            "durasi-live": "2 Jam",
-            "pesanan-dibayar": "Rp. 3.900.000",
-            "pesanan-dikirim": "Rp. 3.500.000",
+            "id": "3",
+            "studio": "STUDIO 3",
+            "gmv": "Rp. 10.000.000",
+            "komisi": "Rp. 3.900.000",
+            "iklan": "Rp. 3.500.000",
         },
     ];
 
     return (
-        <div>
+        <div className="mt-5">
             {viewMode === "card" ? (
                 <div className="grid sm:grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
                     <StudioFinanceCard />
                 </div>
             ) : (
-                <DataTable
-                    columns={performDetailHostColumn}
-                    data={performDetailHostData}
-                />
+                <PerformTable columns={performDetailHostColumn} data={performDetailHostData} />
             )}
         </div>
     );

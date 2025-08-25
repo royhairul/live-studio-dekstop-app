@@ -40,25 +40,44 @@ export default function HostDetailPerformPage() {
             accessorKey: "akun",
             header: "Nama Akun",
             enableGlobalFilter: true,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ row }) => row.original.account_name,
         },
         {
             id: "durasi-live",
             accessorKey: "durasi-live",
             header: "Durasi Live",
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ row }) => {
+                const totalSec = row.original.duration; 
+                const hours = Math.floor(totalSec / 3600);
+                const minutes = Math.floor((totalSec % 3600) / 60);
+                return `${hours}j ${minutes}m`;
+            }
         },
         {
             id: "pesanan-dibayar",
             accessorKey: "pesanan-dibayar",
             header: "Pesanan Dibayar",
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ row }) => {
+                const value = row.original.total_paid;
+                return new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                }).format(value);
+            }
         },
         {
             id: "pesanan-dikirim",
             accessorKey: "pesanan-dikirim",
             header: "Pesanan Dikirim",
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            cell: ({ row }) => {
+                const value = row.original.total_sales;
+                return new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                }).format(value);
+            }
         },
     ];
 
@@ -87,20 +106,7 @@ export default function HostDetailPerformPage() {
     const totalMinutes = data?.total_duration || 0;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    const performDetailHostData = [
-        {
-            "akun": "John Doe",
-            "durasi-live": "08:00:00",
-            "pesanan-dibayar": "1.000.000",
-            "pesanan-dikirim": "1.000.000",
-        },
-        {
-            "akun": "John Doe",
-            "durasi-live": "08:00:00",
-            "pesanan-dibayar": "1.000.000",
-            "pesanan-dikirim": "1.000.000",
-        },
-    ];
+
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             <div className="p-4 bg-white rounded-lg shadow-md">
@@ -122,7 +128,7 @@ export default function HostDetailPerformPage() {
                 </div>
 
                 <div className="flex w-full gap-4 items-start mt-5 ">
-                    <InitialsAvatar name={`${data?.name}` || "Roy"} studio={`${data?.studio || "Studio Ghaib"}`} />
+                    <InitialsAvatar name={`${data?.name}` || "Roy"} studio={`${data?.studio || "Studio 1"}`} />
 
                     <div className="grid grid-cols-2 gap-4 flex-grow">
                         <StatCard
@@ -203,7 +209,7 @@ export default function HostDetailPerformPage() {
                 </div>
 
                 <div className="mt-5">
-                    <PerformTable columns={performDetailHostColumn} data={performDetailHostData} />
+                    <PerformTable columns={performDetailHostColumn} data={data?.list} />
                 </div>
 
             </div>

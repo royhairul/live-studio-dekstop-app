@@ -1,34 +1,37 @@
 import MainLayout from "@/layouts/main-layout";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    IconArrowAutofitRight,
-    IconArrowAutofitUp,
-    IconArrowRight,
     IconCards,
+    IconChartBar,
     IconChartLine,
-    IconReportAnalytics,
-    IconSearch,
-    IconShoppingCart,
     IconTable,
 } from "@tabler/icons-react";
 import { useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/ui/stat-card";
-import { StudioFinanceCard } from "@/components/studio-finance-card";
-import { Input } from "@/components/ui/input";
 import StudioFinanceList from "@/components/studio-finance-list";
+import { endOfWeek, startOfWeek } from "date-fns";
+import { useHosts } from "@/hooks/host/useHosts";
+import { DatePicker } from "@/components/Datepicker";
 
+const today = new Date();
 export default function StudioPerformPage() {
-    const [studio, setStudio] = useState("studio1");
-    const [viewMode, setViewMode] = useState("card");
 
+    const { data: hosts, refetch } = useHosts();
+    const [viewMode, setViewMode] = useState("card");
+    const [dateRange, setDateRange] = useState({
+        from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
+        to: endOfWeek(today, { weekStartsOn: 1 }),
+    });
+
+    const [appliedDateRange, setAppliedDateRange] = useState({
+        from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
+        to: endOfWeek(today, { weekStartsOn: 1 }),     // Minggu
+    });
+
+    const handleApplyClick = () => {
+        setAppliedDateRange(dateRange);
+        refetch();
+    };
     const breadcrumbs = [
         {
             icon: IconChartLine,
@@ -46,21 +49,19 @@ export default function StudioPerformPage() {
             <div className="flex gap-2">
                 <div className="flex-1"></div>
 
-                <div className="self-end">
-                    <Select value={studio} onValueChange={setStudio}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="studio1">Studio 1</SelectItem>
-                            <SelectItem value="studio2">Studio 2</SelectItem>
-                            <SelectItem value="studio3">Studio 3</SelectItem>
-                        </SelectContent>
-                    </Select>
+                <div className="flex gap-2 self-end">
+                    <DatePicker
+                        withRange="true"
+                        value={dateRange}
+                        onChange={setDateRange}
+                    />
+                    <Button onClick={handleApplyClick}>
+                        Terapkan
+                    </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3">
                 <StatCard
                     title="Total GMV"
                     value="Rp. 5.450.000"
@@ -93,6 +94,14 @@ export default function StudioPerformPage() {
                     icon="wallet"
                     borderColor="#2E964C"
                 />
+                <StatCard
+                    title="Total Iklan + PPN"
+                    value="Rp. 5.450.000"
+                    percentage="2,01"
+                    trend="up"
+                    icon="ad"
+                    borderColor="#3818D9"
+                />
             </div>
 
             <div className=" py-5 px-2 rounded-xl">
@@ -102,32 +111,20 @@ export default function StudioPerformPage() {
                         <p className="text-accent/60">Update Informasi Laporan Komisi Setiap Studio Live</p>
 
                     </div>
-                    <div className="flex gap-2">
-                        <div className="flex justify-end mb-4 gap-2">
-                            <button
-                                onClick={() => setViewMode("card")}
-                                className={`p-2 hover:cursor-pointer hover:bg-accent/10 rounded-lg ${viewMode === "card" ? "bg-gray-200" : ""}`}
-                            >
-                                <IconCards size={18} />
-                            </button>
+                    <div className="flex justify-end mb-4 gap-2">
+                        <button
+                            onClick={() => setViewMode("card")}
+                            className={`p-2 hover:cursor-pointer hover:bg-accent/10 rounded-lg ${viewMode === "card" ? "bg-gray-200" : ""}`}
+                        >
+                            <IconCards size={18} />
+                        </button>
 
-                            <button
-                                onClick={() => setViewMode("table")}
-                                className={`p-2 hover:cursor-pointer hover:bg-accent/10 rounded-lg ${viewMode === "table" ? "bg-gray-200" : ""}`}
-                            >
-                                <IconTable size={18} />
-                            </button>
-                        </div>
-
-                        <Input
-                            icon={<IconSearch />}
-                            placeholder="Search..."
-                            // value={table.getColumn("name")?.getFilterValue() ?? ""}
-                            // onChange={(event) =>
-                            //   table.getColumn("name")?.setFilterValue(event.target.value)
-                            // }
-                            className="max-w-sm bg-white"
-                        />
+                        <button
+                            onClick={() => setViewMode("table")}
+                            className={`p-2 hover:cursor-pointer hover:bg-accent/10 rounded-lg ${viewMode === "table" ? "bg-gray-200" : ""}`}
+                        >
+                            <IconTable size={18} />
+                        </button>
                     </div>
 
                 </div>

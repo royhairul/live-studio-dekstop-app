@@ -150,7 +150,7 @@ export default function StudioPerformDetailPage() {
 
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3">
                 <StatCard
                     title="Total GMV"
                     value="Rp. 5.450.000"
@@ -183,7 +183,14 @@ export default function StudioPerformDetailPage() {
                     icon="wallet"
                     borderColor="#2E964C"
                 />
-
+                <StatCard
+                    title="Total Iklan + PPN"
+                    value="Rp. 5.450.000"
+                    percentage="2,01"
+                    trend="up"
+                    icon="ad"
+                    borderColor="#3818D9"
+                />
             </div>
 
             <DataTablePinning columns={ColumnComissionDetail} data={data} pinning={["akun"]} customButton={<DialogIklan />} />
