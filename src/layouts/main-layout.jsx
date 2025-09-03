@@ -2,11 +2,10 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import {
   IconSearch,
-  IconLayoutGridFilled,
+  IconMenu2,
   IconHistory,
   IconBell,
   IconLogout,
-  IconCheck,
 } from "@tabler/icons-react";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -30,15 +29,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
-import { cn } from "@/lib/utils";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/auth/AuthContext";
 
 export default function MainLayout({ breadcrumbs, children }) {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -46,111 +41,115 @@ export default function MainLayout({ breadcrumbs, children }) {
   };
 
   return (
-    <>
-      <SidebarProvider>
-        <AppSidebar />
-        <main className={cn(
-          isSidebarOpen ? "w-[80%]" : "w-full",
-          "p-4 flex-1 flex-col gap-4 bg-gray-100 overflow-auto transition-[width] duration-300 ease-in-out"
-        )}>
-          <div className="w-full bg-white py-4 px-4 flex items-center rounded-md shadow-sm mb-4">
-            <SidebarTrigger
-              className="bg-transparent hover:bg-accent/10 mr-3"
-              onClick={() => setIsSidebarOpen(prev => !prev)}
-            />
+    <SidebarProvider>
+      <AppSidebar />
 
-            <Breadcrumb>
-              <BreadcrumbList>
-                {breadcrumbs.map((item, index) => {
-                  const isLast = index === breadcrumbs.length - 1;
-                  return (
-                    <React.Fragment key={index}>
-                      <BreadcrumbItem>
-                        {isLast ? (
-                          <BreadcrumbPage
-                            className={
-                              "flex items-center gap-1.5 font-semibold text-primary"
-                            }
-                          >
-                            {item.icon && <item.icon className="mr-1 inline" />}
-                            {item.label}
-                          </BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink
-                            to={item.url}
-                            className={"flex items-center gap-1.5 font-medium"}
-                          >
-                            {item.icon && <item.icon className="mr-1 inline" />}
-                            {item.label}
-                          </BreadcrumbLink>
-                        )}
-                      </BreadcrumbItem>
-                      {!isLast && <BreadcrumbSeparator />}
-                    </React.Fragment>
-                  );
-                })}
-              </BreadcrumbList>
-            </Breadcrumb>
+      <main className="p-4 flex-1 flex-col gap-4 bg-gray-100 overflow-auto transition-[width] duration-300 ease-in-out">
+        {/* Topbar */}
+        <div className="w-full bg-white py-3 px-4 flex items-center rounded-md shadow-sm mb-4 gap-3">
+          <SidebarTrigger className="hidden lg:inline-flex bg-transparent hover:bg-accent/10 mr-2" />
 
-            <div className="flex-1" />
+          {/* Breadcrumbs */}
+          <Breadcrumb className="flex-1 min-w-[200px]">
+            <BreadcrumbList className="flex flex-wrap items-center gap-1">
+              {breadcrumbs.map((item, index) => {
+                const isLast = index === breadcrumbs.length - 1;
+                return (
+                  <React.Fragment key={index}>
+                    <BreadcrumbItem>
+                      {isLast ? (
+                        <BreadcrumbPage className="flex items-center gap-1.5 font-semibold text-primary">
+                          {item.icon && <item.icon className="mr-1 inline" />}
+                          {item.label}
+                        </BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink
+                          to={item.url}
+                          className="flex items-center gap-1.5 font-medium"
+                        >
+                          {item.icon && <item.icon className="mr-1 inline" />}
+                          {item.label}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {!isLast && <BreadcrumbSeparator />}
+                  </React.Fragment>
+                );
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
 
-            <div className="self-end flex justify-end items-center gap-2">
+          {/* Right Actions */}
+          {/* Right Actions */}
+          <div className="flex items-center gap-1.5 ml-auto">
+            {/* Search hanya di desktop */}
+            <div className="hidden lg:block">
               <Input
-                icon={<IconSearch className="w-4" />}
+                icon={<IconSearch className="w-4 h-4" />}
                 id="keyword"
                 type="text"
                 placeholder="Cari.."
-                className={"bg-gray-300/40 border-none"}
+                className="bg-gray-300/40 border-none h-8 text-sm"
               />
-              <Button
-                size="icon"
-                className={cn("bg-transparent hover:bg-accent/10")}
-              >
-                <IconHistory color="#333" />
-              </Button>
-              <Button
-                size="icon"
-                className={cn("bg-transparent hover:bg-accent/10")}
-              >
-                <IconBell color="#333" />
-              </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    className="bg-transparent hover:bg-rose-500/10"
-                    variant="ghost"
-                  >
-                    <IconLogout className="text-red-500" />
-                  </Button>
-                </AlertDialogTrigger>
-
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Apakah kamu yakin ingin logout?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Setelah logout, kamu perlu login kembali untuk mengakses
-                      dashboard.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Batal</AlertDialogCancel>
-                    <AlertDialogAction
-                      className={cn("bg-rose-500 hover:bg-rose-700")}
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
             </div>
+
+            <Button
+              size="icon"
+              className="h-8 w-8 bg-transparent hover:bg-accent/10"
+            >
+              <IconHistory className="w-4 h-4 text-gray-700" />
+            </Button>
+            <Button
+              size="icon"
+              className="h-8 w-8 bg-transparent hover:bg-accent/10"
+            >
+              <IconBell className="w-4 h-4 text-gray-700" />
+            </Button>
+
+            {/* Logout */}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="icon"
+                  className="h-8 w-8 bg-transparent hover:bg-rose-500/10"
+                  variant="ghost"
+                >
+                  <IconLogout className="w-4 h-4 text-red-500" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Apakah kamu yakin ingin logout?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Setelah logout, kamu perlu login kembali untuk mengakses dashboard.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-rose-500 hover:bg-rose-700"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Sidebar trigger untuk mobile */}
+            <SidebarTrigger
+              className="inline-flex lg:hidden bg-transparent hover:bg-accent/10 h-8 w-8"
+            />
           </div>
-          {children}
-        </main>
-      </SidebarProvider>
-    </>
+
+        </div>
+
+        {/* Content */}
+        <div className="min-h-[calc(100vh-100px)]">{children}</div>
+      </main>
+    </SidebarProvider>
   );
 }
+

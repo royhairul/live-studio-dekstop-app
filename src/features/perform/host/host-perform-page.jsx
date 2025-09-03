@@ -48,8 +48,8 @@ export default function HostPerformPage() {
             }
         },
         {
-            accessorKey: "totalPaid",
-            header: "Total Paid",
+            accessorKey: "totalDibuat",
+            header: "Total Pesanan Dibuat",
             cell: ({ row }) => {
                 const value = row.original.total_paid;
                 return new Intl.NumberFormat("id-ID", {
@@ -60,8 +60,8 @@ export default function HostPerformPage() {
             },
         },
         {
-            accessorKey: "totalSale",
-            header: "Total Sale",
+            accessorKey: "totalDikirim",
+            header: "Total Pesanan Dikirim",
             cell: ({ row }) => {
                 const value = row.original.total_sales;
                 return new Intl.NumberFormat("id-ID", {
@@ -135,25 +135,38 @@ export default function HostPerformPage() {
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             <div className="p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md w-full">
-                <div className="flex justify-between">
-                    <div className="">
+                {/* Header Section */}
+                <div className="flex flex-col lg:flex-row justify-between gap-3 lg:items-center border-b pb-3">
+                    <div>
                         <h2 className="font-bold text-xl">Data Laporan Host Studio Live</h2>
-                        <p className="text-accent/60 text-sm">Update Informasi Laporan Pendapatan GMV Host Studio Live</p>
+                        <p className="text-accent/60 text-sm">
+                            Update Informasi Laporan Pendapatan GMV Host Studio Live
+                        </p>
                     </div>
-                    <div className="flex gap-2">
+
+                    {/* Filter Section */}
+                    <div className="flex gap-2 items-center">
                         <DatePicker
                             withRange="true"
                             value={dateRange}
                             onChange={setDateRange}
+                            className="w-full sm:w-auto"
                         />
-                        <Button onClick={handleApplyClick} disabled={isFetching}>
+                        <Button
+                            onClick={handleApplyClick}
+                            disabled={isFetching}
+                        >
                             {isFetching ? "Memuat..." : "Terapkan"}
                         </Button>
                     </div>
                 </div>
 
-                <PerformTable columns={performColumns} data={data} />
+                {/* Table Section */}
+                <div className="overflow-x-auto">
+                    <PerformTable columns={performColumns} data={data} />
+                </div>
             </div>
         </MainLayout>
+
     );
 }

@@ -11,7 +11,10 @@ import axios from "axios";
 import { apiEndpoints } from "@/config/api";
 import { DatePicker } from "@/components/Datepicker";
 import { DataTablePinning } from "@/components/data-table-pinning";
-import { DialogIklan } from "@/components/ui/modal-dialog";
+import { DialogTambahData } from "@/components/ui/modal-dialog";
+import { useStudios } from "@/hooks/studio/useStudios";
+import { usePerformStudioDetail } from "./hooks/usePerformStudioDetail";
+import { useParams } from "react-router-dom";
 
 const today = new Date();
 
@@ -27,7 +30,9 @@ const toLocalDateString = (date) =>
         .split("T")[0];
 
 export default function StudioPerformDetailPage() {
-
+    const idStudio = useParams().id;
+    const detailStudio = usePerformStudioDetail(idStudio);
+    
     const [dateRange, setDateRange] = useState({
         from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
         to: endOfWeek(today, { weekStartsOn: 1 }),
@@ -126,31 +131,43 @@ export default function StudioPerformDetailPage() {
             cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
         },
     ]
+    const fieldsModalIklan = [
+        { name: "akun", type: "select", label: "Akun" },
+        { name: "iklan", type: "number", label: "Iklan" },
+        { name: "tanggal", type: "date", label: "Tanggal" }
+    ]
 
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             {/* Action Button */}
-            <div className="flex justify-between">
-
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                {/* Title */}
                 <div>
                     <h1 className="font-bold text-2xl">Laporan Studio 1</h1>
-                    <p className="text-accent/60">Update Informasi Laporan Komisi Studio 1 </p>
+                    <p className="text-accent/60">
+                        Update Informasi Laporan Komisi Studio 1
+                    </p>
                 </div>
 
-                <div className="flex gap-2">
+                {/* Filter */}
+                <div className="flex gap-2 items-center justify-end">
                     <DatePicker
-                        withRange="true"
+                        withRange={true}
                         value={dateRange}
                         onChange={setDateRange}
+                        className="w-full sm:w-auto"
                     />
-                    <Button onClick={handleApplyClick} disabled={isFetching}>
+                    <Button
+                        onClick={handleApplyClick}
+                        disabled={isFetching}
+                    >
                         {isFetching ? "Memuat..." : "Terapkan"}
                     </Button>
                 </div>
-
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3">
+            {/* Stat Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                 <StatCard
                     title="Total GMV"
                     value="Rp. 5.450.000"
@@ -168,7 +185,7 @@ export default function StudioPerformDetailPage() {
                     borderColor="#EE8D5B"
                 />
                 <StatCard
-                    title="Komisi belum dibayar"
+                    title="Komisi Tertunda"
                     value="Rp. 5.450.000"
                     percentage="2,01"
                     trend="down"
@@ -189,11 +206,25 @@ export default function StudioPerformDetailPage() {
                     percentage="2,01"
                     trend="up"
                     icon="ad"
-                    borderColor="#3818D9"
+                    borderColor="#2E9"
                 />
             </div>
 
-            <DataTablePinning columns={ColumnComissionDetail} data={data} pinning={["akun"]} customButton={<DialogIklan />} />
+            {/* Data Table */}
+            <div className="mt-6">
+                <DataTablePinning
+                    columns={ColumnComissionDetail}
+                    data={data}
+                    pinning={["akun"]}
+                    customButton={
+                        <DialogTambahData
+                            fields={fieldsModalIklan}
+                            title="Tambah Iklan + PPN"
+                        />
+                    }
+                />
+            </div>
         </MainLayout>
     );
+
 }

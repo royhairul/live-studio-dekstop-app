@@ -32,6 +32,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/data-table";
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const columns = [
   {
@@ -87,11 +88,10 @@ const columns = [
       const platform = row.getValue("platform");
       return (
         <div
-          className={`flex items-center gap-2 px-2 p-1 w-max rounded font-medium text-xs ${
-            platform === "Shopee"
+          className={`flex items-center gap-2 px-2 p-1 w-max rounded font-medium text-xs ${platform === "Shopee"
               ? "bg-amber-600/20 text-amber-600"
               : "bg-black/20 text-black"
-          }`}
+            }`}
         >
           {platform === "Shopee" ? (
             <IconBrandShopee size={20} />
@@ -226,31 +226,31 @@ export default function DashboardPage() {
 
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
-      {/* Report */}
-      <div className="p-4 bg-primary text-primary-foreground rounded-md flex flex-col gap-8 mb-4">
-        <h1 className="title flex gap-2 font-bold text-xl">
-          <IconSparkles className="w-8 h-8" />
+      {/* Overview */}
+      <div className="p-4 bg-primary text-primary-foreground rounded-md flex flex-col gap-6 mb-6">
+        <h1 className="flex gap-2 items-center font-bold text-xl">
+          <IconSparkles className="w-7 h-7" />
           Overview
         </h1>
 
-        <div className="grid grid-cols-3 divide-accent-foreground">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div>
-            <h3 className="flex gap-2 items-center font-semibold text-xs">
-              <IconCoins className="w-6 h-6" />
+            <h3 className="flex gap-2 items-center font-semibold text-xs uppercase tracking-wide">
+              <IconCoins className="w-5 h-5" />
               Total Omset
             </h3>
             <p className="font-bold text-2xl">Rp. 100.000</p>
           </div>
           <div>
-            <h3 className="flex gap-2 items-center font-semibold text-xs">
-              <IconShoppingCart className="w-6 h-6" />
+            <h3 className="flex gap-2 items-center font-semibold text-xs uppercase tracking-wide">
+              <IconShoppingCart className="w-5 h-5" />
               Transaksi Hari Ini
             </h3>
             <p className="font-bold text-2xl">105</p>
           </div>
           <div>
-            <h3 className="flex gap-2 items-center font-semibold text-xs">
-              <IconEye className="w-6 h-6" />
+            <h3 className="flex gap-2 items-center font-semibold text-xs uppercase tracking-wide">
+              <IconEye className="w-5 h-5" />
               Total Penonton
             </h3>
             <p className="font-bold text-2xl">88</p>
@@ -258,67 +258,71 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="w-full flex items-center">
-        <div className="flex justify-between gap-4">
-          <div className="flex flex-col gap-2">
-            <Label className={"text-sm text-primary font-semibold"}>
-              Daily Report
-            </Label>
-            <Select value={dailyReport} onValueChange={setDailyReport}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="today">Hari Ini</SelectItem>
-                <SelectItem value="yesterday">Kemarin</SelectItem>
-                <SelectItem value="week">7 Hari Yang Lalu</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label className={"text-sm text-primary font-semibold"}>
-              Studio
-            </Label>
-            <Select value={studio} onValueChange={setStudio}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="studio1">Studio 1</SelectItem>
-                <SelectItem value="studio2">Studio 2</SelectItem>
-                <SelectItem value="studio3">Studio 3</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label className={"text-sm text-primary font-semibold"}>
-              Sort By
-            </Label>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="most-view">Most View</SelectItem>
-                <SelectItem value="most-transaction">
-                  Most Transaction
-                </SelectItem>
-                <SelectItem value="most-omset">Most Omset</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          {/* <div className="self-end w-full">
-            <Input
-              type={"text"}
-              icon={<IconSearch />}
-              placeholder={"Search..."}
-              className={"w-full bg-white"}
-            />
-          </div> */}
-        </div>
-      </div>
+      {/* Filters */}
+      <Card className="mb-6 bg-accent-foreground">
+        <CardContent className="p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm text-primary font-semibold">Daily Report</Label>
+              <Select value={dailyReport} onValueChange={setDailyReport}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Pilih Periode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Hari Ini</SelectItem>
+                  <SelectItem value="yesterday">Kemarin</SelectItem>
+                  <SelectItem value="week">7 Hari Yang Lalu</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm text-primary font-semibold">Studio</Label>
+              <Select value={studio} onValueChange={setStudio}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Pilih Studio" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="studio1">Studio 1</SelectItem>
+                  <SelectItem value="studio2">Studio 2</SelectItem>
+                  <SelectItem value="studio3">Studio 3</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label className="text-sm text-primary font-semibold">Sort By</Label>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Urutkan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="most-view">Most View</SelectItem>
+                  <SelectItem value="most-transaction">Most Transaction</SelectItem>
+                  <SelectItem value="most-omset">Most Omset</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Bisa aktifkan Search kalau mau */}
+            {/* 
+          <div className="flex flex-col gap-2">
+            <Label className="text-sm text-primary font-semibold">Search</Label>
+            <Input
+              type="text"
+              icon={<IconSearch />}
+              placeholder="Cari..."
+              className="w-full bg-white"
+            />
+          </div> 
+          */}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Data Table */}
       <DataTable columns={columns} data={data} />
     </MainLayout>
-  );
+  )
+
 }

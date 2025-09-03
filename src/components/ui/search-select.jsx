@@ -40,9 +40,6 @@ export function SearchSelectAkun() {
 
     return (
         <div className="grid gap-3">
-            <label htmlFor="akun" className="text-sm font-medium">
-                Pilih Akun
-            </label>
 
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>

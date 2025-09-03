@@ -170,360 +170,222 @@ export default function HostAttendancePage() {
   const handleCheckOut = async (values) => checkOutMutation.mutate(values);
 
   return (
-    <MainLayout breadcrumbs={breadcrumbs}>
-      <div className="w-full flex gap-2 mb-4">
-        <div className="w-1/2 p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md">
-          <h2 className="font-semibold">Presensi Kehadiran</h2>
+  <MainLayout breadcrumbs={breadcrumbs}>
+    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+      {/* Presensi Kehadiran */}
+      <div className="w-full p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md">
+        <h2 className="font-semibold">Presensi Kehadiran</h2>
 
-          <Tabs defaultValue="check_in" className="w-full">
-            <TabsList>
-              <TabsTrigger value="check_in">
-                <IconDoorEnter /> Check In
-              </TabsTrigger>
-              <TabsTrigger value="check_out">
-                <IconDoorExit /> Check Out
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="check_in">
-              <div className="mt-4 bg-primary w-max p-2 rounded">
-                <IconDoorEnter className="text-white" />
-              </div>
-              <h2 className="font-bold text-primary mt-4">Check In</h2>
-              <p className="text-sm/6 text-muted-foreground font-medium mb-6">
-                Submit your attendance for check in
-              </p>
-              <Form {...formCheckIn}>
-                <form
-                  onSubmit={formCheckIn.handleSubmit(handleCheckIn)}
-                  className="flex flex-col gap-4"
-                >
+        <Tabs defaultValue="check_in" className="w-full">
+          <TabsList className="flex flex-wrap">
+            <TabsTrigger value="check_in" className="flex items-center gap-1">
+              <IconDoorEnter className="w-4 h-4" /> Check In
+            </TabsTrigger>
+            <TabsTrigger value="check_out" className="flex items-center gap-1">
+              <IconDoorExit className="w-4 h-4" /> Check Out
+            </TabsTrigger>
+          </TabsList>
 
-                  <FormField
-                    control={formCheckIn.control}
-                    name="shift_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Shift</FormLabel>
-                        <Select
-                          onValueChange={(val) => {
-                            field.onChange(val);
-                          }}
-                          v
-                          value={field.value ? String(field.value) : ""}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Pilih Shift..." />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {shifts.map((shift) => (
-                              <SelectItem
-                                key={shift.id}
-                                value={String(shift.id)}
+          {/* Tab Check In */}
+          <TabsContent value="check_in">
+            <div className="mt-4 bg-primary w-max p-2 rounded">
+              <IconDoorEnter className="text-white" />
+            </div>
+            <h2 className="font-bold text-primary mt-4">Check In</h2>
+            <p className="text-sm/6 text-muted-foreground font-medium mb-6">
+              Submit your attendance for check in
+            </p>
+
+            <Form {...formCheckIn}>
+              <form
+                onSubmit={formCheckIn.handleSubmit(handleCheckIn)}
+                className="flex flex-col gap-4"
+              >
+                {/* Shift */}
+                <FormField
+                  control={formCheckIn.control}
+                  name="shift_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shift</FormLabel>
+                      <Select
+                        onValueChange={(val) => field.onChange(val)}
+                        value={field.value ? String(field.value) : ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pilih Shift..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {shifts.map((shift) => (
+                            <SelectItem key={shift.id} value={String(shift.id)}>
+                              {shift.name} ({formatTime(shift.start_time)} -{" "}
+                              {formatTime(shift.end_time)})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Studio */}
+                <FormField
+                  control={formCheckIn.control}
+                  name="studio_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Studio</FormLabel>
+                      <Select
+                        onValueChange={(val) => field.onChange(val)}
+                        value={field.value ? String(field.value) : ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pilih Studio..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {studio.map((s) => (
+                            <SelectItem key={s.id} value={String(s.id)}>
+                              {s.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Host */}
+                <FormField
+                  control={formCheckIn.control}
+                  name="host_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Host</FormLabel>
+                      <Select
+                        onValueChange={(val) => field.onChange(val)}
+                        value={field.value ? String(field.value) : ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pilih Host..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {hosts.map((host) => (
+                            <SelectItem key={host.id} value={String(host.id)}>
+                              {host.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button type="submit" className="w-full text-white bg-primary">
+                  Submit
+                </Button>
+              </form>
+            </Form>
+          </TabsContent>
+
+          {/* Tab Check Out */}
+          <TabsContent value="check_out">
+            <div className="mt-4 bg-primary w-max p-2 rounded">
+              <IconDoorExit className="text-white" />
+            </div>
+            <h2 className="font-bold text-primary mt-4">Check Out</h2>
+            <p className="text-sm/6 text-muted-foreground font-medium mb-6">
+              Submit your attendance for check out
+            </p>
+
+            <Form {...formCheckOut}>
+              <form
+                onSubmit={formCheckOut.handleSubmit(handleCheckOut)}
+                className="flex flex-col gap-4"
+              >
+                <FormField
+                  control={formCheckOut.control}
+                  name="attendance_ids"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Daftar Host Sudah Check-In</FormLabel>
+                      <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                        {attendances?.length > 0 ? (
+                          attendances.map((attendance) => (
+                            <div
+                              key={attendance.id}
+                              className="flex items-center gap-2 py-2 border-b border-gray-200"
+                            >
+                              <Checkbox
+                                id={`attendance-${attendance.ID}`}
+                                checked={selectedAttendances.includes(
+                                  attendance.ID
+                                )}
+                                onCheckedChange={(checked) => {
+                                  const newValue = checked
+                                    ? [...selectedAttendances, attendance.ID]
+                                    : selectedAttendances.filter(
+                                        (id) => id !== attendance.ID
+                                      );
+                                  setSelectedAttendances(newValue);
+                                  field.onChange(newValue);
+                                }}
+                              />
+                              <Label
+                                htmlFor={`attendance-${attendance.ID}`}
+                                className="w-full flex justify-between text-sm leading-none"
                               >
-                                {shift.name} ({formatTime(shift.start_time)} -{" "}
-                                {formatTime(shift.end_time)})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={formCheckIn.control}
-                    name="studio_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Studio</FormLabel>
-                        <Select
-                          onValueChange={(val) => {
-                            field.onChange(val);
-                          }}
-                          v
-                          value={field.value ? String(field.value) : ""}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Pilih Studio..." />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {studio.map((s) => (
-                              <SelectItem key={s.id} value={String(s.id)}>
-                                {s.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={formCheckIn.control}
-                    name="host_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Host</FormLabel>
-                        <Select
-                          onValueChange={(val) => {
-                            field.onChange(val);
-                          }}
-                          v
-                          value={field.value ? String(field.value) : ""}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Pilih Host..." />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {hosts.map((host) => (
-                              <SelectItem key={host.id} value={String(host.id)}>
-                                {host.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* <FormField
-                    control={formCheckIn.control}
-                    name="host_ids"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Pilih Host</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Input
-                              id="host_ids"
-                              type="text"
-                              placeholder="Pilih Host..."
-                              readOnly
-                              className="cursor-pointer"
-                              value={getSelectedHostNames()}
-                              aria-invalid={
-                                !!formCheckIn.formState.errors.host_ids
-                              }
-                            />
-                          </PopoverTrigger>
-                          <PopoverContent className="w-80">
-                            <div className="grid gap-4">
-                              <div className="space-y-2">
-                                <h4 className="font-medium leading-none">
-                                  Daftar Host
-                                </h4>
-                                <p className="text-xs/6 text-muted-foreground">
-                                  Pilih host yang ingin ditandai presensi.
-                                </p>
-                              </div>
-
-                              <div className="flex items-center gap-2 py-1">
-                                <Checkbox
-                                  id="check-all-scheduled"
-                                  checked={
-                                    scheduledHosts.data &&
-                                    scheduledHosts.data
-                                      .map((item) => item.host_id)
-                                      .every((id) => selectedHosts.includes(id))
-                                  }
-                                  onCheckedChange={(checked) => {
-                                    if (
-                                      !hostsByStudio ||
-                                      !Array.isArray(scheduledHosts)
-                                    )
-                                      return;
-
-                                    const scheduledHostIds = scheduledHosts.map(
-                                      (item) => item.host_id
-                                    );
-
-                                    const newSelected = checked
-                                      ? [
-                                          ...new Set([
-                                            ...selectedHosts,
-                                            ...scheduledHostIds,
-                                          ]),
-                                        ] // centang semua
-                                      : selectedHosts.filter(
-                                          (id) => !scheduledHostIds.includes(id)
-                                        ); // hapus semua
-
-                                    setSelectedHosts(newSelected);
-                                    field.onChange(newSelected);
-                                  }}
-                                />
-                                <Label
-                                  htmlFor="check-all-scheduled"
-                                  className="text-xs font-normal cursor-pointer select-none"
-                                >
-                                  Checklist Semua Sesuai Jadwal
-                                </Label>
-                              </div>
-
-                              <div className="gap-2 pr-2 divide-y divide-muted-foreground/20">
-                                {hosts &&
-                                  hosts.map((host) => {
-                                    const isScheduled = scheduledHosts.some(
-                                      (item) => item.host_id === host.ID
-                                    );
-                                    return (
-                                      <div
-                                        key={host.id}
-                                        className="flex items-center gap-2 py-2"
-                                      >
-                                        <Checkbox
-                                          id={`host-${host.id}`}
-                                          checked={selectedHosts.includes(
-                                            host.id
-                                          )}
-                                          onCheckedChange={(checked) => {
-                                            const newSelected = checked
-                                              ? [...selectedHosts, host.id]
-                                              : selectedHosts.filter(
-                                                  (id) => id !== host.id
-                                                );
-
-                                            setSelectedHosts(newSelected);
-                                            // Update form value dengan array string
-                                            field.onChange(newSelected);
-                                          }}
-                                        />
-                                        <Label
-                                          htmlFor={`host-${host.id}`}
-                                          className="w-full flex text-sm leading-none"
-                                        >
-                                          {host.name}
-                                          <div className="flex-1"></div>
-                                          {isScheduled && (
-                                            <Badge
-                                              variant="secondary"
-                                              className="bg-primary/10 text-primary"
-                                            >
-                                              <IconCalendarCheck />
-                                              Scheduled
-                                            </Badge>
-                                          )}
-                                        </Label>
-                                      </div>
-                                    );
-                                  })}
-                              </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
-                  <Button
-                    type="submit"
-                    className="w-full text-white bg-primary"
-                  >
-                    Submit
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
-
-            <TabsContent value="check_out">
-              <div className="mt-4 bg-primary w-max p-2 rounded">
-                <IconDoorExit className="text-white" />
-              </div>
-              <h2 className="font-bold text-primary mt-4">Check Out</h2>
-              <p className="text-sm/6 text-muted-foreground font-medium mb-6">
-                Submit your attendance for check out
-              </p>
-
-              <Form {...formCheckOut}>
-                <form
-                  onSubmit={formCheckOut.handleSubmit(handleCheckOut)}
-                  className="flex flex-col gap-4"
-                >
-                  <FormField
-                    control={formCheckOut.control}
-                    name="attendance_ids"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Daftar Host Sudah Check-In</FormLabel>
-                        <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
-                          {attendances?.length > 0 ? (
-                            attendances.map((attendance) => (
-                              <div
-                                key={attendance.id}
-                                className="flex items-center gap-2 py-2 border-b border-gray-200"
-                              >
-                                <Checkbox
-                                  id={`attendance-${attendance.ID}`}
-                                  checked={selectedAttendances.includes(
-                                    attendance.ID
+                                <span>{attendance.host_name || "Tanpa Nama"}</span>
+                                <Badge
+                                  className={cn(
+                                    "capitalize",
+                                    attendance.note === "sesuai jadwal"
+                                      ? "bg-primary/10 text-primary"
+                                      : "bg-amber-600/10 text-amber-600"
                                   )}
-                                  onCheckedChange={(checked) => {
-                                    const newValue = checked
-                                      ? [...selectedAttendances, attendance.ID]
-                                      : selectedAttendances.filter(
-                                          (id) => id !== attendance.ID
-                                        );
-                                    setSelectedAttendances(newValue);
-                                    field.onChange(newValue);
-                                  }}
-                                />
-                                <Label
-                                  htmlFor={`attendance-${attendance.ID}`}
-                                  className="w-full flex justify-between text-sm leading-none"
                                 >
-                                  <span>
-                                    {attendance.host_name || "Tanpa Nama"}
-                                  </span>
-                                  <Badge
-                                    className={cn(
-                                      "capitalize ",
-                                      attendance.note == "sesuai jadwal"
-                                        ? "bg-primary/10 text-primary"
-                                        : "bg-amber-600/10 text-amber-600"
-                                    )}
-                                  >
-                                    {attendance.note == "sesuai jadwal" ? (
-                                      <IconCalendarCheck />
-                                    ) : (
-                                      <IconCalendarX />
-                                    )}
-                                    {attendance.note}
-                                  </Badge>
-                                </Label>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="p-4 bg-muted-foreground/15 text-sm text-muted-foreground italic">
-                              Belum ada host yang check-in.
+                                  {attendance.note === "sesuai jadwal" ? (
+                                    <IconCalendarCheck />
+                                  ) : (
+                                    <IconCalendarX />
+                                  )}
+                                  {attendance.note}
+                                </Badge>
+                              </Label>
                             </div>
-                          )}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          ))
+                        ) : (
+                          <div className="p-4 bg-muted-foreground/15 text-sm text-muted-foreground italic">
+                            Belum ada host yang check-in.
+                          </div>
+                        )}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <Button
-                    type="submit"
-                    className="w-full text-white bg-primary"
-                  >
-                    Check OUT
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
-          </Tabs>
-        </div>
+                <Button type="submit" className="w-full text-white bg-primary">
+                  Check OUT
+                </Button>
+              </form>
+            </Form>
+          </TabsContent>
+        </Tabs>
       </div>
-    </MainLayout>
-  );
+
+      {/* Slot kosong untuk kartu tambahan biar responsif */}
+      <div className="w-full hidden lg:block"></div>
+    </div>
+  </MainLayout>
+);
+
 }

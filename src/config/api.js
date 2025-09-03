@@ -1,5 +1,6 @@
 export const baseUrl = import.meta.env.VITE_API_URL;
 export const baseWsUrl = import.meta.env.VITE_API_URL;
+const mockApi = import.meta.env.VITE_MOCK_API;
 
 export const apiEndpoints = {
   me: () => `${baseUrl}/auth/me`,
@@ -15,11 +16,11 @@ export const apiEndpoints = {
   },
 
   perform: {
-    host: () => `${baseUrl}/performa/host`,
-    hostDetail: (id) => `${baseUrl}/performa/host/${id}`,
-    studio: () => `${baseUrl}/perform/studio`,
-    studioDetail: (id) => `${baseUrl}/perform/studio/${id}`,
-    account: () => `${baseUrl}/perform/account`,
+    host: () => `${mockApi}/performa/host`,
+    hostDetail: (id) => `${mockApi}/performa/host/${id}`,
+    studio: () => `${mockApi}/performa/studio`,
+    studioDetail: (id) => `${mockApi}/performa/studio/${id}`,
+    account: () => `${mockApi}/performa/account`,
   },
 
   // User

@@ -42,8 +42,8 @@ export default function AccountPerformPage() {
       }
     },
     {
-      accessorKey: "Paid",
-      header: "Pesanan Dibayar",
+      accessorKey: "Make",
+      header: "Pesanan Dibuat",
       cell: ({ row }) => {
         const value = row.original.total_paid;
         return new Intl.NumberFormat("id-ID", {
@@ -114,27 +114,33 @@ export default function AccountPerformPage() {
   ];
 
   return (
-    <MainLayout breadcrumbs={breadcrumbs}>
-      <div className="p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md w-full">
-        <div className="flex justify-between">
-          <div className="">
-            <h2 className="font-bold text-xl">Data Laporan Akun Studio Live</h2>
-            <p className="text-accent/60 text-sm">Update Informasi Laporan Akun Studio Live</p>
-          </div>
-          <div className="flex gap-2">
-            <DatePicker
-              withRange="true"
-              value={dateRange}
-              onChange={setDateRange}
-            />
-            <Button onClick={handleApplyClick} disabled={isFetching}>
-              {isFetching ? "Memuat..." : "Terapkan"}
-            </Button>
-          </div>
-        </div>
-
-        <PerformTable columns={performColumns} data={data} />
+  <MainLayout breadcrumbs={breadcrumbs}>
+  <div className="p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md w-full mb-6">
+    {/* Header Section */}
+    <div className="flex flex-col lg:flex-row justify-between gap-3 lg:items-center border-b pb-3">
+      <div>
+        <h2 className="font-bold text-xl">Data Laporan Akun Studio Live</h2>
+        <p className="text-accent/60 text-sm">
+          Update Informasi Laporan Akun Studio Live
+        </p>
       </div>
-    </MainLayout>
+
+      <div className="flex gap-2 items-center justify-end">
+        <DatePicker
+          withRange="true"
+          value={dateRange}
+          onChange={setDateRange}
+        />
+        <Button onClick={handleApplyClick} disabled={isFetching}>
+          {isFetching ? "Memuat..." : "Terapkan"}
+        </Button>
+      </div>
+    </div>
+
+    {/* Table Section */}
+    <PerformTable columns={performColumns} data={data} />
+  </div>
+</MainLayout>
+
   );
 }

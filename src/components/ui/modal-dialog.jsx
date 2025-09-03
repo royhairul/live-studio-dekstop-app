@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogClose,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -14,45 +13,59 @@ import { Label } from "@/components/ui/label"
 import { SearchSelectAkun } from "./search-select"
 import { DatePicker } from "../Datepicker"
 
-export function DialogIklan() {
+export function DialogTambahData({ title = "Tambah Data", fields = [] }) {
     return (
-        <Dialog >
+        <Dialog>
             <form>
-                <DialogTrigger asChild >
-                    <Button
-                        className="relative overflow-hidden px-4 py-2 bg-primary text-white font-semibold rounded-md transition-all duration-300 hover:-translate-y-1 hover:scale-105  hover:bg-accent hover:shadow-lg hover:ring-2 hover:ring-primary"
-                    >
-                        <span className="relative z-10">Tambah Iklan + PPN</span>
+                <DialogTrigger asChild>
+                    <Button className="relative overflow-hidden px-4 py-2 bg-primary text-white font-semibold rounded-md transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:bg-accent hover:shadow-lg hover:ring-2 hover:ring-primary">
+                        <span className="relative z-10">{title}</span>
                         <span className="absolute inset-0 bg-white opacity-10 blur-sm transition-all duration-500 hover:opacity-20"></span>
                     </Button>
                 </DialogTrigger>
+
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Tambah Iklan</DialogTitle>
+                        <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
+
                     <div className="grid gap-4">
-                        <div className="grid gap-3">
-                            <SearchSelectAkun />
-                        </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="iklan">Iklan</Label>
-                            <Input className="border-accent" id="iklan" name="iklan" placeholder="50000" />
-                        </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="tanggal">Tanggal</Label>
-                            <DatePicker />
-                        </div>
+                        {fields.map((field, i) => (
+                            <div key={i} className="grid gap-3">
+                                <Label htmlFor={field.name}>{field.label}</Label>
+                                {field.type === "select" ? (
+                                    <SearchSelectAkun />
+                                ) : field.type === "date" ? (
+                                    <DatePicker />
+                                ) : field.type === "month" ? (
+                                    <input
+                                        type="month"
+                                        id={field.name}
+                                        name={field.name}
+                                        className="w-full border rounded-lg px-3 py-2 border-accent"
+                                    />
+                                ) : (
+                                    <Input
+                                        className="border-accent"
+                                        id={field.name}
+                                        name={field.name}
+                                        placeholder={field.placeholder || ""}
+                                        type={field.type || "text"}
+                                    />
+                                )}
+                            </div>
+                        ))}
                     </div>
+
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button
-                                className="relative overflow-hidden px-4 py-2 bg-red-600 text-white font-semibold rounded-md transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:bg-accent hover:shadow-lg hover:ring-2 hover:ring-primary"
-                            >
+                            <Button className="relative overflow-hidden px-4 py-2 bg-red-600 text-white font-semibold rounded-md transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:bg-accent hover:shadow-lg hover:ring-2 hover:ring-primary">
                                 <span className="relative z-10">Batal</span>
                                 <span className="absolute inset-0 bg-white opacity-10 blur-sm transition-all duration-500 hover:opacity-20"></span>
                             </Button>
                         </DialogClose>
-                        <Button type="submit"
+                        <Button
+                            type="submit"
                             className="relative overflow-hidden px-4 py-2 bg-primary text-white font-semibold rounded-md transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:bg-accent hover:shadow-lg hover:ring-2 hover:ring-primary"
                         >
                             <span className="relative z-10">Simpan</span>

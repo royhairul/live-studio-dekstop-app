@@ -60,7 +60,7 @@ const StatCard = ({
                         <span
                             className={`font-bold pr-1 ${isUp ? "text-green-500" : "text-red-500"}`}
                         >
-                            {isUp ? "+" : "-"}
+                            {isUp ? "+" : ""}
                             {percentage}%
                         </span>
                     </>
