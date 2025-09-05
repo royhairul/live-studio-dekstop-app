@@ -83,7 +83,7 @@ export default function AccountCreatePage() {
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
 
       setTimeout(() => {
-        navigate("/account/all");
+        navigate("/management/account");
       }, 1000);
     },
     onError: (error) => {
@@ -172,7 +172,7 @@ return (
               </FormLabel>
               <FormControl>
                 <Textarea
-                  className="rounded-xl border-gray-300 transition w-full"
+                  className="rounded-xl border-gray-300 transition max-w-lg w-full"
                   placeholder="Masukkan Cookies..."
                   rows={5}
                   {...field}

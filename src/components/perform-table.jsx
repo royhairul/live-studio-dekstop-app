@@ -96,7 +96,7 @@ export default function PerformTable({ columns = [], data = [], customButton = n
                 </div>
             </div>
 
-            {/* Table Header (desktop only) */}
+            {/* Table Header */}
             <div
                 className="hidden md:grid gap-4 text-gray-900 font-semibold tracking-wide border-b border-green-500 pb-2"
                 style={{
@@ -118,8 +118,7 @@ export default function PerformTable({ columns = [], data = [], customButton = n
                     table.getRowModel().rows.map((row) => (
                         <div
                             key={row.id}
-                            className="bg-white rounded-lg p-4 shadow border-l-4 border-[#2E964C] 
-                       flex flex-col md:grid gap-4"
+                            className="bg-white rounded-lg p-4 shadow border-l-4 border-[#2E964C] grid gap-4"
                             style={{
                                 gridTemplateColumns: `repeat(${row.getVisibleCells().length}, minmax(0, 1fr))`,
                             }}
@@ -129,8 +128,8 @@ export default function PerformTable({ columns = [], data = [], customButton = n
                                     key={cell.id}
                                     className="col-span-1 text-gray-900 font-normal"
                                 >
-                                    {/* Label tampil hanya di mobile */}
-                                    <div className="block md:hidden text-xs font-semibold text-gray-500">
+                                    {/* Label hanya muncul di mobile */}
+                                    <div className="block md:hidden text-xs font-semibold text-gray-500 mb-1">
                                         {typeof cell.column.columnDef.header === "function"
                                             ? cell.column.columnDef.accessorKey
                                             : cell.column.columnDef.header ||
@@ -147,6 +146,7 @@ export default function PerformTable({ columns = [], data = [], customButton = n
                     </div>
                 )}
             </div>
+
 
             {/* Pagination */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4">

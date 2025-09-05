@@ -16,11 +16,19 @@ export const apiEndpoints = {
   },
 
   perform: {
-    host: () => `${mockApi}/performa/host`,
-    hostDetail: (id) => `${mockApi}/performa/host/${id}`,
-    studio: () => `${mockApi}/performa/studio`,
-    studioDetail: (id) => `${mockApi}/performa/studio/${id}`,
-    account: () => `${mockApi}/performa/account`,
+    host: () => `${baseUrl}/performa/host`,
+    hostDetail: (id) => `${baseUrl}/performa/host/${id}`,
+    studio: () => `${baseUrl}/performa/studio`,
+    studioDetail: (id) => `${baseUrl}/performa/studio/${id}`,
+    account: () => `${baseUrl}/performa/account`,
+  },
+
+  ads: {
+    getAll: () => `${baseUrl}/accountads`,
+    create: () => `${baseUrl}/accountads`,
+    update: (id) => `${baseUrl}/accountads/${id}`,
+    findById: (id) => `${baseUrl}/accountads/${id}`,
+    delete: (id) => `${baseUrl}/accountads/${id}`,
   },
 
   // User

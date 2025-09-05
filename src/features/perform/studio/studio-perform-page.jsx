@@ -23,8 +23,6 @@ export default function StudioPerformPage() {
         from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
         to: endOfWeek(today, { weekStartsOn: 1 }),
     });
-    console.log("ini studio", studio);
-
 
     const [appliedDateRange, setAppliedDateRange] = useState({
         from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
@@ -107,9 +105,9 @@ export default function StudioPerformPage() {
                     />
                     <StatCard
                         title="Total Iklan + PPN"
-                        value={`Rp. ${studio?.metrics?.ads.toLocaleString("id-ID") || 0}`}
-                        percentage="—"
-                        trend="up"
+                        value={`Rp. ${studio?.metrics?.ads.total.toLocaleString("id-ID") || 0}`}
+                        percentage={`${studio?.metrics?.ads.ratio || 0}`}
+                        trend={studio?.metrics?.ads.ratio >= 0 ? "up" : "down"}
                         icon="ad"
                         borderColor="#2E9"
                     />

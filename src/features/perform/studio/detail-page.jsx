@@ -12,7 +12,6 @@ import { apiEndpoints } from "@/config/api";
 import { DatePicker } from "@/components/Datepicker";
 import { DataTablePinning } from "@/components/data-table-pinning";
 import { DialogTambahData } from "@/components/ui/modal-dialog";
-import { useStudios } from "@/hooks/studio/useStudios";
 import { usePerformStudioDetail } from "./hooks/usePerformStudioDetail";
 import { useParams } from "react-router-dom";
 
@@ -32,7 +31,6 @@ const toLocalDateString = (date) =>
 export default function StudioPerformDetailPage() {
     const idStudio = useParams().id;
     const detailStudio = usePerformStudioDetail(idStudio);
-    
     const [dateRange, setDateRange] = useState({
         from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
         to: endOfWeek(today, { weekStartsOn: 1 }),
@@ -143,9 +141,9 @@ export default function StudioPerformDetailPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 {/* Title */}
                 <div>
-                    <h1 className="font-bold text-2xl">Laporan Studio 1</h1>
+                    <h1 className="font-bold text-2xl">Laporan {detailStudio.studioDetail.studio_name}</h1>
                     <p className="text-accent/60">
-                        Update Informasi Laporan Komisi Studio 1
+                        Update Informasi Laporan Komisi {detailStudio.studioDetail.studio_name}
                     </p>
                 </div>
 
@@ -170,41 +168,41 @@ export default function StudioPerformDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                 <StatCard
                     title="Total GMV"
-                    value="Rp. 5.450.000"
-                    percentage="2,01"
-                    trend="up"
+                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.gmv.total.toLocaleString("id-ID") || 0}`}
+                    percentage={`${detailStudio?.studioDetail.metrics?.gmv.ratio || 0}`}
+                    trend={detailStudio?.studioDetail.metrics?.gmv.ratio >= 0 ? "up" : "down"}
                     icon="cart"
                     borderColor="#3818D9"
                 />
                 <StatCard
                     title="Komisi dibayar"
-                    value="Rp. 5.450.000"
-                    percentage="2,01"
-                    trend="up"
+                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.commission_paid.total.toLocaleString("id-ID") || 0}`}
+                    percentage={`${detailStudio?.studioDetail.metrics?.commission_paid.ratio || 0}`}
+                    trend={detailStudio?.studioDetail.metrics?.commission_paid.ratio >= 0 ? "up" : "down"}
                     icon="coin"
                     borderColor="#EE8D5B"
                 />
                 <StatCard
                     title="Komisi Tertunda"
-                    value="Rp. 5.450.000"
-                    percentage="2,01"
-                    trend="down"
+                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.commission_pending.total.toLocaleString("id-ID") || 0}`}
+                    percentage={`${detailStudio?.studioDetail.metrics?.commission_pending.ratio || 0}`}
+                    trend={detailStudio?.studioDetail.metrics?.commission_pending.ratio >= 0 ? "up" : "down"}
                     icon="speaker"
                     borderColor="#D43B3B"
                 />
                 <StatCard
                     title="Total Pendapatan"
-                    value="Rp. 5.450.000"
-                    percentage="2,01"
-                    trend="up"
+                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.income.total.toLocaleString("id-ID") || 0}`}
+                    percentage={`${detailStudio?.studioDetail.metrics?.income.ratio || 0}`}
+                    trend={detailStudio?.studioDetail.metrics?.income.ratio >= 0 ? "up" : "down"}
                     icon="wallet"
                     borderColor="#2E964C"
                 />
                 <StatCard
                     title="Total Iklan + PPN"
-                    value="Rp. 5.450.000"
-                    percentage="2,01"
-                    trend="up"
+                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.ads.total.toLocaleString("id-ID") || 0}`}
+                    percentage={`${detailStudio?.studioDetail.metrics?.ads.ratio || 0}`}
+                    trend={detailStudio?.studioDetail.metrics?.ads.ratio >= 0 ? "up" : "down"}
                     icon="ad"
                     borderColor="#2E9"
                 />

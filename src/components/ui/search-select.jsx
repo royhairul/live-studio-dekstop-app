@@ -13,26 +13,20 @@ import {
     CommandEmpty,
 } from "@/components/ui/command";
 
-const akunList = [
-    { label: "Pedro Duarte", value: "pedro" },
-    { label: "Maria Lopez", value: "maria" },
-    { label: "John Smith", value: "john" },
-    { label: "Sakura Tanaka", value: "sakura" },
-];
-
-export function SearchSelectAkun() {
-    const [selectedAkun, setSelectedAkun] = useState(akunList[0]);
+export function SearchSelect({ options, placeholder = "Cari...", onChange }) {
+    const [selected, setSelected] = useState(options[0] || null);
     const [open, setOpen] = useState(false);
-    const inputRef = useRef(null);
+    const inputRef = useRef (null);
 
     const handleEnter = (e) => {
         if (e.key === "Enter") {
             const query = inputRef.current?.value.toLowerCase();
-            const match = akunList.find((akun) =>
-                akun.label.toLowerCase().includes(query || "")
+            const match = options.find((opt) =>
+                opt.label.toLowerCase().includes(query || "")
             );
             if (match) {
-                setSelectedAkun(match);
+                setSelected(match);
+                onChange?.(match);
                 setOpen(false);
             }
         }
@@ -40,14 +34,13 @@ export function SearchSelectAkun() {
 
     return (
         <div className="grid gap-3">
-
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
                         className="w-full justify-between bg-accent-foreground text-accent hover:bg-accent-foreground border-1"
                         onClick={() => setOpen(true)}
                     >
-                        {selectedAkun.label}
+                        {selected ? selected.label : "Pilih"}
                     </Button>
                 </PopoverTrigger>
 
@@ -55,21 +48,22 @@ export function SearchSelectAkun() {
                     <Command className={"bg-accent-foreground text-accent"}>
                         <CommandInput
                             ref={inputRef}
-                            placeholder="Cari akun..."
+                            placeholder={placeholder}
                             onKeyDown={handleEnter}
                             autoFocus
                         />
                         <CommandList>
                             <CommandEmpty>Tidak ditemukan.</CommandEmpty>
-                            {akunList.map((akun) => (
+                            {options.map((opt) => (
                                 <CommandItem
-                                    key={akun.value}
+                                    key={opt.value}
                                     onSelect={() => {
-                                        setSelectedAkun(akun);
+                                        setSelected(opt);
+                                        onChange?.(opt);
                                         setOpen(false);
                                     }}
                                 >
-                                    {akun.label}
+                                    {opt.label}
                                 </CommandItem>
                             ))}
                         </CommandList>

@@ -5,7 +5,7 @@ import { DialogTambahData } from "@/components/ui/modal-dialog";
 import { apiEndpoints } from "@/config/api";
 import { useHosts } from "@/hooks/host/useHosts";
 import MainLayout from "@/layouts/main-layout";
-import { IconBarrierBlock, IconChartLine, IconShoppingBag } from "@tabler/icons-react";
+import { IconBarrierBlock, IconChartLine, IconShoppingBag, IconSquareRoundedCheckFilled, IconTargetArrow } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { differenceInDays, endOfWeek, startOfWeek } from "date-fns";
@@ -30,46 +30,55 @@ export default function TargetPage() {
     {
       accessorKey: "name",
       header: "Studio",
-      enableGlobalFilter: true,
-      cell: ({ row }) => row.original.name,
+      cell: ({ row }) => {
+        return (
+          <div className="p-3 bg-primary/20 rounded-lg w-fit">
+            {row.original.name}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "gmv",
-      header: "Target GMV",
+      header: "GMV",
       cell: ({ row }) => {
-        const value = row.original.target_gmv;
-        return new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-        }).format(value);
+        const target = row.original.target_gmv;
+        const realisasi = row.original.realisasi_gmv;
+        const persen = target ? (realisasi / target) * 100 : 0;
+
+        return (
+          <div className="space-y-1">
+            <div className="flex items-center gap-2"><IconTargetArrow className="text-red-500" /> {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(target)}</div>
+            <div className="flex items-center gap-2">
+              <IconSquareRoundedCheckFilled className="text-green-500" />  {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(realisasi)}{" "}
+              <span className="text-sm text-gray-500">({persen.toFixed(1)}%)</span>
+            </div>
+          </div>
+        );
       },
     },
     {
       accessorKey: "pendapatan",
-      header: "Target Pendapatan",
+      header: "Pendapatan",
       cell: ({ row }) => {
-        const value = row.original.target_pendapatan;
-        return new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-        }).format(value);
+        const target = row.original.target_pendapatan;
+        const realisasi = row.original.realisasi_pendapatan;
+        const persen = target ? (realisasi / target) * 100 : 0;
+
+        return (
+          <div className="space-y-1">
+            <div className="flex items-center gap-2"><IconTargetArrow className="text-red-500" /> {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(target)}</div>
+            <div className="flex items-center gap-2">
+              <IconSquareRoundedCheckFilled className="text-green-500" />  {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(realisasi)}{" "}
+              <span className="text-sm text-gray-500">({persen.toFixed(1)}%)</span>
+            </div>
+          </div>
+        );
       },
     },
-    {
-      accessorKey: "realisasi",
-      header: "Realisasi",
-      cell: ({ row }) => {
-        const value = row.original.realisasi;
-        return new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-        }).format(value);
-      },
-    }
   ];
+
+
 
   const fieldsTambahTarget = [
     { name: "studio", type: "select", label: "Studio" },
@@ -146,7 +155,7 @@ export default function TargetPage() {
           </div>
         </div>
 
-        <PerformTable columns={performColumns} data={data} customButton={<DialogTambahData title="Tambah Target Studio" fields={fieldsTambahTarget}/>} />
+        <PerformTable columns={performColumns} data={data} customButton={<DialogTambahData title="Tambah Target Studio" fields={fieldsTambahTarget} />} />
       </div>
     </MainLayout>
   );

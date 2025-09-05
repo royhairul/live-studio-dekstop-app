@@ -35,58 +35,51 @@ export default function HostPerformPage() {
             accessorKey: "name",
             header: "Nama Host",
             enableGlobalFilter: true,
-            cell: ({ row }) => row.original.name,
         },
         {
-            accessorKey: "totalDuration",
+            accessorKey: "total_duration", // samakan dengan API
             header: "Total Durasi",
-            cell: ({ row }) => {
-                const totalSec = row.original.total_duration;
+            cell: ({ getValue }) => {
+                const totalSec = getValue(); // langsung ambil dari accessorKey
                 const hours = Math.floor(totalSec / 3600);
                 const minutes = Math.floor((totalSec % 3600) / 60);
                 return `${hours}j ${minutes}m`;
             }
         },
         {
-            accessorKey: "totalDibuat",
+            accessorKey: "total_paid",
             header: "Total Pesanan Dibuat",
-            cell: ({ row }) => {
-                const value = row.original.total_paid;
-                return new Intl.NumberFormat("id-ID", {
+            cell: ({ getValue }) =>
+                new Intl.NumberFormat("id-ID", {
                     style: "currency",
                     currency: "IDR",
                     minimumFractionDigits: 0,
-                }).format(value);
-            },
+                }).format(getValue())
         },
         {
-            accessorKey: "totalDikirim",
+            accessorKey: "total_sales",
             header: "Total Pesanan Dikirim",
-            cell: ({ row }) => {
-                const value = row.original.total_sales;
-                return new Intl.NumberFormat("id-ID", {
+            cell: ({ getValue }) =>
+                new Intl.NumberFormat("id-ID", {
                     style: "currency",
                     currency: "IDR",
                     minimumFractionDigits: 0,
-                }).format(value);
-            },
+                }).format(getValue())
         },
         {
-            accessorKey: "action",
+            accessorKey: "id", // pakai ID untuk action
             header: "Detail Host",
             cell: ({ row }) => (
-                <Link
-                    to={`/perform/host/detail/${row.original.id}`}
-                >
+                <Link to={`/perform/host/detail/${row.original.id}`}>
                     <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
                         Detail Host
                         <IconArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
                     </Button>
                 </Link>
-
             ),
         },
     ];
+
 
 
     const [dateRange, setDateRange] = useState({
