@@ -14,6 +14,8 @@ import { DataTablePinning } from "@/components/data-table-pinning";
 import { DialogTambahData } from "@/components/ui/modal-dialog";
 import { usePerformStudioDetail } from "./hooks/usePerformStudioDetail";
 import { useParams } from "react-router-dom";
+import formatIDR from "@/helpers/formatIDR";
+import { formatPercentage, getPercentageACOS } from "@/helpers/formatPercent";
 
 const today = new Date();
 
@@ -31,6 +33,8 @@ const toLocalDateString = (date) =>
 export default function StudioPerformDetailPage() {
     const idStudio = useParams().id;
     const detailStudio = usePerformStudioDetail(idStudio);
+    console.log(detailStudio);
+    
     const [dateRange, setDateRange] = useState({
         from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
         to: endOfWeek(today, { weekStartsOn: 1 }),
@@ -84,49 +88,49 @@ export default function StudioPerformDetailPage() {
     const ColumnComissionDetail = [
         {
             id: "akun",
-            accessorKey: "akun",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Nama Akun</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "account_name",
+            header: () => <div className=" font-semibold text-accent ">Nama Akun</div>,
+            cell: ({ getValue }) => <div >{getValue()}</div>,
         },
         {
             id: "gmv",
             accessorKey: "gmv",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">GMV</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            header: () => <div className=" font-semibold text-accent ">GMV</div>,
+            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
         {
             id: "komisi-dibayar",
-            accessorKey: "komisi-dibayar",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Komisi Dibayar</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "commission_paid",
+            header: () => <div className=" font-semibold text-accent ">Komisi Dibayar</div>,
+            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
         {
             id: "komisi-tertunda",
-            accessorKey: "komisi-tertunda",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Komisi Tertunda</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "commission_pending",
+            header: () => <div className=" font-semibold text-accent ">Komisi Tertunda</div>,
+            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
         {
             id: "iklan",
-            accessorKey: "iklan",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Iklan + PPN</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            accessorKey: "ads",
+            header: () => <div className=" font-semibold text-accent ">Iklan + PPN</div>,
+            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
         {
             id: "acos",
             accessorKey: "acos",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">ACOS</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            header: () => <div className=" font-semibold text-accent">ACOS</div>,
+            cell: ({ getValue }) => <div className={`${getPercentageACOS(getValue())} w-max`} >{formatPercentage(getValue())}</div>,
         }, {
             id: "roas",
             accessorKey: "roas",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">ROAS</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            header: () => <div className=" font-semibold text-accent ">ROAS</div>,
+            cell: ({ getValue }) => <div >{getValue()}</div>,
         }, {
-            id: "pendapatan",
-            accessorKey: "pendapatan",
-            header: () => <div className=" font-semibold text-accent "><p className="text-center">Pendapatan</p></div>,
-            cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+            id: "income",
+            accessorKey: "income",
+            header: () => <div className=" font-semibold text-accent ">Pendapatan</div>,
+            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
     ]
     const fieldsModalIklan = [
@@ -168,7 +172,7 @@ export default function StudioPerformDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                 <StatCard
                     title="Total GMV"
-                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.gmv.total.toLocaleString("id-ID") || 0}`}
+                    value={formatIDR(detailStudio?.studioDetail?.metrics?.gmv.total) || 0}
                     percentage={`${detailStudio?.studioDetail.metrics?.gmv.ratio || 0}`}
                     trend={detailStudio?.studioDetail.metrics?.gmv.ratio >= 0 ? "up" : "down"}
                     icon="cart"
@@ -176,7 +180,7 @@ export default function StudioPerformDetailPage() {
                 />
                 <StatCard
                     title="Komisi dibayar"
-                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.commission_paid.total.toLocaleString("id-ID") || 0}`}
+                    value={formatIDR(detailStudio?.studioDetail?.metrics?.commission_paid.total) || 0}
                     percentage={`${detailStudio?.studioDetail.metrics?.commission_paid.ratio || 0}`}
                     trend={detailStudio?.studioDetail.metrics?.commission_paid.ratio >= 0 ? "up" : "down"}
                     icon="coin"
@@ -184,7 +188,7 @@ export default function StudioPerformDetailPage() {
                 />
                 <StatCard
                     title="Komisi Tertunda"
-                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.commission_pending.total.toLocaleString("id-ID") || 0}`}
+                    value={formatIDR(detailStudio?.studioDetail?.metrics?.commission_pending.total) || 0}
                     percentage={`${detailStudio?.studioDetail.metrics?.commission_pending.ratio || 0}`}
                     trend={detailStudio?.studioDetail.metrics?.commission_pending.ratio >= 0 ? "up" : "down"}
                     icon="speaker"
@@ -192,7 +196,7 @@ export default function StudioPerformDetailPage() {
                 />
                 <StatCard
                     title="Total Pendapatan"
-                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.income.total.toLocaleString("id-ID") || 0}`}
+                    value={formatIDR(detailStudio?.studioDetail?.metrics?.income.total) || 0}
                     percentage={`${detailStudio?.studioDetail.metrics?.income.ratio || 0}`}
                     trend={detailStudio?.studioDetail.metrics?.income.ratio >= 0 ? "up" : "down"}
                     icon="wallet"
@@ -200,7 +204,7 @@ export default function StudioPerformDetailPage() {
                 />
                 <StatCard
                     title="Total Iklan + PPN"
-                    value={`Rp. ${detailStudio?.studioDetail?.metrics?.ads.total.toLocaleString("id-ID") || 0}`}
+                    value={formatIDR(detailStudio?.studioDetail?.metrics?.ads.total) || 0}
                     percentage={`${detailStudio?.studioDetail.metrics?.ads.ratio || 0}`}
                     trend={detailStudio?.studioDetail.metrics?.ads.ratio >= 0 ? "up" : "down"}
                     icon="ad"
@@ -212,7 +216,7 @@ export default function StudioPerformDetailPage() {
             <div className="mt-6">
                 <DataTablePinning
                     columns={ColumnComissionDetail}
-                    data={data}
+                    data={detailStudio.studioDetail.list}
                     pinning={["akun"]}
                     customButton={
                         <DialogTambahData
