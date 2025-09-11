@@ -3,66 +3,47 @@ import PerformTable from "./perform-table";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { IconArrowRight } from "@tabler/icons-react";
+import formatIDR from "@/helpers/formatIDR";
 
 export default function StudioFinanceList({ viewMode, data = [] }) {
 
     const performDetailHostColumn = [
         {
-            id: "studio_name",
+            id: "Studio",
             accessorKey: "studio_name",
-            header: () => (
-                <div className="font-semibold text-accent w-40"> {/* fix width */}
-                    <p>Studio</p>
-                </div>
-            ),
+            header: "Studio",
             cell: ({ getValue }) => (
                 <div className="truncate w-40">{getValue()}</div>
             ),
         },
         {
-            id: "gmv",
+            id: "GMV",
             accessorKey: "gmv",
-            header: () => (
-                <div className="font-semibold text-accent w-32">
-                    <p>Total GMV</p>
-                </div>
-            ),
+            header: "GMV",
             cell: ({ getValue }) => (
-                <div className="w-32">{`Rp. ${Number(getValue() || 0).toLocaleString("id-ID")}`}</div>
+                <div className="w-32">{formatIDR(getValue())}</div>
             ),
         },
         {
-            id: "commission",
+            id: "Total Komisi",
             accessorKey: "commission",
-            header: () => (
-                <div className="font-semibold text-accent w-32">
-                    <p>Total Komisi</p>
-                </div>
-            ),
+            header: "Total Komisi",
             cell: ({ getValue }) => (
-                <div className="w-32">{`Rp. ${Number(getValue() || 0).toLocaleString("id-ID")}`}</div>
+                <div className="w-32">{formatIDR(getValue())}</div>
             ),
         },
         {
-            id: "ads",
+            id: "Iklan + PPN",
             accessorKey: "ads",
-            header: () => (
-                <div className="font-semibold text-accent w-40">
-                    <p>Total Iklan + PPN</p>
-                </div>
-            ),
+            header: "Iklan + PPN",
             cell: ({ getValue }) => (
-                <div className="w-40">{`Rp. ${Number(getValue() || 0).toLocaleString("id-ID")}`}</div>
+                <div className="w-40">{formatIDR(getValue())}</div>
             ),
         },
         {
-            id: "action",
+            id: "Aksi",
             accessorKey: "studio_id",
-            header: () => (
-                <div className="font-semibold text-accent w-36">
-                    <p>Detail Studio</p>
-                </div>
-            ),
+            header: "Aksi",
             cell: ({ getValue }) => (
                 <div className="w-36">
                     <Link to={`/perform/studio/detail/${getValue()}`}>

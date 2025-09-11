@@ -3,14 +3,14 @@ import { IconChartBar, IconChartLine, IconShoppingBag, IconShoppingCart } from "
 import InitialsAvatar from "@/components/initials-avatar";
 import StatCard from "@/components/ui/stat-card";
 import PerformTable from "@/components/perform-table";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { apiEndpoints } from "@/config/api";
 import { useParams } from "react-router-dom";
+import formatIDR from "@/helpers/formatIDR";
+import { intToHumanTime } from "@/helpers/formatTime";
+import DateRangeFilter from "../components/DateRangeFilter";
+import useDateRangeQuery from "../hooks/useDateRangeQuery";
+import { getYesterdayRange } from "@/helpers/formatDate";
 import { useState } from "react";
-import { DatePicker } from "@/components/Datepicker";
-import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/utils";
 
 
 const breadcrumbs = [
@@ -42,22 +42,7 @@ const performDetailHostColumn = [
         header: "Durasi Live",
         cell: ({ row }) => {
             const totalSec = row.original.duration;
-            const hours = Math.floor(totalSec / 3600);
-            const minutes = Math.floor((totalSec % 3600) / 60);
-            return `${hours}j ${minutes}m`;
-        }
-    },
-    {
-        id: "pesanan-dikirim",
-        accessorKey: "pesanan-dikirim",
-        header: "Pesanan Dikirim",
-        cell: ({ row }) => {
-            const value = row.original.total_sales;
-            return new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-                minimumFractionDigits: 0,
-            }).format(value);
+            return intToHumanTime(totalSec);
         }
     },
     {
@@ -66,51 +51,38 @@ const performDetailHostColumn = [
         header: "Pesanan Dibuat",
         cell: ({ row }) => {
             const value = row.original.total_paid;
-            return new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-                minimumFractionDigits: 0,
-            }).format(value);
+            return formatIDR(value);
         }
     },
+    {
+        id: "pesanan-dikirim",
+        accessorKey: "pesanan-dikirim",
+        header: "Pesanan Dikirim",
+        cell: ({ row }) => {
+            const value = row.original.total_sales;
+            return formatIDR(value);
+        }
+    },
+
 ];
 
 
 export default function HostDetailPerformPage() {
     const id = useParams().id;
-    const [dateRange, setDateRange] = useState(null);
-    const [appliedRange, setAppliedRange] = useState(null);
+    const [range] = useState(getYesterdayRange);
 
-    console.log(appliedRange);
-
-    const { data, isLoading, isError, error, isFetching } = useQuery({
-        queryKey: ["perform-detail-host", id, appliedRange?.from, appliedRange?.to],
-        queryFn: async () => {
-            const params = {};
-            if (appliedRange?.from) params.startDate = appliedRange.from;
-            if (appliedRange?.to) params.endDate = appliedRange.to;
-
-            const res = await axios.get(apiEndpoints.perform.hostDetail(id), {
-                params,
-            });
-            return res.data.data;
-        },
-        enabled: !!id,
+    const {
+        data,
+        isFetching,
+        handleApplyDateRange,
+    } = useDateRangeQuery({
+        queryKey: ["perform-detail-host"],
+        url: apiEndpoints.perform.hostDetail(id),
+        id,
+        range
     });
 
-
-
-    const handleApplyClick = () => {
-        if (!dateRange?.from || !dateRange?.to) return; 
-        setAppliedRange({
-            from: dateRange?.from ? formatDate(dateRange.from) : null,
-            to: dateRange?.to ? formatDate(dateRange.to) : null,
-        });
-    };
-
-    const totalMinutes = data?.total_duration || 0;
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
+    const totalSeconds = data?.total_duration || 0;
 
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
@@ -124,21 +96,10 @@ export default function HostDetailPerformPage() {
                         </p>
                     </div>
 
-                    {/* Filter */}
-                    <div className="flex gap-2 items-center justify-end">
-                        <DatePicker
-                            withRange="true"
-                            value={dateRange}
-                            onChange={setDateRange}
-                            className="w-full sm:w-auto"
-                        />
-                        <Button
-                            onClick={handleApplyClick}
-                            disabled={isFetching}
-                        >
-                            {isFetching ? "Memuat..." : "Terapkan"}
-                        </Button>
-                    </div>
+                    <DateRangeFilter
+                        onApply={handleApplyDateRange}
+                        isLoading={isFetching}
+                    />
                 </div>
 
                 {/* Avatar + Stats */}
@@ -155,7 +116,7 @@ export default function HostDetailPerformPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow w-full">
                         <StatCard
                             title="Total Durasi Live"
-                            value={`${hours}:${minutes.toString().padStart(2, "0")} jam`}
+                            value={intToHumanTime(totalSeconds)}
                             percentage=""
                             trend="null"
                             since="Jumlah Total Durasi Live"
@@ -192,10 +153,7 @@ export default function HostDetailPerformPage() {
                                         <p className="text-accent/60">Dibuat</p>
                                     </div>
                                     <p>
-                                        {new Intl.NumberFormat("id-ID", {
-                                            style: "currency",
-                                            currency: "IDR",
-                                        }).format(data?.avg_paid || 0)}
+                                        {formatIDR(data?.avg_paid || 0)}
                                     </p>
                                 </div>
                                 <div className="flex justify-between">
@@ -210,22 +168,27 @@ export default function HostDetailPerformPage() {
                                         <p className="text-accent/60">Dikirim</p>
                                     </div>
                                     <p>
-                                        {new Intl.NumberFormat("id-ID", {
-                                            style: "currency",
-                                            currency: "IDR",
-                                        }).format(data?.avg_sales || 0)}
+                                        {formatIDR(data?.avg_sales || 0)}
                                     </p>
                                 </div>
                             </div>
                             <p className="text-xs">Rata - Rata Sale dan Paid Perhari</p>
                         </div>
 
+
+                        <StatCard
+                            title="Total Pesanan Dibuat"
+                            value={formatIDR(data?.total_paid || 0)}
+                            percentage=""
+                            trend="null"
+                            since="Jumlah Total Pesanan Dibuat"
+                            icon="shopbag"
+                            borderColor="#2E964C"
+                        />
+
                         <StatCard
                             title="Total Pesanan Dikirim"
-                            value={new Intl.NumberFormat("id-ID", {
-                                style: "currency",
-                                currency: "IDR",
-                            }).format(data?.total_sales || 0)}
+                            value={formatIDR(data?.total_sales || 0)}
                             percentage=""
                             trend="null"
                             since="Jumlah Total Pesanan Dikirim"
@@ -233,18 +196,6 @@ export default function HostDetailPerformPage() {
                             borderColor="#2E964C"
                         />
 
-                        <StatCard
-                            title="Total Pesanan Dibuat"
-                            value={new Intl.NumberFormat("id-ID", {
-                                style: "currency",
-                                currency: "IDR",
-                            }).format(data?.total_paid || 0)}
-                            percentage=""
-                            trend="null"
-                            since="Jumlah Total Pesanan Dibuat"
-                            icon="shopbag"
-                            borderColor="#2E964C"
-                        />
                     </div>
                 </div>
 

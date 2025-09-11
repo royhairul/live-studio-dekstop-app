@@ -9,3 +9,10 @@ export function getPercentageACOS(value) {
     }
     return "bg-red-100 text-red-700 px-2 py-1 rounded";
 }
+
+export function getPercentageROAS(value) {
+    if (value < 40) {
+        return "bg-red-100 text-red-700 px-2 py-1 rounded";
+    }
+    return "bg-green-100 text-green-700 px-2 py-1 rounded";
+}

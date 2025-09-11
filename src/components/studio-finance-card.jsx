@@ -1,4 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import formatIDR from "@/helpers/formatIDR";
 import { IconArrowRight } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
@@ -16,28 +17,28 @@ export function StudioFinanceCard({ data }) {
                 <CardContent>
                     <p className="text-accent/60 font-bold">Total Pendapatan</p>
                     <p className="font-bold text-2xl text-accent mb-2">
-                        Rp. {Number(data?.income).toLocaleString("id-ID")}
+                        {formatIDR(data?.income)}
                     </p>
 
                     <div className="w-full p-3 rounded-lg bg-gray-200/50 mb-2">
                         <div className="flex text-xs justify-between w-full mb-2">
                             <p className="font-bold text-accent/60">GMV</p>
                             <p className="font-bold text-accent">
-                                Rp. {Number(data?.gmv).toLocaleString("id-ID")}
+                                {formatIDR(data?.gmv)}
                             </p>
                         </div>
                         <hr />
                         <div className="flex text-xs justify-between w-full my-2">
                             <p className="font-bold text-accent/60">Komisi</p>
                             <p className="font-bold text-accent">
-                                Rp. {Number(data?.commission).toLocaleString("id-ID")}
+                                {formatIDR(data?.commission)}
                             </p>
                         </div>
                         <hr />
                         <div className="flex text-xs justify-between w-full mt-2">
                             <p className="font-bold text-accent/60">Iklan + PPN</p>
                             <p className="font-bold text-accent">
-                                Rp. {Number(data?.ads).toLocaleString("id-ID")}
+                                {formatIDR(data?.ads)}
                             </p>
                         </div>
                     </div>

@@ -10,3 +10,17 @@ export const formatTime = (dateTimeStr) => {
     return "";
   }
 };
+
+
+export function intToHumanTime(seconds) {
+  if (!seconds || seconds < 0) return "0 Menit";
+
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+
+  const parts = [];
+  if (hrs > 0) parts.push(`${hrs} Jam`);
+  if (mins > 0) parts.push(`${mins} Menit`);
+
+  return parts.length > 0 ? parts.join(" ") : "0 Menit";
+}

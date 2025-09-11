@@ -1,107 +1,73 @@
-import { DatePicker } from "@/components/Datepicker";
 import PerformTable from "@/components/perform-table";
-import { Button } from "@/components/ui/button";
 import { apiEndpoints } from "@/config/api";
-import { useHosts } from "@/hooks/host/useHosts";
+import formatIDR from "@/helpers/formatIDR";
+import { formatPercentage, getPercentageACOS, getPercentageROAS } from "@/helpers/formatPercent";
 import MainLayout from "@/layouts/main-layout";
-import { IconBarrierBlock, IconChartLine, IconShoppingBag } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { differenceInDays, endOfWeek, startOfWeek } from "date-fns";
+import { IconChartLine } from "@tabler/icons-react";
+import DateRangeFilter from "../components/DateRangeFilter";
+import useDateRangeQuery from "../hooks/useDateRangeQuery";
+import { getYesterdayRange } from "@/helpers/formatDate";
 import { useState } from "react";
 
-const today = new Date();
 
-const getTimeDim = (from, to) => {
-  const diffDays = differenceInDays(to, from);
-  if (diffDays <= 0) return "1d";
-  return `${diffDays}d`;
-};
-
-const toLocalDateString = (date) =>
-  new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-    .toISOString()
-    .split("T")[0];
 export default function AccountPerformPage() {
+  const [range] = useState(getYesterdayRange);
 
-  const performColumns = [
-    {
-      accessorKey: "name",
-      header: "Nama Akun",
-      enableGlobalFilter: true,
-      cell: ({ row }) => row.original.name,
-    },
-    {
-      accessorKey: "Duration",
-      header: "Durasi",
-      cell: ({ row }) => {
-        const totalSec = row.original.total_duration;
-        const hours = Math.floor(totalSec / 3600);
-        const minutes = Math.floor((totalSec % 3600) / 60);
-        return `${hours}j ${minutes}m`;
-      }
-    },
-    {
-      accessorKey: "Make",
-      header: "Pesanan Dibuat",
-      cell: ({ row }) => {
-        const value = row.original.total_paid;
-        return new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-        }).format(value);
-      },
-    },
-    {
-      accessorKey: "Sale",
-      header: "Pesanan Dikirim",
-      cell: ({ row }) => {
-        const value = row.original.total_sales;
-        return new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          minimumFractionDigits: 0,
-        }).format(value);
-      },
-    }
-  ];
-
-  const [dateRange, setDateRange] = useState({
-    from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
-    to: endOfWeek(today, { weekStartsOn: 1 }),
+  const {
+    data,
+    isFetching,
+    handleApplyDateRange,
+  } = useDateRangeQuery({
+    queryKey: ["perform-account"],
+    url: apiEndpoints.perform.account(),
+    range
   });
 
-  const [appliedDateRange, setAppliedDateRange] = useState({
-    from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
-    to: endOfWeek(today, { weekStartsOn: 1 }),     // Minggu
-  });
+  console.log(data);
 
-  const { data, isLoading, isError, isFetching, error } = useQuery({
-    queryKey: ["finance-daily-report", appliedDateRange],
-    queryFn: async () => {
-      const payload = {
-        page: 1,
-        pageSize: 100,
-        orderBy: "",
-        sort: "",
-        timeDim: getTimeDim(appliedDateRange.from, appliedDateRange.to),
-        endDate: toLocalDateString(appliedDateRange.to),
-      };
-
-      const res = await axios.get(apiEndpoints.perform.host());
-
-      return res.data.data;
+  const ColumnAccount = [
+    {
+      id: "akun",
+      accessorKey: "account_name",
+      header: "Akun",
+      cell: ({ getValue }) => <div >{getValue()}</div>,
     },
-  });
+    {
+      id: "gmv",
+      accessorKey: "gmv",
+      header: "GMV",
+      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+    },
+    {
+      id: "komisi",
+      accessorKey: "commission",
+      header: "Komisi",
+      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+    },
+    {
+      id: "iklan",
+      accessorKey: "ads",
+      header: "Iklan + PPN",
+      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+    },
+    {
+      id: "acos",
+      accessorKey: "acos",
+      header: "ACOS",
+      cell: ({ getValue }) => <div className={`${getPercentageACOS(getValue())} w-max`} >{formatPercentage(getValue())}</div>,
+    }, {
+      id: "roas",
+      accessorKey: "roas",
+      header: "ROAS",
+      cell: ({ getValue }) => <div className={`${getPercentageROAS(getValue())} w-max`}>{formatPercentage(getValue())}</div>,
+    }, {
+      id: "income",
+      accessorKey: "income",
+      header: "Pendapatan",
+      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+    },
+  ]
 
-  const { data: hosts, refetch } = useHosts();
-
-
-  const handleApplyClick = () => {
-    setAppliedDateRange(dateRange);
-    refetch();
-  };
   const breadcrumbs = [
     {
       icon: IconChartLine,
@@ -114,33 +80,29 @@ export default function AccountPerformPage() {
   ];
 
   return (
-  <MainLayout breadcrumbs={breadcrumbs}>
-  <div className="p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md w-full mb-6">
-    {/* Header Section */}
-    <div className="flex flex-col lg:flex-row justify-between gap-3 lg:items-center border-b pb-3">
-      <div>
-        <h2 className="font-bold text-xl">Data Laporan Akun Studio Live</h2>
-        <p className="text-accent/60 text-sm">
-          Update Informasi Laporan Akun Studio Live
-        </p>
-      </div>
+    <MainLayout breadcrumbs={breadcrumbs}>
+      <div className="p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md w-full mb-6">
+        {/* Header Section */}
+        <div className="flex flex-col lg:flex-row justify-between gap-3 lg:items-center border-b pb-3">
+          <div>
+            <h2 className="font-bold text-xl">Data Laporan Akun Studio Live</h2>
+            <p className="text-accent/60 text-sm">
+              Update Informasi Laporan Akun Studio Live
+            </p>
+          </div>
 
-      <div className="flex gap-2 items-center justify-end">
-        <DatePicker
-          withRange="true"
-          value={dateRange}
-          onChange={setDateRange}
-        />
-        <Button onClick={handleApplyClick} disabled={isFetching}>
-          {isFetching ? "Memuat..." : "Terapkan"}
-        </Button>
-      </div>
-    </div>
+          <div className="justify-end">
+            <DateRangeFilter
+              onApply={handleApplyDateRange}
+              isLoading={isFetching}
+            />
+          </div>
+        </div>
 
-    {/* Table Section */}
-    <PerformTable columns={performColumns} data={data} />
-  </div>
-</MainLayout>
+        {/* Table Section */}
+        <PerformTable columns={ColumnAccount} data={data} />
+      </div>
+    </MainLayout>
 
   );
 }

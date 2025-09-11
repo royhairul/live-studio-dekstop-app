@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { toast } from "sonner"; 
-import { useNavigate } from "react-router-dom"; 
-
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -17,82 +15,77 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SearchSelect } from "./search-select";
-import { DatePicker } from "../Datepicker";
-import { useAccounts } from "@/hooks/account/useAccounts";
-import { apiEndpoints } from "@/config/api";
+import { formatDateTarget } from "@/helpers/formatDate";
+import { MonthYearSelect } from "./mont-year-select";
 
-export function DialogTambahData({ title = "Tambah Data", fields = [] }) {
-    const { data: akunList = [] } = useAccounts();
-    const akunOptions = akunList.map((item) => ({
-        value: item.id,
-        label: `${item.name} (${item.platform})`,
-    }));
-
+export function DialogTambahData({
+    title = "Tambah Data",
+    fields = [],
+    endpoint = null,
+    queryInvalidateKey = [],
+    selectOptions = {},
+}) {
     const [formData, setFormData] = useState({});
-    const [selectedAkun, setSelectedAkun] = useState(null);
     const [open, setOpen] = useState(false);
-
 
     const queryClient = useQueryClient();
 
-    // Untuk input text / month
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    // handler input umum
+    const handleChange = (name, value) => {
         setFormData((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
 
-    // Mutation
-    const createAccountMutation = useMutation({
+    // mutation
+    const mutation = useMutation({
         mutationFn: async (values) => {
-            const { status, result } = await axios.post(
-                apiEndpoints.ads.create(),
-                values
-            );
-            if (!status) {
-                throw new Error(result.errors || "Gagal menambahkan akun.");
-            }
-
-            return result;
-
+            const { data } = await axios.post(endpoint(), values);
+            return data;
         },
         onSuccess: (result) => {
             toast.success(result?.message || "Data berhasil ditambahkan.");
-            queryClient.invalidateQueries({ queryKey: ["accounts"] });
-            setOpen(false); 
+            if (queryInvalidateKey.length > 0) {
+                queryClient.invalidateQueries({ queryKey: queryInvalidateKey });
+            }
+            setOpen(false);
+            setFormData({});
         },
         onError: (error) => {
             console.error("error:", error);
-            toast.error("Gagal membuat account.", {
-                description: error?.response?.data?.message || "Invalid or expired cookies.",
+            toast.error("Gagal menambahkan data.", {
+                description: error?.response?.data?.message || "Terjadi kesalahan.",
             });
         },
     });
 
-    // Submit form
+    // submit
     const handleSubmit = (e) => {
         e.preventDefault();
-        const finalData = {
-            accountid: selectedAkun?.value,
-            date: formData.date,   // sudah ada string YYYY-MM-DD
-            iklan: formData.iklan, // contoh field lain
-        };
+        const finalData = {};
+        fields.forEach((field) => {
+            const val = formData[field.name];
 
+            switch (field.type) {
+                case "number":
+                    finalData[field.name] = Number(val);
+                    break;
+                case "month":
+                    finalData[field.name] = formatDateTarget(val);
+                    break;
+                default:
+                    finalData[field.name] = val;
+            }
+        });
 
-        console.log("Form submitted:", finalData);
-
-
-        createAccountMutation.mutate(finalData);
+        mutation.mutate(finalData);
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    {title}
-                </Button>
+                <Button>{title}</Button>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[425px]">
@@ -107,36 +100,26 @@ export function DialogTambahData({ title = "Tambah Data", fields = [] }) {
                                 <Label htmlFor={field.name}>{field.label}</Label>
                                 {field.type === "select" ? (
                                     <SearchSelect
-                                        options={akunOptions}
-                                        placeholder="Cari Akun..."
-                                        onChange={(val) => setSelectedAkun(val)}
+                                        options={selectOptions[field.name] || []}
+                                        placeholder={`Pilih ${field.label}...`}
+                                        onChange={(val) => handleChange(field.name, val?.value)}
                                     />
-                                ) : field.type === "date" ? (
-                                    <input
-                                        type="date"
-                                        value={formData.date || ""}
-                                        onChange={(e) =>
-                                            setFormData((prev) => ({ ...prev, date: e.target.value }))
+                                ) : field.type === "monthyear" ? (
+                                    <MonthYearSelect
+                                        value={formData[field.name]}
+                                        onChange={(val) =>
+                                            setFormData((prev) => ({ ...prev, [field.name]: val }))
                                         }
-                                    />
-
-
-                                ) : field.type === "month" ? (
-                                    <input
-                                        type="month"
-                                        id={field.name}
-                                        name={field.name}
-                                        className="w-full border rounded-lg px-3 py-2 border-accent"
-                                        onChange={handleChange}
                                     />
                                 ) : (
                                     <Input
-                                        className="border-accent"
                                         id={field.name}
                                         name={field.name}
-                                        placeholder={field.placeholder || ""}
                                         type={field.type || "text"}
-                                        onChange={handleChange}
+                                        placeholder={field.placeholder || ""}
+                                        className="border-accent"
+                                        value={formData[field.name] || ""}
+                                        onChange={(e) => handleChange(field.name, e.target.value)}
                                     />
                                 )}
                             </div>
@@ -149,13 +132,12 @@ export function DialogTambahData({ title = "Tambah Data", fields = [] }) {
                                 Batal
                             </Button>
                         </DialogClose>
-                        <Button type="submit" disabled={createAccountMutation.isPending}>
-                            {createAccountMutation.isPending ? "Menyimpan..." : "Simpan"}
+                        <Button type="submit" disabled={mutation.isPending}>
+                            {mutation.isPending ? "Menyimpan..." : "Simpan"}
                         </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
         </Dialog>
-
     );
 }

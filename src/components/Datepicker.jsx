@@ -3,7 +3,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { IconCalendar } from "@tabler/icons-react";
-import { startOfWeek, endOfWeek, subWeeks } from "date-fns";
+import { subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -25,16 +25,17 @@ export function DatePicker({
   onChange,
   withRange = false,
   presets = [
-    { label: "This Week", value: "range:this-week" },
-    { label: "Last Week", value: "range:last-week" },
-  ],
+    { label: "7 hari terakhir", value: "range:last-7-days" },
+    { label: "15 hari terakhir", value: "range:last-15-days" },
+    { label: "30 hari terakhir", value: "range:last-30-days" },
+  ]
 }) {
   const getLocalDate = () =>
     new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
 
   const [internalDate, setInternalDate] = React.useState({
-    from: getLocalDate(),
-    to: getLocalDate(),
+    from: getLocalDate() - 1 * 24 * 60 * 60 * 1000,
+    to: getLocalDate() - 1 * 24 * 60 * 60 * 1000,
   });
 
   const selectedDate = value || internalDate;
@@ -95,17 +96,19 @@ export function DatePicker({
                 handleChange({ from: offsetDate, to: withRange ? offsetDate : undefined });
               }
 
-              if (value === "range:this-week") {
-                const start = startOfWeek(today, { weekStartsOn: 1 }); // Senin
-                const end = endOfWeek(today, { weekStartsOn: 1 });     // Minggu
-                handleChange({ from: start, to: end });
+              if (value === "range:last-7-days") {
+                const start = subDays(today, 6); // termasuk hari ini
+                handleChange({ from: start, to: today });
               }
 
-              if (value === "range:last-week") {
-                const lastWeekDate = subWeeks(today, 1);
-                const start = startOfWeek(lastWeekDate, { weekStartsOn: 1 });
-                const end = endOfWeek(lastWeekDate, { weekStartsOn: 1 });
-                handleChange({ from: start, to: end });
+              if (value === "range:last-15-days") {
+                const start = subDays(today, 14);
+                handleChange({ from: start, to: today });
+              }
+
+              if (value === "range:last-30-days") {
+                const start = subDays(today, 29);
+                handleChange({ from: start, to: today });
               }
             }}
 

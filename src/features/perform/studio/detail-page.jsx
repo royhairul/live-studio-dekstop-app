@@ -1,75 +1,35 @@
 "use client";
 
 import MainLayout from "@/layouts/main-layout";
-import { IconChartLine, IconReportAnalytics } from "@tabler/icons-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { IconChartLine } from "@tabler/icons-react";
 import StatCard from "@/components/ui/stat-card";
-import { differenceInDays, endOfWeek, startOfWeek } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { apiEndpoints } from "@/config/api";
-import { DatePicker } from "@/components/Datepicker";
 import { DataTablePinning } from "@/components/data-table-pinning";
 import { DialogTambahData } from "@/components/ui/modal-dialog";
-import { usePerformStudioDetail } from "./hooks/usePerformStudioDetail";
 import { useParams } from "react-router-dom";
 import formatIDR from "@/helpers/formatIDR";
-import { formatPercentage, getPercentageACOS } from "@/helpers/formatPercent";
+import { formatPercentage, getPercentageACOS, getPercentageROAS } from "@/helpers/formatPercent";
+import DateRangeFilter from "../components/DateRangeFilter";
+import useDateRangeQuery from "../hooks/useDateRangeQuery";
+import React, { useState } from "react";
+import PerformTable from "@/components/perform-table";
+import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
 
-const today = new Date();
-
-const getTimeDim = (from, to) => {
-    const diffDays = differenceInDays(to, from);
-    if (diffDays <= 0) return "1d";
-    return `${diffDays}d`;
-};
-
-const toLocalDateString = (date) =>
-    new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-        .toISOString()
-        .split("T")[0];
 
 export default function StudioPerformDetailPage() {
+    const [range] = useState(getYesterdayRange);
     const idStudio = useParams().id;
-    const detailStudio = usePerformStudioDetail(idStudio);
-    console.log(detailStudio);
-    
-    const [dateRange, setDateRange] = useState({
-        from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
-        to: endOfWeek(today, { weekStartsOn: 1 }),
+    const {
+        data,
+        isFetching,
+        handleApplyDateRange,
+    } = useDateRangeQuery({
+        queryKey: ["perform-studio-detail", idStudio],
+        url: apiEndpoints.perform.studioDetail(idStudio),
+        id: idStudio,
+        range
     });
 
-    const [appliedDateRange, setAppliedDateRange] = useState({
-        from: startOfWeek(today, { weekStartsOn: 1 }), // Senin
-        to: endOfWeek(today, { weekStartsOn: 1 }),     // Minggu
-    });
-
-    const { data, isLoading, isError, refetch, isFetching, error } = useQuery({
-        queryKey: ["finance-daily-report", appliedDateRange],
-        queryFn: async () => {
-            const payload = {
-                page: 1,
-                pageSize: 100,
-                orderBy: "",
-                sort: "",
-                timeDim: getTimeDim(appliedDateRange.from, appliedDateRange.to),
-                endDate: toLocalDateString(appliedDateRange.to),
-            };
-            console.log(payload);
-            const res = await axios.post(apiEndpoints.finance.daily(), payload);
-            return res.data.data.flatMap((shop) =>
-                (shop.reportLive ?? []).map((item) => ({
-                    name: shop.name,
-                    ...item,
-                }))
-            );
-        },
-    });
-    const handleApplyClick = () => {
-        setAppliedDateRange(dateRange);
-        refetch();
-    };
     const breadcrumbs = [
         {
             icon: IconChartLine,
@@ -89,55 +49,54 @@ export default function StudioPerformDetailPage() {
         {
             id: "akun",
             accessorKey: "account_name",
-            header: () => <div className=" font-semibold text-accent ">Nama Akun</div>,
+            header: "Nama Akun",
             cell: ({ getValue }) => <div >{getValue()}</div>,
         },
         {
             id: "gmv",
             accessorKey: "gmv",
-            header: () => <div className=" font-semibold text-accent ">GMV</div>,
+            header: "GMV",
             cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
         {
-            id: "komisi-dibayar",
-            accessorKey: "commission_paid",
-            header: () => <div className=" font-semibold text-accent ">Komisi Dibayar</div>,
-            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
-        },
-        {
-            id: "komisi-tertunda",
-            accessorKey: "commission_pending",
-            header: () => <div className=" font-semibold text-accent ">Komisi Tertunda</div>,
+            id: "komisi",
+            accessorKey: "commission",
+            header: "Komisi",
             cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
         {
             id: "iklan",
             accessorKey: "ads",
-            header: () => <div className=" font-semibold text-accent ">Iklan + PPN</div>,
+            header: "Iklan + PPN",
             cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
         {
             id: "acos",
             accessorKey: "acos",
-            header: () => <div className=" font-semibold text-accent">ACOS</div>,
+            header: "ACOS",
             cell: ({ getValue }) => <div className={`${getPercentageACOS(getValue())} w-max`} >{formatPercentage(getValue())}</div>,
         }, {
             id: "roas",
             accessorKey: "roas",
-            header: () => <div className=" font-semibold text-accent ">ROAS</div>,
-            cell: ({ getValue }) => <div >{getValue()}</div>,
+            header: "ROAS",
+            cell: ({ getValue }) => <div className={`${getPercentageROAS(getValue())} w-max`}>{formatPercentage(getValue())}</div>,
         }, {
             id: "income",
             accessorKey: "income",
-            header: () => <div className=" font-semibold text-accent ">Pendapatan</div>,
+            header: "Pendapatan",
             cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
         },
     ]
     const fieldsModalIklan = [
-        { name: "akun", type: "select", label: "Akun" },
-        { name: "iklan", type: "number", label: "Iklan" },
-        { name: "tanggal", type: "date", label: "Tanggal" }
+        { name: "accountid", type: "select", label: "Akun" },
+        { name: "ads", type: "number", label: "Iklan" },
+        { name: "date", type: "date", label: "Tanggal" }
     ]
+
+    const accountOptions = data?.list?.map((item) => ({
+        value: item.account_id,
+        label: item.account_name,
+    }));
 
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
@@ -145,26 +104,18 @@ export default function StudioPerformDetailPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 {/* Title */}
                 <div>
-                    <h1 className="font-bold text-2xl">Laporan {detailStudio.studioDetail.studio_name}</h1>
+                    <h1 className="font-bold text-2xl">Laporan {data?.studio_name}</h1>
                     <p className="text-accent/60">
-                        Update Informasi Laporan Komisi {detailStudio.studioDetail.studio_name}
+                        Update Informasi Laporan Komisi {data?.studio_name}
                     </p>
                 </div>
 
                 {/* Filter */}
                 <div className="flex gap-2 items-center justify-end">
-                    <DatePicker
-                        withRange={true}
-                        value={dateRange}
-                        onChange={setDateRange}
-                        className="w-full sm:w-auto"
+                    <DateRangeFilter
+                        onApply={handleApplyDateRange}
+                        isLoading={isFetching}
                     />
-                    <Button
-                        onClick={handleApplyClick}
-                        disabled={isFetching}
-                    >
-                        {isFetching ? "Memuat..." : "Terapkan"}
-                    </Button>
                 </div>
             </div>
 
@@ -172,56 +123,55 @@ export default function StudioPerformDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                 <StatCard
                     title="Total GMV"
-                    value={formatIDR(detailStudio?.studioDetail?.metrics?.gmv.total) || 0}
-                    percentage={`${detailStudio?.studioDetail.metrics?.gmv.ratio || 0}`}
-                    trend={detailStudio?.studioDetail.metrics?.gmv.ratio >= 0 ? "up" : "down"}
+                    value={formatIDR(data?.metrics?.gmv.total) || 0}
+                    percentage={`${data?.metrics?.gmv.ratio || 0}`}
+                    trend={data?.metrics?.gmv.ratio >= 0 ? "up" : "down"}
                     icon="cart"
                     borderColor="#3818D9"
+                    since={formatSince(data?.current_period?.days)}
                 />
                 <StatCard
                     title="Komisi dibayar"
-                    value={formatIDR(detailStudio?.studioDetail?.metrics?.commission_paid.total) || 0}
-                    percentage={`${detailStudio?.studioDetail.metrics?.commission_paid.ratio || 0}`}
-                    trend={detailStudio?.studioDetail.metrics?.commission_paid.ratio >= 0 ? "up" : "down"}
+                    value={formatIDR(data?.metrics?.commission?.total) || 0}
+                    percentage={`${data?.metrics?.commission?.ratio || 0}`}
+                    trend={data?.metrics?.commission?.ratio >= 0 ? "up" : "down"}
                     icon="coin"
                     borderColor="#EE8D5B"
-                />
-                <StatCard
-                    title="Komisi Tertunda"
-                    value={formatIDR(detailStudio?.studioDetail?.metrics?.commission_pending.total) || 0}
-                    percentage={`${detailStudio?.studioDetail.metrics?.commission_pending.ratio || 0}`}
-                    trend={detailStudio?.studioDetail.metrics?.commission_pending.ratio >= 0 ? "up" : "down"}
-                    icon="speaker"
-                    borderColor="#D43B3B"
+                    since={formatSince(data?.current_period?.days)}
                 />
                 <StatCard
                     title="Total Pendapatan"
-                    value={formatIDR(detailStudio?.studioDetail?.metrics?.income.total) || 0}
-                    percentage={`${detailStudio?.studioDetail.metrics?.income.ratio || 0}`}
-                    trend={detailStudio?.studioDetail.metrics?.income.ratio >= 0 ? "up" : "down"}
+                    value={formatIDR(data?.metrics?.income.total) || 0}
+                    percentage={`${data?.metrics?.income.ratio || 0}`}
+                    trend={data?.metrics?.income.ratio >= 0 ? "up" : "down"}
                     icon="wallet"
                     borderColor="#2E964C"
+                    since={formatSince(data?.current_period?.days)}
                 />
                 <StatCard
                     title="Total Iklan + PPN"
-                    value={formatIDR(detailStudio?.studioDetail?.metrics?.ads.total) || 0}
-                    percentage={`${detailStudio?.studioDetail.metrics?.ads.ratio || 0}`}
-                    trend={detailStudio?.studioDetail.metrics?.ads.ratio >= 0 ? "up" : "down"}
+                    value={formatIDR(data?.metrics?.ads.total) || 0}
+                    percentage={`${data?.metrics?.ads.ratio || 0}`}
+                    trend={data?.metrics?.ads.ratio >= 0 ? "up" : "down"}
                     icon="ad"
                     borderColor="#2E9"
+                    since={formatSince(data?.current_period?.days)}
                 />
             </div>
 
             {/* Data Table */}
             <div className="mt-6">
-                <DataTablePinning
+
+                <PerformTable
                     columns={ColumnComissionDetail}
-                    data={detailStudio.studioDetail.list}
-                    pinning={["akun"]}
+                    data={data?.list}
                     customButton={
                         <DialogTambahData
                             fields={fieldsModalIklan}
                             title="Tambah Iklan + PPN"
+                            endpoint={apiEndpoints.ads.create}
+                            queryInvalidateKey={["perform-studio"]}
+                            selectOptions={{ accountid: accountOptions }}
                         />
                     }
                 />

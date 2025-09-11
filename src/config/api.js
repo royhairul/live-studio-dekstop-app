@@ -23,6 +23,14 @@ export const apiEndpoints = {
     account: () => `${baseUrl}/performa/account`,
   },
 
+  target: {
+    getAll: () => `${baseUrl}/target`,
+    create: () => `${baseUrl}/target`,
+    update: (id) => `${baseUrl}/target/${id}`,
+    findById: (id) => `${baseUrl}/target/${id}`,
+    delete: (id) => `${baseUrl}/target/${id}`,
+  },
+
   ads: {
     getAll: () => `${baseUrl}/accountads`,
     create: () => `${baseUrl}/accountads`,

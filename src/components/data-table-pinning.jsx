@@ -50,18 +50,21 @@ import {
 import { cn } from "@/lib/utils";
 
 export function DataTablePinning({ columns, pinning = [], data = [], customButton = null }) {
-  const [sorting, setSorting] = React.useState();
-  const [columnFilters, setColumnFilters] = React.useState();
-  const [columnVisibility, setColumnVisibility] = React.useState();
+  const memoData = React.useMemo(() => data, [data]);
+  const memoColumns = React.useMemo(() => columns, [columns]);
+
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnPinning, setColumnPinning] = React.useState({
+  const [columnPinning, setColumnPinning] = React.useState(() => ({
     left: pinning,
     right: [],
-  });
+  }));
 
   const table = useReactTable({
-    data,
-    columns,
+    data: memoData,
+    columns: memoColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -105,34 +108,34 @@ export function DataTablePinning({ columns, pinning = [], data = [], customButto
         />
         <div className="flex gap-2">
 
-        {customButton && customButton}
+          {customButton && customButton}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="ml-auto">
-              Columns <IconChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="ml-auto">
+                Columns <IconChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
       </div>
