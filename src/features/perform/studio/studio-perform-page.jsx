@@ -73,21 +73,12 @@ export default function StudioPerformPage() {
                     since={formatSince(studio?.current_period?.days)}
                 />
                 <StatCard
-                    title="Komisi dibayar"
+                    title="Total Komisi"
                     value={formatIDR(studio?.metrics?.commission?.total) || 0}
                     percentage={`${studio?.metrics?.commission?.ratio || 0}`}
                     trend={studio?.metrics?.commission?.ratio >= 0 ? "up" : "down"}
                     icon="coin"
                     borderColor="#EE8D5B"
-                    since={formatSince(studio?.current_period?.days)}
-                />
-                <StatCard
-                    title="Total Pendapatan"
-                    value={formatIDR(studio?.metrics?.income.total) || 0}
-                    percentage={`${studio?.metrics?.income.ratio || 0}`}
-                    trend={studio?.metrics?.income.ratio >= 0 ? "up" : "down"}
-                    icon="wallet"
-                    borderColor="#2E964C"
                     since={formatSince(studio?.current_period?.days)}
                 />
                 <StatCard
@@ -97,6 +88,15 @@ export default function StudioPerformPage() {
                     trend={studio?.metrics?.ads.ratio >= 0 ? "up" : "down"}
                     icon="ad"
                     borderColor="#2E9"
+                    since={formatSince(studio?.current_period?.days)}
+                />
+                <StatCard
+                    title="Total Pendapatan"
+                    value={formatIDR(studio?.metrics?.income.total) || 0}
+                    percentage={`${studio?.metrics?.income.ratio || 0}`}
+                    trend={studio?.metrics?.income.ratio >= 0 ? "up" : "down"}
+                    icon="wallet"
+                    borderColor="#2E964C"
                     since={formatSince(studio?.current_period?.days)}
                 />
             </div>
