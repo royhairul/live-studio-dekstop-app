@@ -1,6 +1,5 @@
 import PerformTable from "@/components/perform-table";
 import { apiEndpoints } from "@/config/api";
-import formatIDR from "@/helpers/formatIDR";
 import { formatPercentage, getPercentageACOS, getPercentageROAS } from "@/helpers/formatPercent";
 import MainLayout from "@/layouts/main-layout";
 import { IconChartLine } from "@tabler/icons-react";
@@ -8,6 +7,8 @@ import DateRangeFilter from "../components/DateRangeFilter";
 import useDateRangeQuery from "../hooks/useDateRangeQuery";
 import { getYesterdayRange } from "@/helpers/formatDate";
 import { useState } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { formatFull, formatShort } from "@/helpers/formatIDR";
 
 
 export default function AccountPerformPage() {
@@ -36,19 +37,52 @@ export default function AccountPerformPage() {
       id: "gmv",
       accessorKey: "gmv",
       header: "GMV",
-      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-pointer">
+              {formatShort(getValue())}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            {formatFull(getValue())}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
     },
     {
       id: "komisi",
       accessorKey: "commission",
       header: "Komisi",
-      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-pointer">
+              {formatShort(getValue())}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            {formatFull(getValue())}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
     },
     {
       id: "iklan",
       accessorKey: "ads",
       header: "Iklan + PPN",
-      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-pointer">
+              {formatShort(getValue())}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            {formatFull(getValue())}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
     },
     {
       id: "acos",
@@ -64,7 +98,18 @@ export default function AccountPerformPage() {
       id: "income",
       accessorKey: "income",
       header: "Pendapatan",
-      cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-pointer">
+              {formatShort(getValue())}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            {formatFull(getValue())}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>,
     },
   ]
 

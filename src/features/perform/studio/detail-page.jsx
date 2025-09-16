@@ -4,17 +4,16 @@ import MainLayout from "@/layouts/main-layout";
 import { IconChartLine } from "@tabler/icons-react";
 import StatCard from "@/components/ui/stat-card";
 import { apiEndpoints } from "@/config/api";
-import { DataTablePinning } from "@/components/data-table-pinning";
 import { DialogTambahData } from "@/components/ui/modal-dialog";
 import { useParams } from "react-router-dom";
-import formatIDR from "@/helpers/formatIDR";
+import { formatFull, formatShort } from "@/helpers/formatIDR";
 import { formatPercentage, getPercentageACOS, getPercentageROAS } from "@/helpers/formatPercent";
 import DateRangeFilter from "../components/DateRangeFilter";
 import useDateRangeQuery from "../hooks/useDateRangeQuery";
 import React, { useState } from "react";
 import PerformTable from "@/components/perform-table";
 import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function StudioPerformDetailPage() {
     const [range] = useState(getYesterdayRange);
@@ -28,7 +27,7 @@ export default function StudioPerformDetailPage() {
         url: apiEndpoints.perform.studioDetail(idStudio),
         id: idStudio,
         range
-    });
+    });    
 
     const breadcrumbs = [
         {
@@ -56,19 +55,52 @@ export default function StudioPerformDetailPage() {
             id: "gmv",
             accessorKey: "gmv",
             header: "GMV",
-            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                            {formatShort(getValue())}
+                        </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        {formatFull(getValue())}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>,
         },
         {
             id: "komisi",
             accessorKey: "commission",
             header: "Komisi",
-            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                            {formatShort(getValue())}
+                        </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        {formatFull(getValue())}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>,
         },
         {
             id: "iklan",
             accessorKey: "ads",
             header: "Iklan + PPN",
-            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                            {formatShort(getValue())}
+                        </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        {formatFull(getValue())}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>,
         },
         {
             id: "acos",
@@ -84,7 +116,18 @@ export default function StudioPerformDetailPage() {
             id: "income",
             accessorKey: "income",
             header: "Pendapatan",
-            cell: ({ getValue }) => <div >{formatIDR(getValue())}</div>,
+            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                            {formatShort(getValue())}
+                        </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        {formatFull(getValue())}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>,
         },
     ]
     const fieldsModalIklan = [
@@ -123,7 +166,20 @@ export default function StudioPerformDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                 <StatCard
                     title="Total GMV"
-                    value={formatIDR(data?.metrics?.gmv.total) || 0}
+                    value={
+                        <TooltipProvider delayDuration={100}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">
+                                        {formatShort(data?.metrics?.gmv.ratio || 0)}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {formatFull(data?.metrics?.gmv.ratio || 0)}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    }
                     percentage={`${data?.metrics?.gmv.ratio || 0}`}
                     trend={data?.metrics?.gmv.ratio >= 0 ? "up" : "down"}
                     icon="cart"
@@ -132,7 +188,20 @@ export default function StudioPerformDetailPage() {
                 />
                 <StatCard
                     title="Total Komisi"
-                    value={formatIDR(data?.metrics?.commission?.total) || 0}
+                    value={
+                        <TooltipProvider delayDuration={100}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">
+                                        {formatShort(data?.metrics?.commission?.ratio || 0)}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {formatFull(data?.metrics?.commission?.ratio || 0)}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    }
                     percentage={`${data?.metrics?.commission?.ratio || 0}`}
                     trend={data?.metrics?.commission?.ratio >= 0 ? "up" : "down"}
                     icon="coin"
@@ -141,7 +210,20 @@ export default function StudioPerformDetailPage() {
                 />
                 <StatCard
                     title="Total Iklan + PPN"
-                    value={formatIDR(data?.metrics?.ads.total) || 0}
+                    value={
+                        <TooltipProvider delayDuration={100}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">
+                                        {formatShort(data?.metrics?.ads.ratio || 0)}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {formatFull(data?.metrics?.ads.ratio || 0)}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    }
                     percentage={`${data?.metrics?.ads.ratio || 0}`}
                     trend={data?.metrics?.ads.ratio >= 0 ? "up" : "down"}
                     icon="ad"
@@ -150,9 +232,22 @@ export default function StudioPerformDetailPage() {
                 />
                 <StatCard
                     title="Total Pendapatan"
-                    value={formatIDR(data?.metrics?.income.total) || 0}
-                    percentage={`${data?.metrics?.income.ratio || 0}`}
-                    trend={data?.metrics?.income.ratio >= 0 ? "up" : "down"}
+                    value={
+                        <TooltipProvider delayDuration={100}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">
+                                        {formatShort(data?.metrics?.income?.ratio || 0)}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {formatFull(data?.metrics?.income?.ratio || 0)}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    }
+                    percentage={`${data?.metrics?.income?.ratio || 0}`}
+                    trend={data?.metrics?.income?.ratio >= 0 ? "up" : "down"}
                     icon="wallet"
                     borderColor="#2E964C"
                     since={formatSince(data?.current_period?.days)}

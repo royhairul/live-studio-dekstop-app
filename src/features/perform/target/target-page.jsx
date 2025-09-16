@@ -1,14 +1,14 @@
 import PerformTable from "@/components/perform-table";
 import { DialogTambahData } from "@/components/ui/modal-dialog";
 import { apiEndpoints } from "@/config/api";
-import formatIDR from "@/helpers/formatIDR";
 import MainLayout from "@/layouts/main-layout";
 import { IconChartLine, IconSquareRoundedCheckFilled, IconTargetArrow } from "@tabler/icons-react";
 import { MonthYearSelect } from "@/components/ui/mont-year-select";
 import { Button } from "@/components/ui/button";
 import useMonthYearQuery from "../hooks/useMonthYearQuery";
-
-
+import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { formatPercentage, getPercentageRealisasi, getPercentageTarget } from "@/helpers/formatPercent";
 
 export default function TargetPage() {
 
@@ -20,6 +20,9 @@ export default function TargetPage() {
     queryKey: ["target-studio"],
     url: apiEndpoints.target.getAll(),
   });
+
+  console.log(data);
+
 
   const performColumns = [
     {
@@ -33,7 +36,6 @@ export default function TargetPage() {
         );
       },
     },
-    // Contoh membuat cell component yang lebih compact untuk sticky columns
     {
       accessorKey: "gmv",
       header: "GMV",
@@ -41,57 +43,141 @@ export default function TargetPage() {
         const target = row.original.gmv.target;
         const realisasi = row.original.gmv.real;
         const persen = row.original.gmv.ratio;
+        const remaining = Math.max(0, 100 - persen);
 
-        // Deteksi jika ini adalah pinned column (bisa dengan context atau props)
-        const isPinned = row.isPinned || false; // Sesuaikan dengan implementasi Anda
+        const isPinned = row.isPinned || false;
 
         if (isPinned) {
           // Versi compact untuk pinned column
           return (
             <div className="space-y-1 text-xs">
-              <div className="text-red-600 font-medium">{formatIDR(target)}</div>
+              <div className="text-red-600 font-medium">{<TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatShort(target)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {formatFull(target)}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>}<span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
+                  (- {formatPercentage(remaining)})
+                </span>
+
+              </div>
               <div className="text-green-600 font-medium">
-                {formatIDR(realisasi)} <span className="text-gray-500">({persen.toFixed(1)}%)</span>
+                {<TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-pointer">
+                        {formatShort(realisasi)}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {formatFull(realisasi)}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>} <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(persen)}`}>
+                  ({formatPercentage(persen)})
+                </span>
+
               </div>
             </div>
           );
         }
 
-        // Versi lengkap untuk unpinned column
         return (
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <IconTargetArrow className="text-red-500 w-4 h-4 flex-shrink-0" />
-              <span className="truncate">{formatIDR(target)}</span>
+              <span className="truncate">{<TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatShort(target)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {formatFull(target)}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>}</span>
+              <span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
+                (- {formatPercentage(remaining)})
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <IconSquareRoundedCheckFilled className="text-green-500 w-4 h-4 flex-shrink-0" />
-              <span className="truncate">{formatIDR(realisasi)}</span>
-              <span className="text-sm text-gray-500 flex-shrink-0">({persen.toFixed(1)}%)</span>
+              <span className="truncate">{<TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatShort(realisasi)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {formatFull(realisasi)}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>}</span>
+              <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(persen)}`}>
+                ({formatPercentage(persen)})
+              </span>
+
             </div>
           </div>
         );
       },
     },
-    // Contoh membuat cell component yang lebih compact untuk sticky columns
     {
       accessorKey: "pendapatan",
       header: "Pendapatan",
       cell: ({ row }) => {
         const target = row.original.income.target;
         const realisasi = row.original.income.real;
-        const persen = row.original.income.ratio;
+        const persen = row.original.income.ratio ?? (target > 0 ? (realisasi / target) * 100 : 0);
 
-        // Deteksi jika ini adalah pinned column (bisa dengan context atau props)
-        const isPinned = row.isPinned || false; // Sesuaikan dengan implementasi Anda
+        const remaining = Math.max(0, 100 - persen);
+
+        const isPinned = row.isPinned || false;
 
         if (isPinned) {
-          // Versi compact untuk pinned column
           return (
             <div className="space-y-1 text-xs">
-              <div className="text-red-600 font-medium">{formatIDR(target)}</div>
+              <div className="text-red-600 font-medium">{<TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatShort(target)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {formatFull(target)}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>}<span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
+                  (- {formatPercentage(remaining)})
+                </span>
+
+              </div>
               <div className="text-green-600 font-medium">
-                {formatIDR(realisasi)} <span className="text-gray-500">({persen.toFixed(1)}%)</span>
+                {<TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-pointer">
+                        {formatShort(realisasi)}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {formatFull(realisasi)}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>} <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(realisasi)}`}>
+                  ({formatPercentage(realisasi)})
+                </span>
+
               </div>
             </div>
           );
@@ -102,12 +188,41 @@ export default function TargetPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <IconTargetArrow className="text-red-500 w-4 h-4 flex-shrink-0" />
-              <span className="truncate">{formatIDR(target)}</span>
+              <span className="truncate">{<TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatShort(target)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {formatFull(target)}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>}</span>
+              <span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
+                (- {formatPercentage(remaining)})
+              </span>
             </div>
+
             <div className="flex items-center gap-2">
               <IconSquareRoundedCheckFilled className="text-green-500 w-4 h-4 flex-shrink-0" />
-              <span className="truncate">{formatIDR(realisasi)}</span>
-              <span className="text-sm text-gray-500 flex-shrink-0">({persen.toFixed(1)}%)</span>
+              <span className="truncate">{<TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatShort(realisasi)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {formatFull(realisasi)}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>}</span>
+              <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(persen)}`}>
+                ({formatPercentage(persen)})
+              </span>
+
             </div>
           </div>
         );

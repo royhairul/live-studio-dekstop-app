@@ -1,5 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import formatIDR from "@/helpers/formatIDR";
+import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { IconArrowRight } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
@@ -17,28 +18,72 @@ export function StudioFinanceCard({ data }) {
                 <CardContent>
                     <p className="text-accent/60 font-bold">Total Pendapatan</p>
                     <p className="font-bold text-2xl text-accent mb-2">
-                        {formatIDR(data?.income)}
+                        <TooltipProvider delayDuration={100}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">
+                                        {formatShort(data?.income || 0)}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {formatFull(data?.income || 0)}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     </p>
 
                     <div className="w-full p-3 rounded-lg bg-gray-200/50 mb-2">
                         <div className="flex text-xs justify-between w-full mb-2">
                             <p className="font-bold text-accent/60">GMV</p>
                             <p className="font-bold text-accent">
-                                {formatIDR(data?.gmv)}
+                                <TooltipProvider delayDuration={100}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="cursor-pointer">
+                                                {formatShort(data?.gmv || 0)}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {formatFull(data?.gmv || 0)}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </p>
                         </div>
                         <hr />
                         <div className="flex text-xs justify-between w-full my-2">
                             <p className="font-bold text-accent/60">Komisi</p>
                             <p className="font-bold text-accent">
-                                {formatIDR(data?.commission)}
+                                <TooltipProvider delayDuration={100}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="cursor-pointer">
+                                                {formatShort(data?.commission || 0)}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {formatFull(data?.commission || 0)}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </p>
                         </div>
                         <hr />
                         <div className="flex text-xs justify-between w-full mt-2">
                             <p className="font-bold text-accent/60">Iklan + PPN</p>
                             <p className="font-bold text-accent">
-                                {formatIDR(data?.ads)}
+                                <TooltipProvider delayDuration={100}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="cursor-pointer">
+                                                {formatShort(data?.ads || 0)}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {formatFull(data?.ads || 0)}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </p>
                         </div>
                     </div>

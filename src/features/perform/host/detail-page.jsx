@@ -5,12 +5,13 @@ import StatCard from "@/components/ui/stat-card";
 import PerformTable from "@/components/perform-table";
 import { apiEndpoints } from "@/config/api";
 import { useParams } from "react-router-dom";
-import formatIDR from "@/helpers/formatIDR";
 import { intToHumanTime } from "@/helpers/formatTime";
 import DateRangeFilter from "../components/DateRangeFilter";
 import useDateRangeQuery from "../hooks/useDateRangeQuery";
 import { getYesterdayRange } from "@/helpers/formatDate";
 import { useState } from "react";
+import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 const breadcrumbs = [
@@ -51,7 +52,18 @@ const performDetailHostColumn = [
         header: "Pesanan Dibuat",
         cell: ({ row }) => {
             const value = row.original.total_paid;
-            return formatIDR(value);
+            return <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                            {formatShort(value || 0)}
+                        </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        {formatFull(value || 0)}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         }
     },
     {
@@ -60,7 +72,18 @@ const performDetailHostColumn = [
         header: "Pesanan Dikirim",
         cell: ({ row }) => {
             const value = row.original.total_sales;
-            return formatIDR(value);
+            return <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                            {formatShort(value || 0)}
+                        </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        {formatFull(value || 0)}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         }
     },
 
@@ -153,7 +176,18 @@ export default function HostDetailPerformPage() {
                                         <p className="text-accent/60">Dibuat</p>
                                     </div>
                                     <p>
-                                        {formatIDR(data?.avg_paid || 0)}
+                                        <TooltipProvider delayDuration={100}>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <span className="cursor-pointer">
+                                                        {formatShort(data?.avg_paid || 0)}
+                                                    </span>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {formatFull(data?.avg_paid || 0)}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
                                     </p>
                                 </div>
                                 <div className="flex justify-between">
@@ -168,7 +202,19 @@ export default function HostDetailPerformPage() {
                                         <p className="text-accent/60">Dikirim</p>
                                     </div>
                                     <p>
-                                        {formatIDR(data?.avg_sales || 0)}
+                                        <TooltipProvider delayDuration={100}>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <span className="cursor-pointer">
+                                                        {formatShort(data?.avg_sales || 0)}
+                                                    </span>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {formatFull(data?.avg_sales || 0)}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+
                                     </p>
                                 </div>
                             </div>
@@ -178,7 +224,18 @@ export default function HostDetailPerformPage() {
 
                         <StatCard
                             title="Total Pesanan Dibuat"
-                            value={formatIDR(data?.total_paid || 0)}
+                            value={<TooltipProvider delayDuration={100}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="cursor-pointer">
+                                            {formatShort(data?.total_paid || 0)}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {formatFull(data?.total_paid || 0)}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>}
                             percentage=""
                             trend="null"
                             since="Jumlah Total Pesanan Dibuat"
@@ -188,7 +245,18 @@ export default function HostDetailPerformPage() {
 
                         <StatCard
                             title="Total Pesanan Dikirim"
-                            value={formatIDR(data?.total_sales || 0)}
+                            value={<TooltipProvider delayDuration={100}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="cursor-pointer">
+                                            {formatShort(data?.total_sales || 0)}
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {formatFull(data?.total_sales || 0)}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>}
                             percentage=""
                             trend="null"
                             since="Jumlah Total Pesanan Dikirim"

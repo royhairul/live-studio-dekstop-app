@@ -3,7 +3,8 @@ import PerformTable from "./perform-table";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { IconArrowRight } from "@tabler/icons-react";
-import formatIDR from "@/helpers/formatIDR";
+import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function StudioFinanceList({ viewMode, data = [] }) {
 
@@ -21,7 +22,18 @@ export default function StudioFinanceList({ viewMode, data = [] }) {
             accessorKey: "gmv",
             header: "GMV",
             cell: ({ getValue }) => (
-                <div className="w-32">{formatIDR(getValue())}</div>
+                <div className="w-32"><TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-pointer">
+                                {formatShort(getValue())}
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {formatFull(getValue())}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider></div>
             ),
         },
         {
@@ -29,7 +41,18 @@ export default function StudioFinanceList({ viewMode, data = [] }) {
             accessorKey: "commission",
             header: "Total Komisi",
             cell: ({ getValue }) => (
-                <div className="w-32">{formatIDR(getValue())}</div>
+                <div className="w-32"><TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-pointer">
+                                {formatShort(getValue())}
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {formatFull(getValue())}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider></div>
             ),
         },
         {
@@ -37,7 +60,18 @@ export default function StudioFinanceList({ viewMode, data = [] }) {
             accessorKey: "ads",
             header: "Iklan + PPN",
             cell: ({ getValue }) => (
-                <div className="w-40">{formatIDR(getValue())}</div>
+                <div className="w-40"><TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-pointer">
+                                {formatShort(getValue())}
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {formatFull(getValue())}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider></div>
             ),
         },
         {
@@ -56,8 +90,6 @@ export default function StudioFinanceList({ viewMode, data = [] }) {
             ),
         },
     ];
-
-
 
     return (
         <div className="mt-5">

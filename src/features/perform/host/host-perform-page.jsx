@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { IconArrowRight, IconChartLine } from "@tabler/icons-react";
 import PerformTable from "@/components/perform-table";
 import { Link } from "react-router-dom";
-import formatIDR from "@/helpers/formatIDR";
 import { intToHumanTime } from "@/helpers/formatTime";
 import useDateRangeQuery from "../hooks/useDateRangeQuery";
 import { apiEndpoints } from "@/config/api";
 import DateRangeFilter from "../components/DateRangeFilter";
 import { getYesterdayRange } from "@/helpers/formatDate";
 import { useState } from "react";
+import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 export default function HostPerformPage() {
@@ -40,13 +41,35 @@ export default function HostPerformPage() {
             accessorKey: "total_paid",
             header: "Total Pesanan Dibuat",
             cell: ({ getValue }) =>
-                formatIDR(getValue())
+                <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-pointer">
+                                {formatShort(getValue())}
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {formatFull(getValue())}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
         },
         {
             accessorKey: "total_sales",
             header: "Total Pesanan Dikirim",
             cell: ({ getValue }) =>
-                formatIDR(getValue())
+                <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-pointer">
+                                {formatShort(getValue())}
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {formatFull(getValue())}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
         },
         {
             accessorKey: "id",
