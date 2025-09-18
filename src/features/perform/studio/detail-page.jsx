@@ -211,7 +211,7 @@ export default function StudioPerformDetailPage() {
                                     </Tooltip>
                                 </TooltipProvider>
                             }
-                            percentage={metric.ratio || 0}
+                            percentage={`${metric.ratio || 0}`}
                             trend={metric.ratio >= 0 ? "up" : "down"}
                             icon={icon}
                             borderColor={borderColor}

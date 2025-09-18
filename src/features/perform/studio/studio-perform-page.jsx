@@ -28,6 +28,9 @@ export default function StudioPerformPage() {
         range: getYesterdayRange()
     });
 
+    console.log(studio);
+    
+
     const breadcrumbs = [
         {
             icon: IconChartLine,
@@ -111,7 +114,7 @@ export default function StudioPerformPage() {
                                     </Tooltip>
                                 </TooltipProvider>
                             }
-                            percentage={metric.ratio || 0}
+                            percentage={`${metric.ratio || 0}`}
                             trend={metric.ratio >= 0 ? "up" : "down"}
                             icon={icon}
                             borderColor={borderColor}

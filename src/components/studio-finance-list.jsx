@@ -14,7 +14,7 @@ export default function StudioFinanceList({ viewMode, data = [] }) {
             accessorKey: "studio_name",
             header: "Studio",
             cell: ({ getValue }) => (
-                <div className="truncate w-40">{getValue()}</div>
+                <div className="truncate w-32">{getValue()}</div>
             ),
         },
         {
@@ -60,7 +60,26 @@ export default function StudioFinanceList({ viewMode, data = [] }) {
             accessorKey: "ads",
             header: "Iklan + PPN",
             cell: ({ getValue }) => (
-                <div className="w-40"><TooltipProvider delayDuration={100}>
+                <div className="w-36"><TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-pointer">
+                                {formatShort(getValue())}
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {formatFull(getValue())}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider></div>
+            ),
+        },
+        {
+            id: "Pendapatan",
+            accessorKey: "income",
+            header: "Pendapatan",
+            cell: ({ getValue }) => (
+                <div className="w-36"><TooltipProvider delayDuration={100}>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <span className="cursor-pointer">

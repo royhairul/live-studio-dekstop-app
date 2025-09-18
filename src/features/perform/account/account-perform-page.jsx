@@ -29,85 +29,97 @@ export default function AccountPerformPage() {
       id: "akun",
       accessorKey: "account_name",
       header: "Akun",
-      cell: ({ getValue }) => <div >{getValue()}</div>,
+      cell: ({ getValue }) => <div className="w-40">{getValue()}</div>,
     },
     {
       id: "gmv",
       accessorKey: "gmv",
       header: "GMV",
-      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="cursor-pointer">
-              {formatShort(getValue())}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            {formatFull(getValue())}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>,
+      cell: ({ getValue }) =>
+        <div className="w-28">
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-pointer">
+                  {formatShort(getValue())}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                {formatFull(getValue())}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
     },
     {
       id: "komisi",
       accessorKey: "commission",
       header: "Komisi",
-      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="cursor-pointer">
-              {formatShort(getValue())}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            {formatFull(getValue())}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>,
+      cell: ({ getValue }) =>
+        <div className="w-28">
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-pointer">
+                  {formatShort(getValue())}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                {formatFull(getValue())}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
     },
     {
       id: "iklan",
       accessorKey: "ads",
       header: "Iklan + PPN",
-      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="cursor-pointer">
-              {formatShort(getValue())}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            {formatFull(getValue())}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>,
+      cell: ({ getValue }) =>
+        <div className="w-28">
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-pointer">
+                  {formatShort(getValue())}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                {formatFull(getValue())}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>,
     },
     {
       id: "acos",
       accessorKey: "acos",
       header: "ACOS",
-      cell: ({ getValue }) => <div className={`${getPercentageACOS(getValue())} w-max`} >{formatPercentage(getValue())}</div>,
+      cell: ({ getValue }) => <div className={`${getPercentageACOS(getValue())} w-20`} >{formatPercentage(getValue())}</div>,
     }, {
       id: "roas",
       accessorKey: "roas",
       header: "ROAS",
-      cell: ({ getValue }) => <div className={`${getPercentageROAS(getValue())} w-max`}>{formatPercentage(getValue())}</div>,
+      cell: ({ getValue }) => <div className={`${getPercentageROAS(getValue())} w-20`}>{formatPercentage(getValue())}</div>,
     }, {
       id: "income",
       accessorKey: "income",
       header: "Pendapatan",
-      cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="cursor-pointer">
-              {formatShort(getValue())}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            {formatFull(getValue())}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>,
+      cell: ({ getValue }) =>
+        <div className="w-28">
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-pointer">
+                  {formatShort(getValue())}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                {formatFull(getValue())}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>,
     },
   ]
 

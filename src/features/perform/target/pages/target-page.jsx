@@ -30,8 +30,10 @@ export default function TargetPage() {
       header: "Studio",
       cell: ({ row }) => {
         return (
-          <div className="p-3 bg-primary/20 rounded-lg w-fit">
-            {row.original.studio_name}
+          <div className="w-50">
+            <p className="p-3 bg-primary/20 rounded-lg w-fit">
+              {row.original.studio_name}
+            </p>
           </div>
         );
       },
@@ -63,7 +65,7 @@ export default function TargetPage() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>}<span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
-                  (- {formatPercentage(remaining)})
+                  {remaining > 0 ? `- ${formatPercentage(remaining)}` : formatPercentage(remaining)}
                 </span>
 
               </div>
@@ -89,7 +91,7 @@ export default function TargetPage() {
         }
 
         return (
-          <div className="space-y-1">
+          <div className="space-y-1 w-80">
             <div className="flex items-center gap-2">
               <IconTargetArrow className="text-red-500 w-4 h-4 flex-shrink-0" />
               <span className="truncate">{<TooltipProvider delayDuration={100}>
@@ -105,7 +107,7 @@ export default function TargetPage() {
                 </Tooltip>
               </TooltipProvider>}</span>
               <span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
-                (- {formatPercentage(remaining)})
+                {remaining > 0 ? `- ${formatPercentage(remaining)}` : formatPercentage(remaining)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -158,7 +160,7 @@ export default function TargetPage() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>}<span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
-                  (- {formatPercentage(remaining)})
+                  {remaining > 0 ? `- ${formatPercentage(remaining)}` : formatPercentage(remaining)}
                 </span>
 
               </div>
@@ -201,7 +203,7 @@ export default function TargetPage() {
                 </Tooltip>
               </TooltipProvider>}</span>
               <span className={`text-xs flex-shrink-0 ${getPercentageTarget(remaining)}`}>
-                (- {formatPercentage(remaining)})
+                {remaining > 0 ? `- ${formatPercentage(remaining)}` : formatPercentage(remaining)}
               </span>
             </div>
 
