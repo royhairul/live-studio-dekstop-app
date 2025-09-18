@@ -6,7 +6,7 @@ import { Route } from "react-router-dom";
 import AccountPerformPage from "@/features/perform/account/account-perform-page";
 import StudioPerformPage from "@/features/perform/studio/studio-perform-page";
 import StudioPerformDetailPage from "@/features/perform/studio/detail-page";
-import TargetPage from "@/features/perform/target/target-page";
+import TargetPage from "@/features/perform/target/pages/target-page";
 
 export const performRoutes = (
   <>

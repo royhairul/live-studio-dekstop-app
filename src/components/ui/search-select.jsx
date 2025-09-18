@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/command";
 
 export function SearchSelect({ options, placeholder = "Cari...", onChange }) {
-    const [selected, setSelected] = useState(options[0] || null);
+    const [selected, setSelected] = useState(null);
     const [open, setOpen] = useState(false);
     const inputRef = useRef (null);
 
@@ -40,7 +40,7 @@ export function SearchSelect({ options, placeholder = "Cari...", onChange }) {
                         className="w-full justify-between bg-accent-foreground text-accent hover:bg-accent-foreground border-1"
                         onClick={() => setOpen(true)}
                     >
-                        {selected ? selected.label : "Pilih"}
+                        {selected ? selected.label : "Pilih item..."}
                     </Button>
                 </PopoverTrigger>
 

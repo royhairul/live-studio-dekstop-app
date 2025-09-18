@@ -38,7 +38,7 @@ export function MonthYearSelect({ value, onChange, yearRange = 5 }) {
                     handleChange(Number(v), year);
                 }}
             >
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-full">
                     <SelectValue placeholder="Pilih bulan" />
                 </SelectTrigger>
                 <SelectContent>

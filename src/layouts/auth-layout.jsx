@@ -6,7 +6,7 @@ export default function AuthLayout({ children }) {
         <img
           src="/assets/vector-start.svg"
           alt="Auth Illustration"
-          className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-full h-auto"
+          className="hidden md:block md:max-w-md lg:max-w-full h-auto"
         />
       </div>
 

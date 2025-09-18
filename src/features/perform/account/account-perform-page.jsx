@@ -5,26 +5,24 @@ import MainLayout from "@/layouts/main-layout";
 import { IconChartLine } from "@tabler/icons-react";
 import DateRangeFilter from "../components/DateRangeFilter";
 import useDateRangeQuery from "../hooks/useDateRangeQuery";
-import { getYesterdayRange } from "@/helpers/formatDate";
-import { useState } from "react";
+import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
+import StatCard from "@/components/ui/stat-card";
 
 
 export default function AccountPerformPage() {
-  const [range] = useState(getYesterdayRange);
 
   const {
     data,
     isFetching,
     handleApplyDateRange,
+    appliedRange,
   } = useDateRangeQuery({
     queryKey: ["perform-account"],
     url: apiEndpoints.perform.account(),
-    range
+    range: getYesterdayRange(),
   });
-
-  console.log(data);
 
   const ColumnAccount = [
     {
@@ -124,6 +122,34 @@ export default function AccountPerformPage() {
     },
   ];
 
+  const metricsConfig = [
+    {
+      title: "Total GMV",
+      metric: "gmv",
+      icon: "cart",
+      borderColor: "#3818D9",
+    },
+    {
+      title: "Total Komisi",
+      metric: "commission",
+      icon: "coin",
+      borderColor: "#EE8D5B",
+    },
+    {
+      title: "Total Iklan + PPN",
+      metric: "ads",
+      icon: "ad",
+      borderColor: "#2E9",
+    },
+    {
+      title: "Total Pendapatan",
+      metric: "income",
+      icon: "wallet",
+      borderColor: "#2E964C",
+    },
+  ];
+
+
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
       <div className="p-4 bg-white flex flex-col gap-4 rounded-lg shadow-md w-full mb-6">
@@ -138,14 +164,47 @@ export default function AccountPerformPage() {
 
           <div className="justify-end">
             <DateRangeFilter
+              dateRange={appliedRange}
               onApply={handleApplyDateRange}
               isLoading={isFetching}
             />
           </div>
         </div>
+        {/* Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3">
+          {metricsConfig.map(({ title, metric, icon, borderColor }) => {
+            const value = data?.metrics?.[metric]?.total || 0;
+            const ratio = data?.metrics?.[metric]?.ratio || 0;
+
+            return (
+              <StatCard
+                key={metric}
+                title={title}
+                value={
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                          {formatShort(value)}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>{formatFull(value)}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                }
+                percentage={`${ratio}`}
+                trend={ratio >= 0 ? "up" : "down"}
+                icon={icon}
+                borderColor={borderColor}
+                since={formatSince(data?.current_period?.days || 0)}
+              />
+            );
+          })}
+        </div>
+
 
         {/* Table Section */}
-        <PerformTable columns={ColumnAccount} data={data} />
+        <PerformTable columns={ColumnAccount} data={data?.list} />
       </div>
     </MainLayout>
 

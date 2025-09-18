@@ -10,24 +10,23 @@ import { formatFull, formatShort } from "@/helpers/formatIDR";
 import { formatPercentage, getPercentageACOS, getPercentageROAS } from "@/helpers/formatPercent";
 import DateRangeFilter from "../components/DateRangeFilter";
 import useDateRangeQuery from "../hooks/useDateRangeQuery";
-import React, { useState } from "react";
 import PerformTable from "@/components/perform-table";
 import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function StudioPerformDetailPage() {
-    const [range] = useState(getYesterdayRange);
     const idStudio = useParams().id;
     const {
         data,
         isFetching,
         handleApplyDateRange,
+        appliedRange,
     } = useDateRangeQuery({
         queryKey: ["perform-studio-detail", idStudio],
         url: apiEndpoints.perform.studioDetail(idStudio),
         id: idStudio,
-        range
-    });    
+        range: getYesterdayRange(),
+    });
 
     const breadcrumbs = [
         {
@@ -130,11 +129,39 @@ export default function StudioPerformDetailPage() {
             </TooltipProvider>,
         },
     ]
+
     const fieldsModalIklan = [
         { name: "accountid", type: "select", label: "Akun" },
         { name: "ads", type: "number", label: "Iklan" },
         { name: "date", type: "date", label: "Tanggal" }
     ]
+
+    const metricsConfig = [
+        {
+            key: "gmv",
+            title: "Total GMV",
+            icon: "cart",
+            borderColor: "#3818D9",
+        },
+        {
+            key: "commission",
+            title: "Total Komisi",
+            icon: "coin",
+            borderColor: "#EE8D5B",
+        },
+        {
+            key: "ads",
+            title: "Total Iklan + PPN",
+            icon: "ad",
+            borderColor: "#2E9",
+        },
+        {
+            key: "income",
+            title: "Total Pendapatan",
+            icon: "wallet",
+            borderColor: "#2E964C",
+        },
+    ];
 
     const accountOptions = data?.list?.map((item) => ({
         value: item.account_id,
@@ -156,103 +183,44 @@ export default function StudioPerformDetailPage() {
                 {/* Filter */}
                 <div className="flex gap-2 items-center justify-end">
                     <DateRangeFilter
+                        dateRange={appliedRange}
                         onApply={handleApplyDateRange}
                         isLoading={isFetching}
                     />
                 </div>
             </div>
 
-            {/* Stat Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                <StatCard
-                    title="Total GMV"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(data?.metrics?.gmv.ratio || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(data?.metrics?.gmv.ratio || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    }
-                    percentage={`${data?.metrics?.gmv.ratio || 0}`}
-                    trend={data?.metrics?.gmv.ratio >= 0 ? "up" : "down"}
-                    icon="cart"
-                    borderColor="#3818D9"
-                    since={formatSince(data?.current_period?.days)}
-                />
-                <StatCard
-                    title="Total Komisi"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(data?.metrics?.commission?.ratio || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(data?.metrics?.commission?.ratio || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    }
-                    percentage={`${data?.metrics?.commission?.ratio || 0}`}
-                    trend={data?.metrics?.commission?.ratio >= 0 ? "up" : "down"}
-                    icon="coin"
-                    borderColor="#EE8D5B"
-                    since={formatSince(data?.current_period?.days)}
-                />
-                <StatCard
-                    title="Total Iklan + PPN"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(data?.metrics?.ads.ratio || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(data?.metrics?.ads.ratio || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    }
-                    percentage={`${data?.metrics?.ads.ratio || 0}`}
-                    trend={data?.metrics?.ads.ratio >= 0 ? "up" : "down"}
-                    icon="ad"
-                    borderColor="#2E9"
-                    since={formatSince(data?.current_period?.days)}
-                />
-                <StatCard
-                    title="Total Pendapatan"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(data?.metrics?.income?.ratio || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(data?.metrics?.income?.ratio || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    }
-                    percentage={`${data?.metrics?.income?.ratio || 0}`}
-                    trend={data?.metrics?.income?.ratio >= 0 ? "up" : "down"}
-                    icon="wallet"
-                    borderColor="#2E964C"
-                    since={formatSince(data?.current_period?.days)}
-                />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3">
+                {metricsConfig.map(({ key, title, icon, borderColor }) => {
+                    const metric = data?.metrics?.[key] || {};
+                    return (
+                        <StatCard
+                            key={key}
+                            title={title}
+                            value={
+                                <TooltipProvider delayDuration={100}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="cursor-pointer">
+                                                {formatShort(metric.total || 0)}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {formatFull(metric.total || 0)}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            }
+                            percentage={metric.ratio || 0}
+                            trend={metric.ratio >= 0 ? "up" : "down"}
+                            icon={icon}
+                            borderColor={borderColor}
+                            since={formatSince(data?.current_period?.days || 0)}
+                        />
+                    );
+                })}
             </div>
+
 
             {/* Data Table */}
             <div className="mt-6">

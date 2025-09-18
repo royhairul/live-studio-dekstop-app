@@ -24,13 +24,13 @@ export function DialogTambahData({
     endpoint = null,
     queryInvalidateKey = [],
     selectOptions = {},
+    schema = null,
 }) {
     const [formData, setFormData] = useState({});
     const [open, setOpen] = useState(false);
 
     const queryClient = useQueryClient();
 
-    // handler input umum
     const handleChange = (name, value) => {
         setFormData((prev) => ({
             ...prev,
@@ -38,7 +38,6 @@ export function DialogTambahData({
         }));
     };
 
-    // mutation
     const mutation = useMutation({
         mutationFn: async (values) => {
             const { data } = await axios.post(endpoint(), values);
@@ -55,7 +54,8 @@ export function DialogTambahData({
         onError: (error) => {
             console.error("error:", error);
             toast.error("Gagal menambahkan data.", {
-                description: error?.response?.data?.message || "Terjadi kesalahan.",
+                description: error?.response?.data?.error || "Terjadi kesalahan.",
+
             });
         },
     });
@@ -78,6 +78,18 @@ export function DialogTambahData({
                     finalData[field.name] = val;
             }
         });
+        console.log(finalData);
+        
+
+        const result = schema.safeParse(finalData);
+        if (!result.success) {
+            result.error.errors.forEach((err) => {
+                toast.error("Validasi gagal", {
+                    description: err.message,
+                });
+            });
+            return;
+        }
 
         mutation.mutate(finalData);
     };
@@ -117,8 +129,9 @@ export function DialogTambahData({
                                         name={field.name}
                                         type={field.type || "text"}
                                         placeholder={field.placeholder || ""}
-                                        className="border-accent"
+                                        className="border-accent [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [appearance:textfield]"
                                         value={formData[field.name] || ""}
+                                        min={field.type === "number" ? 0 : undefined}
                                         onChange={(e) => handleChange(field.name, e.target.value)}
                                     />
                                 )}

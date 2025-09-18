@@ -5,10 +5,11 @@ import MainLayout from "@/layouts/main-layout";
 import { IconChartLine, IconSquareRoundedCheckFilled, IconTargetArrow } from "@tabler/icons-react";
 import { MonthYearSelect } from "@/components/ui/mont-year-select";
 import { Button } from "@/components/ui/button";
-import useMonthYearQuery from "../hooks/useMonthYearQuery";
+import useMonthYearQuery from "../../hooks/useMonthYearQuery";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatPercentage, getPercentageRealisasi, getPercentageTarget } from "@/helpers/formatPercent";
+import { schema } from "../schemas/createOrUpdate";
 
 export default function TargetPage() {
 
@@ -22,7 +23,6 @@ export default function TargetPage() {
   });
 
   console.log(data);
-
 
   const performColumns = [
     {
@@ -262,9 +262,8 @@ export default function TargetPage() {
             <h2 className="font-bold text-xl">Data Laporan Akun Studio Live</h2>
             <p className="text-accent/60 text-sm">Update Informasi Laporan Akun Studio Live</p>
           </div>
-          <div className="flex items-center gap-3 justify-end">
+          <div className="flex items-center justify-end">
             <MonthYearSelect onChange={handleApplyMonthYear} value={appliedPeriod} />
-            <Button onClick={() => handleApplyMonthYear(appliedPeriod)}>Terapkan</Button>
           </div>
         </div>
 
@@ -275,6 +274,7 @@ export default function TargetPage() {
             endpoint={apiEndpoints.target.create}
             queryInvalidateKey={["targets"]}
             selectOptions={{ studio_id: studioOptions }}
+            schema={schema}
           />
           } />
       </div>

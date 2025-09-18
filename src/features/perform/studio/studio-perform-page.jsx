@@ -16,19 +16,17 @@ import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function StudioPerformPage() {
-    const [range] = useState(getYesterdayRange);
     const [viewMode, setViewMode] = useState("card");
     const {
         data: studio,
         isFetching,
         handleApplyDateRange,
+        appliedRange
     } = useDateRangeQuery({
         queryKey: ["perform-studio"],
         url: apiEndpoints.perform.studio(),
-        range
+        range: getYesterdayRange()
     });
-    console.log("ini studio", studio);
-
 
     const breadcrumbs = [
         {
@@ -40,6 +38,34 @@ export default function StudioPerformPage() {
             label: "Studio",
         },
     ];
+
+    const metricsConfig = [
+        {
+            key: "gmv",
+            title: "Total GMV",
+            icon: "cart",
+            borderColor: "#3818D9",
+        },
+        {
+            key: "commission",
+            title: "Total Komisi",
+            icon: "coin",
+            borderColor: "#EE8D5B",
+        },
+        {
+            key: "ads",
+            title: "Total Iklan + PPN",
+            icon: "ad",
+            borderColor: "#2E9",
+        },
+        {
+            key: "income",
+            title: "Total Pendapatan",
+            icon: "wallet",
+            borderColor: "#2E964C",
+        },
+    ];
+
 
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
@@ -57,6 +83,7 @@ export default function StudioPerformPage() {
             <div className="flex gap-2">
                 <div className="flex-1"></div>
                 <DateRangeFilter
+                    dateRange={appliedRange}
                     onApply={handleApplyDateRange}
                     isLoading={isFetching}
                 />
@@ -64,95 +91,36 @@ export default function StudioPerformPage() {
 
             {/* Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3">
-                <StatCard
-                    title="Total GMV"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(studio?.metrics?.gmv?.total || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(studio?.metrics?.gmv?.total || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    } 
-                    percentage={`${studio?.metrics?.gmv?.ratio || 0}`}
-                    trend={studio?.metrics?.gmv?.ratio >= 0 ? "up" : "down"}
-                    icon="cart"
-                    borderColor="#3818D9"
-                    since={formatSince(studio?.current_period?.days)}
-                />
-                <StatCard
-                    title="Total Komisi"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(studio?.metrics?.commission?.total || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(studio?.metrics?.commission?.total || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    }
-                    percentage={`${studio?.metrics?.commission?.ratio || 0}`}
-                    trend={studio?.metrics?.commission?.ratio >= 0 ? "up" : "down"}
-                    icon="coin"
-                    borderColor="#EE8D5B"
-                    since={formatSince(studio?.current_period?.days)}
-                />
-                <StatCard
-                    title="Total Iklan + PPN"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(studio?.metrics?.ads?.total || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(studio?.metrics?.ads?.total || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    }
-                    percentage={`${studio?.metrics?.ads.ratio || 0}`}
-                    trend={studio?.metrics?.ads.ratio >= 0 ? "up" : "down"}
-                    icon="ad"
-                    borderColor="#2E9"
-                    since={formatSince(studio?.current_period?.days)}
-                />
-                <StatCard
-                    title="Total Pendapatan"
-                    value={
-                        <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                        {formatShort(studio?.metrics?.income?.total || 0)}
-                                    </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    {formatFull(studio?.metrics?.income?.total || 0)}
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    }
-                    percentage={`${studio?.metrics?.income.ratio || 0}`}
-                    trend={studio?.metrics?.income.ratio >= 0 ? "up" : "down"}
-                    icon="wallet"
-                    borderColor="#2E964C"
-                    since={formatSince(studio?.current_period?.days)}
-                />
+                {metricsConfig.map(({ key, title, icon, borderColor }) => {
+                    const metric = studio?.metrics?.[key] || {};
+                    return (
+                        <StatCard
+                            key={key}
+                            title={title}
+                            value={
+                                <TooltipProvider delayDuration={100}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="cursor-pointer">
+                                                {formatShort(metric.total || 0)}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {formatFull(metric.total || 0)}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            }
+                            percentage={metric.ratio || 0}
+                            trend={metric.ratio >= 0 ? "up" : "down"}
+                            icon={icon}
+                            borderColor={borderColor}
+                            since={formatSince(studio?.current_period?.days || 0)}
+                        />
+                    );
+                })}
             </div>
+
 
             {/* Data Ringkasan */}
             <div className="py-5 px-2 rounded-xl">

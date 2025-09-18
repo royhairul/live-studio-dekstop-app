@@ -8,22 +8,21 @@ import useDateRangeQuery from "../hooks/useDateRangeQuery";
 import { apiEndpoints } from "@/config/api";
 import DateRangeFilter from "../components/DateRangeFilter";
 import { getYesterdayRange } from "@/helpers/formatDate";
-import { useState } from "react";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 export default function HostPerformPage() {
-    const [range] = useState(getYesterdayRange);
 
     const {
         data,
         isFetching,
         handleApplyDateRange,
+        appliedRange
     } = useDateRangeQuery({
         queryKey: ["perform-detail-host"],
         url: apiEndpoints.perform.host(),
-        range
+        range: getYesterdayRange()
     });
 
     const performColumns = [
@@ -108,6 +107,7 @@ export default function HostPerformPage() {
                         </p>
                     </div>
                     <DateRangeFilter
+                        dateRange={appliedRange}
                         onApply={handleApplyDateRange}
                         isLoading={isFetching}
                     />

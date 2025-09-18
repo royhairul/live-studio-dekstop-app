@@ -9,7 +9,6 @@ import { intToHumanTime } from "@/helpers/formatTime";
 import DateRangeFilter from "../components/DateRangeFilter";
 import useDateRangeQuery from "../hooks/useDateRangeQuery";
 import { getYesterdayRange } from "@/helpers/formatDate";
-import { useState } from "react";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -92,17 +91,16 @@ const performDetailHostColumn = [
 
 export default function HostDetailPerformPage() {
     const id = useParams().id;
-    const [range] = useState(getYesterdayRange);
-
     const {
         data,
         isFetching,
         handleApplyDateRange,
+        appliedRange
     } = useDateRangeQuery({
         queryKey: ["perform-detail-host"],
         url: apiEndpoints.perform.hostDetail(id),
         id,
-        range
+        range: getYesterdayRange(),
     });
 
     const totalSeconds = data?.total_duration || 0;
@@ -120,6 +118,7 @@ export default function HostDetailPerformPage() {
                     </div>
 
                     <DateRangeFilter
+                        dateRange={appliedRange}
                         onApply={handleApplyDateRange}
                         isLoading={isFetching}
                     />
