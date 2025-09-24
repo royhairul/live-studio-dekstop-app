@@ -34,56 +34,53 @@ const performDetailHostColumn = [
         accessorKey: "akun",
         header: "Nama Akun",
         enableGlobalFilter: true,
-        cell: ({ row }) => row.original.account_name,
+        cell: ({ row }) => <div className="w-40">{row.original.account_name}</div>,
     },
     {
         id: "durasi-live",
         accessorKey: "durasi-live",
         header: "Durasi Live",
-        cell: ({ row }) => {
-            const totalSec = row.original.duration;
-            return intToHumanTime(totalSec);
-        }
+        cell: ({ row }) => <div className="w-40">
+            {intToHumanTime(row.original.total_duration)}
+        </div>
     },
     {
         id: "pesanan-dibuat",
         accessorKey: "pesanan-dibuat",
         header: "Pesanan Dibuat",
-        cell: ({ row }) => {
-            const value = row.original.total_paid;
-            return <TooltipProvider delayDuration={100}>
+        cell: ({ row }) => <div className="w-40">
+            <TooltipProvider delayDuration={100}>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <span className="cursor-pointer">
-                            {formatShort(value || 0)}
+                            {formatShort(row.original.total_paid || 0)}
                         </span>
                     </TooltipTrigger>
                     <TooltipContent>
-                        {formatFull(value || 0)}
+                        {formatFull(row.original.total_paid || 0)}
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-        }
+        </div>
     },
     {
         id: "pesanan-dikirim",
         accessorKey: "pesanan-dikirim",
         header: "Pesanan Dikirim",
-        cell: ({ row }) => {
-            const value = row.original.total_sales;
-            return <TooltipProvider delayDuration={100}>
+        cell: ({ row }) => <div className="w-40">
+            <TooltipProvider delayDuration={100}>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <span className="cursor-pointer">
-                            {formatShort(value || 0)}
+                            {formatShort(row.original.total_sales || 0)}
                         </span>
                     </TooltipTrigger>
                     <TooltipContent>
-                        {formatFull(value || 0)}
+                        {formatFull(row.original.total_sales || 0)}
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-        }
+        </div>
     },
 
 ];

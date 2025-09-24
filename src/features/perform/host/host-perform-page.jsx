@@ -30,16 +30,19 @@ export default function HostPerformPage() {
             accessorKey: "name",
             header: "Nama Host",
             enableGlobalFilter: true,
+            cell: ({ getValue }) => <div className="w-40">{getValue()}</div>,
         },
         {
             accessorKey: "total_duration",
             header: "Total Durasi",
-            cell: ({ getValue }) => intToHumanTime(getValue())
+            cell: ({ getValue }) => <div className="w-40">{intToHumanTime(getValue())}</div>
         },
         {
             accessorKey: "total_paid",
             header: "Total Pesanan Dibuat",
-            cell: ({ getValue }) =>
+            cell: ({ getValue }) => 
+                <div className="w-40">
+
                 <TooltipProvider delayDuration={100}>
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -52,11 +55,15 @@ export default function HostPerformPage() {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
+                </div>
+
         },
         {
             accessorKey: "total_sales",
             header: "Total Pesanan Dikirim",
             cell: ({ getValue }) =>
+                <div className="w-40">
+
                 <TooltipProvider delayDuration={100}>
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -69,6 +76,7 @@ export default function HostPerformPage() {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
+                </div>
         },
         {
             accessorKey: "id",

@@ -4,8 +4,8 @@ import HostDetailPerformPage from "@/features/perform/host/detail-page";
 import HostPerformPage from "@/features/perform/host/host-perform-page";
 import { Route } from "react-router-dom";
 import AccountPerformPage from "@/features/perform/account/account-perform-page";
-import StudioPerformPage from "@/features/perform/studio/studio-perform-page";
-import StudioPerformDetailPage from "@/features/perform/studio/detail-page";
+import StudioPerformPage from "@/features/perform/studio/pages/studio-perform-page";
+import StudioPerformDetailPage from "@/features/perform/studio/pages/detail-page";
 import TargetPage from "@/features/perform/target/pages/target-page";
 
 export const performRoutes = (

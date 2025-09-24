@@ -7,11 +7,10 @@ import {
 import { useState } from "react";
 import StatCard from "@/components/ui/stat-card";
 import StudioFinanceList from "@/components/studio-finance-list";
-import Loader from "@/components/ui/loader";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
 import { apiEndpoints } from "@/config/api";
-import useDateRangeQuery from "../hooks/useDateRangeQuery";
-import DateRangeFilter from "../components/DateRangeFilter";
+import useDateRangeQuery from "../../hooks/useDateRangeQuery";
+import DateRangeFilter from "../../components/DateRangeFilter";
 import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -26,10 +25,7 @@ export default function StudioPerformPage() {
         queryKey: ["perform-studio"],
         url: apiEndpoints.perform.studio(),
         range: getYesterdayRange()
-    });
-
-    console.log(studio);
-    
+    });    
 
     const breadcrumbs = [
         {

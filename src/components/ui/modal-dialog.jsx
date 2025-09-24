@@ -16,7 +16,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SearchSelect } from "./search-select";
 import { formatDateTarget } from "@/helpers/formatDate";
-import { MonthYearSelect } from "./mont-year-select";
+import { MonthYearSelect } from "../month-year-select";
+import CurrencyInput from "../Input-number";
+import { DatePicker } from "../date-input";
 
 export function DialogTambahData({
     title = "Tambah Data",
@@ -78,9 +80,9 @@ export function DialogTambahData({
                     finalData[field.name] = val;
             }
         });
+
         console.log(finalData);
         
-
         const result = schema.safeParse(finalData);
         if (!result.success) {
             result.error.errors.forEach((err) => {
@@ -123,13 +125,27 @@ export function DialogTambahData({
                                             setFormData((prev) => ({ ...prev, [field.name]: val }))
                                         }
                                     />
+                                ) : field.type === "number" ? (
+                                    <CurrencyInput
+                                        id={field.name}
+                                        name={field.name}
+                                        value={formData[field.name]}
+                                        onChange={(val) => handleChange(field.name, val)}
+                                        placeholder="Masukkan angka"
+                                    />
+
+                                ) : field.type === "date" ? (
+                                    <DatePicker
+                                        value={formData[field.name]}
+                                        onChange={(val) => handleChange(field.name, val)}
+                                    />
                                 ) : (
                                     <Input
                                         id={field.name}
                                         name={field.name}
                                         type={field.type || "text"}
                                         placeholder={field.placeholder || ""}
-                                        className="border-accent [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [appearance:textfield]"
+                                        className="border-accent"
                                         value={formData[field.name] || ""}
                                         min={field.type === "number" ? 0 : undefined}
                                         onChange={(e) => handleChange(field.name, e.target.value)}

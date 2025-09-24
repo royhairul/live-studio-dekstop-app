@@ -8,11 +8,12 @@ import { DialogTambahData } from "@/components/ui/modal-dialog";
 import { useParams } from "react-router-dom";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
 import { formatPercentage, getPercentageACOS, getPercentageROAS } from "@/helpers/formatPercent";
-import DateRangeFilter from "../components/DateRangeFilter";
-import useDateRangeQuery from "../hooks/useDateRangeQuery";
+import DateRangeFilter from "../../components/DateRangeFilter";
+import useDateRangeQuery from "../../hooks/useDateRangeQuery";
 import PerformTable from "@/components/perform-table";
 import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { schema } from "../schemas/createOrUpdateAds";
 
 export default function StudioPerformDetailPage() {
     const idStudio = useParams().id;
@@ -47,86 +48,98 @@ export default function StudioPerformDetailPage() {
         {
             id: "akun",
             accessorKey: "account_name",
-            header: "Nama Akun",
-            cell: ({ getValue }) => <div >{getValue()}</div>,
+            header: "Akun",
+            cell: ({ getValue }) => <div className="w-40">{getValue()}</div>,
         },
         {
             id: "gmv",
             accessorKey: "gmv",
             header: "GMV",
-            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <span className="cursor-pointer">
-                            {formatShort(getValue())}
-                        </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        {formatFull(getValue())}
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>,
+            cell: ({ getValue }) =>
+                <div className="w-28">
+                    <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className="cursor-pointer">
+                                    {formatShort(getValue())}
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {formatFull(getValue())}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
         },
         {
             id: "komisi",
             accessorKey: "commission",
             header: "Komisi",
-            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <span className="cursor-pointer">
-                            {formatShort(getValue())}
-                        </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        {formatFull(getValue())}
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>,
+            cell: ({ getValue }) =>
+                <div className="w-28">
+                    <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className="cursor-pointer">
+                                    {formatShort(getValue())}
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {formatFull(getValue())}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
         },
         {
             id: "iklan",
             accessorKey: "ads",
             header: "Iklan + PPN",
-            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <span className="cursor-pointer">
-                            {formatShort(getValue())}
-                        </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        {formatFull(getValue())}
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>,
+            cell: ({ getValue }) =>
+                <div className="w-28">
+                    <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className="cursor-pointer">
+                                    {formatShort(getValue())}
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {formatFull(getValue())}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>,
         },
         {
             id: "acos",
             accessorKey: "acos",
             header: "ACOS",
-            cell: ({ getValue }) => <div className={`${getPercentageACOS(getValue())} w-max`} >{formatPercentage(getValue())}</div>,
+            cell: ({ getValue }) => <div className={`${getPercentageACOS(getValue())} w-20`} >{formatPercentage(getValue())}</div>,
         }, {
             id: "roas",
             accessorKey: "roas",
             header: "ROAS",
-            cell: ({ getValue }) => <div className={`${getPercentageROAS(getValue())} w-max`}>{formatPercentage(getValue())}</div>,
+            cell: ({ getValue }) => <div className={`${getPercentageROAS(getValue())} w-20`}>{formatPercentage(getValue())}</div>,
         }, {
             id: "income",
             accessorKey: "income",
             header: "Pendapatan",
-            cell: ({ getValue }) => <TooltipProvider delayDuration={100}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <span className="cursor-pointer">
-                            {formatShort(getValue())}
-                        </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        {formatFull(getValue())}
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>,
+            cell: ({ getValue }) =>
+                <div className="w-28">
+                    <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className="cursor-pointer">
+                                    {formatShort(getValue())}
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {formatFull(getValue())}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>,
         },
     ]
 
@@ -166,7 +179,7 @@ export default function StudioPerformDetailPage() {
     const accountOptions = data?.list?.map((item) => ({
         value: item.account_id,
         label: item.account_name,
-    }));
+    }));    
 
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
@@ -190,6 +203,7 @@ export default function StudioPerformDetailPage() {
                 </div>
             </div>
 
+            {/* metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-3">
                 {metricsConfig.map(({ key, title, icon, borderColor }) => {
                     const metric = data?.metrics?.[key] || {};
@@ -230,6 +244,7 @@ export default function StudioPerformDetailPage() {
                     data={data?.list}
                     customButton={
                         <DialogTambahData
+                            schema={schema}
                             fields={fieldsModalIklan}
                             title="Tambah Iklan + PPN"
                             endpoint={apiEndpoints.ads.create}

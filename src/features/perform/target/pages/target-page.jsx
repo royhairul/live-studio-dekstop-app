@@ -3,7 +3,7 @@ import { DialogTambahData } from "@/components/ui/modal-dialog";
 import { apiEndpoints } from "@/config/api";
 import MainLayout from "@/layouts/main-layout";
 import { IconChartLine, IconSquareRoundedCheckFilled, IconTargetArrow } from "@tabler/icons-react";
-import { MonthYearSelect } from "@/components/ui/mont-year-select";
+import { MonthYearSelect } from "@/components/month-year-select";
 import { Button } from "@/components/ui/button";
 import useMonthYearQuery from "../../hooks/useMonthYearQuery";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
@@ -21,8 +21,6 @@ export default function TargetPage() {
     queryKey: ["target-studio"],
     url: apiEndpoints.target.getAll(),
   });
-
-  console.log(data);
 
   const performColumns = [
     {
@@ -82,7 +80,7 @@ export default function TargetPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>} <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(persen)}`}>
-                  ({formatPercentage(persen)})
+                  {formatPercentage(persen)}
                 </span>
 
               </div>
@@ -125,7 +123,7 @@ export default function TargetPage() {
                 </Tooltip>
               </TooltipProvider>}</span>
               <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(persen)}`}>
-                ({formatPercentage(persen)})
+                {formatPercentage(persen)}
               </span>
 
             </div>
@@ -177,7 +175,7 @@ export default function TargetPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>} <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(realisasi)}`}>
-                  ({formatPercentage(realisasi)})
+                  {formatPercentage(realisasi)}
                 </span>
 
               </div>
@@ -222,7 +220,7 @@ export default function TargetPage() {
                 </Tooltip>
               </TooltipProvider>}</span>
               <span className={`text-xs flex-shrink-0 ${getPercentageRealisasi(persen)}`}>
-                ({formatPercentage(persen)})
+                {formatPercentage(persen)}
               </span>
 
             </div>

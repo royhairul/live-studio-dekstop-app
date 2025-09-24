@@ -38,7 +38,7 @@ export function MonthYearSelect({ value, onChange, yearRange = 5 }) {
                     handleChange(Number(v), year);
                 }}
             >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full border-accent border p-2 rounded-sm hover:cursor-pointer">
                     <SelectValue placeholder="Pilih bulan" />
                 </SelectTrigger>
                 <SelectContent>
@@ -58,7 +58,7 @@ export function MonthYearSelect({ value, onChange, yearRange = 5 }) {
                     handleChange(month, Number(v));
                 }}
             >
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="border-accent border p-2 rounded-sm w-[180px] hover:cursor-pointer">
                     <SelectValue placeholder="Pilih tahun" />
                 </SelectTrigger>
                 <SelectContent>
