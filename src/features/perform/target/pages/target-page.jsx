@@ -263,7 +263,7 @@ export default function TargetPage() {
             <p className="text-accent/60 text-sm">Update Informasi Laporan Akun Studio Live</p>
           </div>
           <div className="flex items-center justify-end">
-            <MonthYearSelect onChange={handleApplyMonthYear} value={appliedPeriod} />
+            <MonthYearSelect onChange={handleApplyMonthYear} value={appliedPeriod} withDefault={true} />
           </div>
         </div>
 

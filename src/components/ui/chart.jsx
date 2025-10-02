@@ -2,6 +2,7 @@ import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
 import { cn } from "@/lib/utils"
+import { formatShort } from "@/helpers/formatIDR"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = {
@@ -67,13 +68,13 @@ const ChartStyle = ({
           .map(([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
-.map(([key, itemConfig]) => {
-const color =
-  itemConfig.theme?.[theme] ||
-  itemConfig.color
-return color ? `  --color-${key}: ${color};` : null
-})
-.join("\n")}
+              .map(([key, itemConfig]) => {
+                const color =
+                  itemConfig.theme?.[theme] ||
+                  itemConfig.color
+                return color ? `  --color-${key}: ${color};` : null
+              })
+              .join("\n")}
 }
 `)
           .join("\n"),
@@ -100,6 +101,8 @@ function ChartTooltipContent({
 }) {
   const { config } = useChart()
 
+  console.log(payload);
+  
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || !payload?.length) {
       return null
@@ -117,6 +120,14 @@ function ChartTooltipContent({
       return (
         <div className={cn("font-medium", labelClassName)}>
           {labelFormatter(value, payload)}
+        </div>
+      );
+    }
+    const dateFull = payload?.[0].payload?.dateFull; 
+    if (dateFull) {
+      return (
+        <div className={cn("font-medium", labelClassName)}>
+          {dateFull}
         </div>
       );
     }
@@ -145,7 +156,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
+        "border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl text-white",
         className
       )}>
       {!nestLabel ? tooltipLabel : null}
@@ -188,7 +199,7 @@ function ChartTooltipContent({
                   )}
                   <div
                     className={cn(
-                      "flex flex-1 justify-between leading-none",
+                      "flex flex-1 justify-between leading-none gap-5",
                       nestLabel ? "items-end" : "items-center"
                     )}>
                     <div className="grid gap-1.5">
@@ -199,7 +210,7 @@ function ChartTooltipContent({
                     </div>
                     {item.value && (
                       <span className="text-foreground font-mono font-medium tabular-nums">
-                        {item.value.toLocaleString()}
+                        {formatShort(item.value)}
                       </span>
                     )}
                   </div>
@@ -274,8 +285,8 @@ function getPayloadConfigFromPayload(
 
   const payloadPayload =
     "payload" in payload &&
-    typeof payload.payload === "object" &&
-    payload.payload !== null
+      typeof payload.payload === "object" &&
+      payload.payload !== null
       ? payload.payload
       : undefined
 

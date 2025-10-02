@@ -3,8 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { IconId } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { apiEndpoints, baseUrl } from "@/config/api";
+import { apiEndpoints } from "@/config/api";
 import { toast } from "sonner";
 import {
   Form,
@@ -27,12 +26,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useStudios } from "@/hooks/studio/useStudios";
-import { postRequest } from "@/lib/useApi";
-import { Value } from "@radix-ui/react-select";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { Label } from "recharts";
 
 export default function AccountCreatePage() {
   const { studio } = useStudios();

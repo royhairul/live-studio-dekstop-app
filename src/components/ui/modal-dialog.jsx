@@ -21,7 +21,7 @@ import CurrencyInput from "../Input-number";
 import { DatePicker } from "../date-input";
 
 export function DialogTambahData({
-    title = "Tambah Data",
+    title,
     fields = [],
     endpoint = null,
     queryInvalidateKey = [],
@@ -30,7 +30,8 @@ export function DialogTambahData({
 }) {
     const [formData, setFormData] = useState({});
     const [open, setOpen] = useState(false);
-
+    console.log("formData", formData);
+    
     const queryClient = useQueryClient();
 
     const handleChange = (name, value) => {
@@ -81,7 +82,7 @@ export function DialogTambahData({
             }
         });
 
-        console.log(finalData);
+        console.log("data", finalData);
         
         const result = schema.safeParse(finalData);
         if (!result.success) {
@@ -121,6 +122,7 @@ export function DialogTambahData({
                                 ) : field.type === "monthyear" ? (
                                     <MonthYearSelect
                                         value={formData[field.name]}
+                                        withDefault={false}
                                         onChange={(val) =>
                                             setFormData((prev) => ({ ...prev, [field.name]: val }))
                                         }

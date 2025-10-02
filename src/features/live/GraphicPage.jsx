@@ -18,7 +18,7 @@ import {
   IconIdBadge,
   IconReportMoney,
 } from "@tabler/icons-react";
-import { ChartAreaGradient } from "@/components/ui/chart-area-gradient";
+import { ChartAreaGradient } from "@/components/chart-area-gradient";
 import RevenueCard from "@/components/ui/revenue";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { useState } from "react";

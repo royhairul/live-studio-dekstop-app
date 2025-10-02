@@ -23,14 +23,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   IconLayoutGridFilled,
-  IconUsersGroup,
   IconChevronDown,
   IconId,
   IconShoppingBag,
   IconIdBadge,
   IconSettings,
-  IconReportMoney,
-  IconTemperatureSnow,
   IconUsers,
   IconChartLine,
 } from "@tabler/icons-react";
@@ -42,22 +39,6 @@ import { PERMISSIONS } from "@/helpers/permission";
 import { hasPermission } from "@/helpers/hasPermissions";
 
 const items = [
-  // {
-  //   icon: IconIdBadge,
-  //   title: "Live",
-  //   children: [
-  //     {
-  //       title: "Preview",
-  //       url: "/live/preview",
-  //       permission: PERMISSIONS.LIVE.VIEW,
-  //     },
-  //     {
-  //       title: "Grafik",
-  //       url: "/live/graph",
-  //       permission: PERMISSIONS.LIVE.REPORT,
-  //     },
-  //   ],
-  // },
   {
     icon: IconChartLine,
     title: "Performa",
@@ -89,34 +70,17 @@ const items = [
     title: "Transaksi",
     children: [
       {
-        title: "Daftar Produk",
-        url: "/product/list",
+        title: "Keuangan",
+        url: "/transaksi/keuangan",
         permission: PERMISSIONS.FINANCE.VIEW,
       },
       {
         title: "Transaksi Produk",
-        url: "/product/orders",
+        url: "/transaksi/produk",
         permission: PERMISSIONS.FINANCE.VIEW,
       },
     ],
   },
-  // {
-  //   icon: IconUsersGroup,
-  //   title: "Host",
-  //   url: "/host/all",
-  //   children: [
-  //     {
-  //       title: "Daftar Host",
-  //       url: "/host/all",
-  //       permission: PERMISSIONS.HOST.VIEW,
-  //     },
-  //     {
-  //       title: "Jadwal Host",
-  //       url: "/host/schedule",
-  //       permission: PERMISSIONS.SCHEDULE_HOST.VIEW,
-  //     },
-  //   ],
-  // },
   {
     icon: IconId,
     title: "Master",

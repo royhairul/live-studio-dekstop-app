@@ -144,7 +144,7 @@ export default function StudioPerformDetailPage() {
     ]
 
     const fieldsModalIklan = [
-        { name: "accountid", type: "select", label: "Akun" },
+        { name: "account_id", type: "select", label: "Akun" },
         { name: "ads", type: "number", label: "Iklan" },
         { name: "date", type: "date", label: "Tanggal" }
     ]
@@ -249,7 +249,7 @@ export default function StudioPerformDetailPage() {
                             title="Tambah Iklan + PPN"
                             endpoint={apiEndpoints.ads.create}
                             queryInvalidateKey={["perform-studio"]}
-                            selectOptions={{ accountid: accountOptions }}
+                            selectOptions={{ account_id: accountOptions }}
                         />
                     }
                 />

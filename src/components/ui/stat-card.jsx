@@ -9,6 +9,9 @@ import {
     IconBrandSpeedtest,
     IconShoppingBag,
     IconAd,
+    IconVideo,
+    IconDeviceMobile,
+    IconUsers,
 } from "@tabler/icons-react";
 
 const iconMap = {
@@ -18,7 +21,10 @@ const iconMap = {
     wallet: IconWallet,
     speed: IconBrandSpeedtest,
     shopbag: IconShoppingBag,
-    ad: IconAd
+    ad: IconAd,
+    studio: IconVideo,
+    account: IconDeviceMobile,
+    host: IconUsers
 };
 
 const StatCard = ({

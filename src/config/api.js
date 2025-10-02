@@ -138,4 +138,8 @@ export const apiEndpoints = {
   live: {
     preview: () => `${baseWsUrl}/live/shopee`,
   },
+
+  dashboard: {
+    index: () => `${baseUrl}/dashboard`
+  }
 };

@@ -154,8 +154,8 @@ export default function AccountAllPage() {
           onError: () => toast.error("Gagal menghapus account"),
         });
 
-        const handleDelete = (values) =>
-          deleteAccountMutation.mutate(row.original.ID);
+        const handleDelete = () =>
+          deleteAccountMutation.mutate(row.original.id);
 
         return (
           <div className="flex gap-2">
