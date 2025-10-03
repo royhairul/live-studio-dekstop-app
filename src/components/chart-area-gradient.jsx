@@ -2,7 +2,6 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/chart"
 
 const chartConfig = {
-  komisi: {
+  commission: {
     label: "Komisi",
     color: "var(--color-chart-1)",
   },
@@ -31,9 +30,11 @@ const chartConfig = {
   },
 }
 
-export function ChartAreaGradient({ data }) {  
-  console.log(data);
-  
+export function ChartAreaGradient({ data }) {
+  const allTicks = Array.from(
+    new Set(data.flatMap(item => [item.gmv, item.commission, item.ads, item.income]))
+  ).sort((a, b) => a - b);
+
   return (
     <Card className="bg-white text-gray-800 border-gray-100 h-max">
       <CardHeader >
@@ -46,12 +47,12 @@ export function ChartAreaGradient({ data }) {
             data={data || []}
             margin={{ top: 16, bottom: 16, left: 30, right: 16 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#8884d8" strokeOpacity={0.4} />
 
             <YAxis
-              tickFormatter={(value) =>
-                new Intl.NumberFormat("id-ID").format(value)
-              }
+              ticks={allTicks}
+              domain={['dataMin', 'dataMax']}
+              tickFormatter={(value) => new Intl.NumberFormat("id-ID").format(value)}
               axisLine={false}
               tickLine={true}
               tickMargin={0}
@@ -79,8 +80,8 @@ export function ChartAreaGradient({ data }) {
               </linearGradient>
 
               <linearGradient id="fillKomisi" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-komisi)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="var(--color-komisi)" stopOpacity={0.1} />
+                <stop offset="5%" stopColor="var(--color-commission)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="var(--color-commission)" stopOpacity={0.1} />
               </linearGradient>
 
               <linearGradient id="fillAds" x1="0" y1="0" x2="0" y2="1">
@@ -93,27 +94,32 @@ export function ChartAreaGradient({ data }) {
                 <stop offset="95%" stopColor="var(--color-income)" stopOpacity={0.1} />
               </linearGradient>
             </defs>
+
             <Area
               dataKey="gmv"
-              type="natural"
+              type="bump"
+              strokeWidth={3}
               fill="url(#fillGmv)"
               stroke="var(--color-gmv)"
             />
             <Area
               dataKey="commission"
-              type="natural"
+              type="bump"
+              strokeWidth={3}
               fill="url(#fillKomisi)"
-              stroke="var(--color-komisi)"
+              stroke="var(--color-commission)"
             />
             <Area
               dataKey="ads"
-              type="natural"
+              type="bump"
+              strokeWidth={3}
               fill="url(#fillAds)"
               stroke="var(--color-ads)"
             />
             <Area
               dataKey="income"
-              type="natural"
+              type="bump"
+              strokeWidth={3}
               fill="url(#fillIncome)"
               stroke="var(--color-income)"
             />
