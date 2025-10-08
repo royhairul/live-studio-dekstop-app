@@ -10,6 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { formatShortNoRp } from "@/helpers/formatIDR";
 
 const chartConfig = {
   commission: {
@@ -30,9 +31,16 @@ const chartConfig = {
   },
 }
 
-export function ChartAreaGradient({ data }) {
+export function ChartAreaGradient({ data = [] }) {
   const allTicks = Array.from(
-    new Set(data.flatMap(item => [item.gmv, item.commission, item.ads, item.income]))
+    new Set(
+      data.flatMap(item => [
+        item.gmv,
+        item.commission,
+        item.ads,
+        item.income
+      ])
+    )
   ).sort((a, b) => a - b);
 
   return (
@@ -52,7 +60,7 @@ export function ChartAreaGradient({ data }) {
             <YAxis
               ticks={allTicks}
               domain={['dataMin', 'dataMax']}
-              tickFormatter={(value) => new Intl.NumberFormat("id-ID").format(value)}
+              tickFormatter={(value) => formatShortNoRp(value)}
               axisLine={false}
               tickLine={true}
               tickMargin={0}
@@ -98,28 +106,28 @@ export function ChartAreaGradient({ data }) {
             <Area
               dataKey="gmv"
               type="bump"
-              strokeWidth={3}
+              strokeWidth={2.5}
               fill="url(#fillGmv)"
               stroke="var(--color-gmv)"
             />
             <Area
               dataKey="commission"
               type="bump"
-              strokeWidth={3}
+              strokeWidth={2.5}
               fill="url(#fillKomisi)"
               stroke="var(--color-commission)"
             />
             <Area
               dataKey="ads"
               type="bump"
-              strokeWidth={3}
+              strokeWidth={2.5}
               fill="url(#fillAds)"
               stroke="var(--color-ads)"
             />
             <Area
               dataKey="income"
               type="bump"
-              strokeWidth={3}
+              strokeWidth={2.5}
               fill="url(#fillIncome)"
               stroke="var(--color-income)"
             />
