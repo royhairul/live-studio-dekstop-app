@@ -13,7 +13,6 @@ import { apiEndpoints } from "@/config/api";
 import { useLocation } from "react-router-dom";
 import { LineChart } from "lucide-react";
 import { ChartLineMultiple } from "@/components/ui/line-chart";
-import { ur } from "zod/v4/locales";
 
 const columnDetailPreview = [
     {

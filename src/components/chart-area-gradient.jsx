@@ -1,4 +1,4 @@
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, LabelList } from "recharts"
 import {
   Card,
   CardContent,
@@ -7,46 +7,60 @@ import {
 } from "@/components/ui/card"
 import {
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart"
 import { formatShortNoRp } from "@/helpers/formatIDR";
 
 const chartConfig = {
-  commission: {
-    label: "Komisi",
-    color: "var(--color-chart-1)",
-  },
-  gmv: {
-    label: "GMV",
-    color: "var(--color-chart-4)",
-  },
-  ads: {
-    label: "Iklan + PPN",
-    color: "var(--color-chart-3)",
-  },
-  income: {
-    label: "Pendapatan",
-    color: "var(--color-chart-2)",
-  },
+  commission: { label: "Komisi", color: "var(--color-chart-1)" },
+  gmv: { label: "GMV", color: "var(--color-chart-4)" },
+  ads: { label: "Iklan + PPN", color: "var(--color-chart-3)" },
+  income: { label: "Pendapatan", color: "var(--color-chart-2)" },
 }
 
-export function ChartAreaGradient({ data = [] }) {
-  const allTicks = Array.from(
-    new Set(
-      data.flatMap(item => [
-        item.gmv,
-        item.commission,
-        item.ads,
-        item.income
-      ])
-    )
-  ).sort((a, b) => a - b);
+const CustomLabel = ({ x, y, value, fillColor }) => {
+  if (!value || value === 0) return null // sembunyikan nilai 0
+
+  const displayText = formatShortNoRp(value)
+  const paddingX = 4  // padding horizontal
+  const paddingY = 2  // padding vertikal
+  const textWidth = displayText.toString().length * 6  // perkiraan lebar teks
+  const textHeight = 14  // tinggi teks
+  const rectWidth = textWidth + paddingX * 2
+  const rectHeight = textHeight + paddingY * 2
 
   return (
+    <g transform={`translate(${x - rectWidth / 2}, ${y - rectHeight - 6})`}>
+      <rect
+        width={rectWidth}
+        height={rectHeight}
+        rx={4}
+        ry={4}
+        fill={fillColor}
+        stroke={fillColor}
+        strokeWidth={0.6}
+      />
+      <text
+        x={rectWidth / 2}
+        y={rectHeight / 2 + 4}
+        textAnchor="middle"
+        fill="#000"
+        fontSize={12}
+        fontWeight={500}
+      >
+        {displayText}
+      </text>
+    </g>
+  )
+}
+
+export function ChartAreaGradient({ key , title, data = [], color }) {
+  
+  return (
     <Card className="bg-white text-gray-800 border-gray-100 h-max">
-      <CardHeader >
-        <CardTitle className={"text-2xl font-semibold text-accent"}>Grafik Laporan</CardTitle>
+      <CardHeader>
+        <CardTitle className="text-2xl font-semibold text-accent">
+          Grafik Laporan
+        </CardTitle>
       </CardHeader>
 
       <CardContent>
@@ -55,15 +69,14 @@ export function ChartAreaGradient({ data = [] }) {
             data={data || []}
             margin={{ top: 16, bottom: 16, left: 30, right: 16 }}
           >
-            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#8884d8" strokeOpacity={0.4} />
+            <CartesianGrid vertical={true} strokeDasharray="3 3" stroke="#8884d8" strokeOpacity={0.4} />
 
+            {/* YAxis normal tanpa domain dataMin/dataMax */}
             <YAxis
-              ticks={allTicks}
-              domain={['dataMin', 'dataMax']}
               tickFormatter={(value) => formatShortNoRp(value)}
               axisLine={false}
               tickLine={true}
-              tickMargin={0}
+              tickMargin={4}
             />
 
             <XAxis
@@ -71,72 +84,51 @@ export function ChartAreaGradient({ data = [] }) {
               tickLine={true}
               axisLine={false}
               tickMargin={8}
-              interval={9}
+              interval={4}
               tick={{ textAnchor: "start" }}
             />
 
-            <ChartTooltip
-              cursor={false}
-              active={true}
-              content={<ChartTooltipContent />}
-            />
-
-            <defs>
-              <linearGradient id="fillGmv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-gmv)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="var(--color-gmv)" stopOpacity={0.1} />
-              </linearGradient>
-
-              <linearGradient id="fillKomisi" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-commission)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="var(--color-commission)" stopOpacity={0.1} />
-              </linearGradient>
-
-              <linearGradient id="fillAds" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-ads)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="var(--color-ads)" stopOpacity={0.1} />
-              </linearGradient>
-
-              <linearGradient id="fillIncome" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-income)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="var(--color-income)" stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
-
+            {/* Area dengan nilai langsung ditampilkan */}
             <Area
               dataKey="gmv"
-              type="bump"
+              type="monotone"
               strokeWidth={2.5}
               fill="url(#fillGmv)"
               stroke="var(--color-gmv)"
-            />
+            >
+              <LabelList content={(props) => <CustomLabel {...props} fillColor={chartConfig.gmv.color} />} />
+            </Area>
+
             <Area
               dataKey="commission"
-              type="bump"
+              type="monotone"
               strokeWidth={2.5}
               fill="url(#fillKomisi)"
-              stroke="var(--color-commission)"
-            />
+              stroke={chartConfig.commission.color}
+            >
+              <LabelList content={(props) => <CustomLabel {...props} fillColor={chartConfig.commission.color} />} />
+            </Area>
             <Area
               dataKey="ads"
-              type="bump"
+              type="monotone"
               strokeWidth={2.5}
               fill="url(#fillAds)"
-              stroke="var(--color-ads)"
-            />
+              stroke={chartConfig.ads.color}
+            >
+              <LabelList content={(props) => <CustomLabel {...props} fillColor={chartConfig.ads.color} />} />
+            </Area>
             <Area
               dataKey="income"
-              type="bump"
+              type="monotone"
               strokeWidth={2.5}
               fill="url(#fillIncome)"
-              stroke="var(--color-income)"
-            />
-
+              stroke={chartConfig.income.color}
+            >
+              <LabelList content={(props) => <CustomLabel {...props} fillColor={chartConfig.income.color} />} />
+            </Area>
           </AreaChart>
         </ChartContainer>
-
       </CardContent>
     </Card>
   );
 }
-

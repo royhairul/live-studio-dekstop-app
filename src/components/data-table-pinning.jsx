@@ -10,25 +10,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  IconArrowDown,
-  IconChevronDown,
-  IconDots,
-  IconSearch,
-} from "@tabler/icons-react";
-
+import { IconSearch, IconChevronDown } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -37,7 +27,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   Pagination,
   PaginationContent,
@@ -49,7 +38,12 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 
-export function DataTablePinning({ columns, pinning = [], data = [], customButton = null }) {
+export function DataTablePinning({
+  columns,
+  pinning = [],
+  data = [],
+  customButton = null,
+}) {
   const memoData = React.useMemo(() => data, [data]);
   const memoColumns = React.useMemo(() => columns, [columns]);
 
@@ -57,6 +51,7 @@ export function DataTablePinning({ columns, pinning = [], data = [], customButto
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState("");
   const [columnPinning, setColumnPinning] = React.useState(() => ({
     left: pinning,
     right: [],
@@ -65,22 +60,24 @@ export function DataTablePinning({ columns, pinning = [], data = [], customButto
   const table = useReactTable({
     data: memoData,
     columns: memoColumns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
-      columnPinning,
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter,
+      columnPinning,
     },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     onColumnPinningChange: setColumnPinning,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const pinnedLeft = table.getState().columnPinning.left;
@@ -88,64 +85,65 @@ export function DataTablePinning({ columns, pinning = [], data = [], customButto
     let left = 0;
     for (const colId of pinnedLeft) {
       if (colId === id) break;
-      left += 150; // Misal: lebar tetap 150px per pinned column
+      left += 150; // lebar tetap per kolom yang dipin
     }
     return `${left}px`;
   };
 
+  const currentPage = table.getState().pagination.pageIndex + 1;
+  const totalPages = table.getPageCount();
+
   return (
     <div className="w-full">
+      {/* Header: Search & Column Filter */}
       <div className="flex items-center py-4 justify-between">
-
+        {/* 🔍 Search Global */}
         <Input
           icon={<IconSearch />}
-          placeholder="Search..."
-          // value={table.getColumn("name")?.getFilterValue() ?? ""}
-          // onChange={(event) =>
-          //   table.getColumn("name")?.setFilterValue(event.target.value)
-          // }
+          placeholder="Cari data..."
+          value={globalFilter ?? ""}
+          onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm bg-white"
         />
-        <div className="flex gap-2">
 
+        {/* Tombol Custom dan Filter Kolom */}
+        <div className="flex gap-2">
           {customButton && customButton}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="ml-auto">
-                Columns <IconChevronDown />
+                Columns <IconChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
       </div>
-      <div className="pb-4 shadow-sm rounded-lg border border-gray-400/50">
+
+      {/* Table */}
+      <div className="pb-4 shadow-sm rounded-lg border border-gray-400/50 overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  const pinnedLeft = table.getState().columnPinning.left;
                   const pinnedIndex = pinnedLeft.indexOf(header.column.id);
                   const leftValue =
                     pinnedIndex !== -1 ? `${pinnedIndex * 150}px` : undefined;
@@ -156,16 +154,16 @@ export function DataTablePinning({ columns, pinning = [], data = [], customButto
                       className={cn(
                         "w-[150px] min-w-[150px] max-w-[150px]",
                         pinnedIndex !== -1 &&
-                        "sticky z-20 shadow-md bg-gray-50 "
+                          "sticky z-20 shadow-md bg-gray-50"
                       )}
                       style={pinnedIndex !== -1 ? { left: leftValue } : {}}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -176,14 +174,9 @@ export function DataTablePinning({ columns, pinning = [], data = [], customButto
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => {
-                    const pinnedLeft = table.getState().columnPinning.left;
                     const pinnedIndex = pinnedLeft.indexOf(cell.column.id);
-
                     return (
                       <TableCell
                         key={cell.id}
@@ -209,33 +202,72 @@ export function DataTablePinning({ columns, pinning = [], data = [], customButto
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
+                  className="h-24 text-center text-gray-500"
                 >
-                  Data Tidak Tersedia.
+                  Data tidak tersedia.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex-col items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-gray-500">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+
+      {/* Pagination */}
+      <div className="flex flex-col items-center justify-between sm:flex-row py-4 text-sm text-gray-500 gap-3">
+        <div>
+          {table.getFilteredSelectedRowModel().rows.length} dari{" "}
+          {table.getFilteredRowModel().rows.length} data dipilih.
         </div>
+
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious
+                onClick={() => table.previousPage()}
+                className={
+                  !table.getCanPreviousPage()
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
+              />
             </PaginationItem>
+
+            {/* Halaman */}
+            {[...Array(totalPages)].map((_, i) => {
+              const page = i + 1;
+              if (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              ) {
+                return (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={page === currentPage}
+                      onClick={() => table.setPageIndex(page - 1)}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              } else if (
+                page === currentPage - 2 ||
+                page === currentPage + 2
+              ) {
+                return <PaginationEllipsis key={page} />;
+              }
+              return null;
+            })}
+
             <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext
+                onClick={() => table.nextPage()}
+                className={
+                  !table.getCanNextPage()
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
+              />
             </PaginationItem>
           </PaginationContent>
         </Pagination>

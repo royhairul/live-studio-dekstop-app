@@ -7,10 +7,12 @@ import DateRangeFilter from "@/features/perform/components/DateRangeFilter";
 import useDateRangeQuery from "@/features/perform/hooks/useDateRangeQuery";
 import { apiEndpoints } from "@/config/api";
 import { formatDateID, formatDateIDFull, formatSince, getYesterdayRange } from "@/helpers/formatDate";
-import { ChartAreaGradient } from "@/components/chart-area-gradient";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
 import StatCard from "@/components/ui/stat-card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useState } from "react";
+import { ChartLineLabel } from "@/components/DashboardChart";
+import { DataTablePinning } from "@/components/data-table-pinning";
 
 const metricsConfig = [
   {
@@ -39,11 +41,69 @@ const metricsConfig = [
   }
 ];
 
+const chartConfig = {
+  gmv: {
+    label: "GMV",
+    color: "var(--color-chart-4)",
+  },
+  commission: {
+    label: "Komisi",
+    color: "var(--color-chart-1)",
+  },
+  ads: {
+    label: "Iklan + PPN",
+    color: "var(--color-chart-3)",
+  },
+  income: {
+    label: "Pendapatan",
+    color: "var(--color-chart-2)",
+  },
+}
+
+const tableConfig = [
+  {
+    id: "date",
+    accessorKey: "date",
+    header: () => <div className="pl-4 pr-8 font-semibold">Tanggal</div>,
+    cell: ({ getValue }) => <div className="pl-4">{formatDateIDFull(getValue())}</div>,
+  },
+  {
+    id: "gmv",
+    accessorKey: "gmv",
+    header: () => <div className="pl-4 pr-8 font-semibold">GMV</div>,
+    cell: ({ getValue }) => <div className="pl-4">{formatShort(getValue())}</div>,
+  },
+  {
+    id: "ads",
+    accessorKey: "ads",
+    header: () => <div className="pl-4 pr-8 font-semibold">Iklan + PPN</div>,
+    cell: ({ getValue }) => <div className="pl-4">{formatShort(getValue())}</div>,
+  },
+  {
+    id: "commission",
+    accessorKey: "commission",
+    header: () => <div className="pl-4 pr-8 font-semibold">Komisi</div>,
+    cell: ({ getValue }) => <div className="pl-4">{formatShort(getValue())}</div>,
+  },
+  {
+    id: "income",
+    accessorKey: "income",
+    header: () => <div className="pl-4 pr-8 font-semibold">Pendapatan</div>,
+    cell: ({ getValue }) => <div className="pl-4">{formatShort(getValue())}</div>,
+  },
+]
+
+
+
+
 export default function DashboardPage() {
+  const [selectedMetric, setSelectedMetric] = useState(metricsConfig[0].key)
   const breadcrumbs = [
     { icon: IconLayoutGridFilled, label: "Dashboard", url: "/dashboard" },
   ];
-
+  const handleSelectMetric = (key) => {
+    setSelectedMetric(key)
+  }
   const {
     data,
     isFetching,
@@ -55,11 +115,13 @@ export default function DashboardPage() {
     range: getYesterdayRange(),
   });
 
-  const chartData = data?.charts.map(item => ({
+
+  const activeMetricData = data?.charts?.map(item => ({
     ...item,
     date: formatDateID(item.date),
-    dateFull: formatDateIDFull(item.date) 
-  }));
+    dateFull: formatDateIDFull(item.date),
+    value: item[selectedMetric] || 0,
+  })) || []
 
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
@@ -72,40 +134,59 @@ export default function DashboardPage() {
       </div>
       {/* Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-2 my-3">
+
         {metricsConfig.map(({ key, title, icon, borderColor }) => {
-          const metric = data?.metrics?.[key] || {};
+          const metric = data?.metrics?.[key] || {}
+          const isActive = key === selectedMetric
+
           return (
-            <StatCard
+            <button
               key={key}
-              title={title}
-              value={
-                <TooltipProvider delayDuration={100}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="cursor-pointer">
-                        {formatShort(metric.total || 0)}
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {formatFull(metric.total || 0)}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              }
-              percentage={`${metric.ratio || 0}`}
-              trend={metric.ratio >= 0 ? "up" : "down"}
-              icon={icon}
-              borderColor={borderColor}
-              since={formatSince(data?.current_period?.days || 0)}
-            />
-          );
+              onClick={() => handleSelectMetric(key)}
+              className={`p-0 transition-all rounded-xl hover:cursor-pointer ${isActive ? "ring-2 ring-offset-2 ring-blue-400" : ""}`}
+            >
+              <StatCard
+                title={title}
+                value={
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="cursor-pointer">
+                          {formatShort(metric.total || 0)}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {formatFull(metric.total || 0)}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                }
+                percentage={`${metric.ratio || 0}`}
+                trend={metric.ratio >= 0 ? "up" : "down"}
+                icon={icon}
+                borderColor={borderColor}
+                since={formatSince(data?.current_period?.days || 0)}
+              />
+            </button>
+          )
         })}
+
         <StatCard title="Total Studio" value={data?.metrics?.studio || 0} icon="studio" borderColor="#D92E8D" since="Total Semua Studio" />
         <StatCard title="Total Akun" value={data?.metrics?.account || 0} icon="account" borderColor="#D9A12E" since="Total Semua Akun" />
         <StatCard title="Total Host" value={data?.metrics?.host || 0} icon="host" borderColor="#A12ED9" since="Total Semua Host" />
       </div>
 
-      <ChartAreaGradient data={chartData} />
+      <ChartLineLabel
+        dataKey={selectedMetric}
+        title={chartConfig[selectedMetric].label}
+        chartConfig={chartConfig}
+        chartData={activeMetricData}
+      />
+
+      <DataTablePinning
+        columns={tableConfig}
+        data={data.charts || []}
+      />
 
     </MainLayout>
   )

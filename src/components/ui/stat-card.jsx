@@ -54,7 +54,7 @@ const StatCard = ({
                     }}
                 />
             </div>
-            <h2 className="font-bold py-5 text-2xl text-accent">{value}</h2>
+            <h2 className="font-bold py-5 text-2xl text-accent text-left">{value}</h2>
             <div className="flex gap-2 text-xs">
                 {percentage && isUp !== null && isUp !== undefined ? (
                     <>

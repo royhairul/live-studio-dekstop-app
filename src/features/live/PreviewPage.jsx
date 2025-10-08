@@ -27,12 +27,6 @@ const columnReportDaily = [
     cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
   },
   {
-    id: "name",
-    accessorKey: "name",
-    header: () => <div className="pl-4 pr-8 font-semibold">Akun</div>,
-    cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
-  },
-  {
     id: "studio",
     accessorKey: "studio_name",
     header: () => <div className="pl-4 pr-8 font-semibold">Studio</div>,
@@ -205,7 +199,7 @@ const columnReportDaily = [
     header: "Detail",
     cell: ({ row }) => (
       <Link
-        to={`/live/preview-detail`}
+        to={`/live/preview-detail/${row.original.name}`}
       >
         <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
           Detail
@@ -282,7 +276,7 @@ export default function LivePreviewPage() {
       <DataTablePinning
         columns={columnReportDaily}
         data={combinedData}
-        pinning={["host", "name", "status"]}
+        pinning={["host", "status"]}
       />
     </MainLayout>
   );

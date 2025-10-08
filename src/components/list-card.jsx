@@ -81,7 +81,7 @@ export function ListCard() {
 
                 {/* Penjualan */}
                 <div className="text-black text-center font-bold mb-4">
-                    <h5 className="text-xl mb-1">Penjualan</h5>
+                    <h5 className="text-xl mb-1">Penjualan <span className="text-sm font-light">(pesanan siap dikirim)</span></h5>
                     <h1 className="text-3xl">
                         {selectedAccount ? selectedAccount.sales : "Rp. 0"}
                     </h1>
