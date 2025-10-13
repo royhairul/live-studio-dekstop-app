@@ -14,42 +14,82 @@ import { ChartLineMultiple } from "@/components/ui/line-chart";
 
 const columnDetailPreview = [
     {
-        id: "name",
-        accessorKey: "name",
-        header: () => <div className="pl-4 pr-8 font-semibold">Product</div>,
-        cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
-    },
-    {
-        id: "product-im",
-        accessorKey: "product-im",
-        header: () => <div className="pl-4 pr-8 font-semibold">Product Im</div>,
-        cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+        id: "title",
+        accessorKey: "title",
+        header: () => <div className="pl-4 pr-8 font-semibold">Produk/Harga Jual</div>,
+        cell: ({ getValue, row }) => {
+            const fullTitle = getValue()
+            const shortTitle =
+                fullTitle.length > 20 ? fullTitle.substring(0, 20) + "..." : fullTitle
+
+            const minPrice = row.original.minPrice
+            const maxPrice = row.original.maxPrice
+            const formattedPrice =
+                minPrice === maxPrice
+                    ? `Rp${minPrice.toLocaleString("id-ID")}`
+                    : `Rp${minPrice.toLocaleString("id-ID")} - Rp${maxPrice.toLocaleString("id-ID")}`
+
+            return (
+                <div className="pl-4 flex items-center gap-3 group">
+                    {/* Thumbnail */}
+                    <img
+                        src={`https://down-id.img.susercontent.com/file/${row.original.coverImage}`}
+                        alt={fullTitle}
+                        className="w-10 h-10 rounded-md object-cover flex-shrink-0"
+                    />
+
+                    {/* Text content */}
+                    <div className="relative flex flex-col">
+                        {/* Short title with hover tooltip */}
+                        <span className="text-sm font-medium text-gray-800 leading-tight">
+                            {shortTitle}
+                        </span>
+
+                        {/* Price */}
+                        <span className="text-xs text-gray-500">
+                            {formattedPrice}
+                        </span>
+
+                        {/* Tooltip */}
+                        <div className="absolute hidden group-hover:block bg-gray-900 text-white text-xs rounded-md px-2 py-1 -top-8 left-0 whitespace-nowrap z-50">
+                            {fullTitle}
+                        </div>
+                    </div>
+                </div>
+            )
+        },
     },
     {
         id: "ctr",
         accessorKey: "ctr",
         header: () => <div className="pl-4 pr-8 font-semibold">CTR</div>,
+        cell: ({ getValue }) => (
+            <div className="pl-4">{(getValue() * 100).toFixed(1)}%</div>
+        ),
+    },
+    {
+        id: "ordersCreated",
+        accessorKey: "ordersCreated",
+        header: () => <div className="pl-4 pr-8 font-semibold">Pesanan</div>,
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
     {
-        id: "order-create",
-        accessorKey: "order-create",
-        header: () => <div className="pl-4 pr-8 font-semibold">Order Create</div>,
-        cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
-    },
-    {
-        id: "order-pad",
-        accessorKey: "order-pad",
-        header: () => <div className="pl-4 pr-8 font-semibold">Order PAD</div>,
+        id: "confirmedOrderCnt",
+        accessorKey: "confirmedOrderCnt",
+        header: () => <div className="pl-4 pr-8 font-semibold">Orders Paid</div>,
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
     {
         id: "revenue",
         accessorKey: "revenue",
         header: () => <div className="pl-4 pr-8 font-semibold">Revenue</div>,
-        cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
-    }
+        cell: ({ getValue }) => (
+            <div className="pl-4">Rp {getValue()?.toLocaleString("id-ID")}</div>
+        ),
+    },
 ]
+
+
 export default function LivePreviewDetailPage() {
     const { id, sessionId } = useParams();
     const breadcrumbs = [
@@ -72,7 +112,6 @@ export default function LivePreviewDetailPage() {
         console.log("Params:", { id, sessionId });
 
         const url = apiEndpoints.live.detail(id, sessionId);
-        console.log("Connecting to:", url);
 
         // === 2️⃣ BUAT KONEKSI WEBSOCKET ===
         const ws = new WebSocket(url);
@@ -82,13 +121,11 @@ export default function LivePreviewDetailPage() {
             console.log("✅ WebSocket Connected to", url);
         };
 
-        // === 3️⃣ HANDLE DATA DARI SERVER ===
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
                 console.log("📦 Raw object from WebSocket:", data);
 
-                // Pastikan object valid
                 if (!data || !data.name) {
                     console.warn("⚠️ Data tidak valid:", data);
                     return;
@@ -110,14 +147,12 @@ export default function LivePreviewDetailPage() {
             console.warn("❌ WebSocket Closed:", event.code, event.reason);
         };
 
-        // === 4️⃣ BERSIHKAN KONEKSI SAAT UNMOUNT ===
         return () => {
             console.log("🧹 Cleaning up WebSocket...");
             ws.close();
         };
     }, [location.pathname, id, sessionId]);
 
-    console.log("🧠 Combined Data:", reports);
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             <div className="w-full overflow-auto flex gap-2">
@@ -130,7 +165,7 @@ export default function LivePreviewDetailPage() {
                     <h2 className="text-lg font-bold -mb-5 text-center">Product List</h2>
                     <DataTablePinning
                         columns={columnDetailPreview}
-                        
+                        data={reports?.products?.list || []}
                         pinning={["name"]}
                     />
                 </div>
