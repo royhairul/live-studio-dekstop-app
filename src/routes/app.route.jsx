@@ -11,6 +11,7 @@ import { productRoutes } from "./product.route";
 import RegisterPage from "@/pages/auth/pages/register-page";
 import { settingRoutes } from "./setting.route";
 import { masterRoutes } from "./master.route";
+import NotFound from "@/components/not-found";
 
 export default function AppRouter() {
   const ProtectedRoute = () => {
@@ -43,6 +44,7 @@ export default function AppRouter() {
         {masterRoutes}
         {settingRoutes}
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

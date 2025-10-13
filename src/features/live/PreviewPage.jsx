@@ -21,9 +21,9 @@ import { Button } from "@/components/ui/button";
 
 const columnReportDaily = [
   {
-    id: "host",
-    accessorKey: "host",
-    header: () => <div className="pl-4 pr-8 font-semibold">Host</div>,
+    id: "name",
+    accessorKey: "name",
+    header: () => <div className="pl-4 pr-8 font-semibold">Akun</div>,
     cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
   },
   {
@@ -199,7 +199,7 @@ const columnReportDaily = [
     header: "Detail",
     cell: ({ row }) => (
       <Link
-        to={`/live/preview-detail/${row.original.name}`}
+        to={`/live/preview-detail/${row.original.id}/${row.original.reportLive?.[0]?.sessionId}`}
       >
         <Button className="group bg-green-100 hover:bg-green-200 text-green-900 hover:cursor-pointer rounded-md px-4 py-1 text-sm font-semibold">
           Detail
@@ -217,7 +217,7 @@ export default function LivePreviewPage() {
 
   const { data: accounts } = useAccounts();
   const [reports, setReports] = useState({});
-
+  
   useEffect(() => {
     const ws = new WebSocket(apiEndpoints.live.preview());
     socketRef.current = ws;
@@ -230,6 +230,8 @@ export default function LivePreviewPage() {
       const realtimeData = JSON.parse(event.data);
       const newReports = {};
 
+      console.log("realtimeData", realtimeData);
+      
       realtimeData.forEach((item) => {
         newReports[item.name] = item.reportLive; // by account name
       });
@@ -264,6 +266,8 @@ export default function LivePreviewPage() {
     reportLive: reports[acc.name] || acc.reportLive || [], // real-time jika ada, fallback null/[]
   }));
 
+  console.log(combinedData);
+  
   const breadcrumbs = [
     {
       icon: IconIdBadge,
@@ -276,7 +280,7 @@ export default function LivePreviewPage() {
       <DataTablePinning
         columns={columnReportDaily}
         data={combinedData}
-        pinning={["host", "status"]}
+        pinning={["name", "status"]}
       />
     </MainLayout>
   );

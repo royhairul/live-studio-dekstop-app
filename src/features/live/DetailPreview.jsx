@@ -7,11 +7,9 @@ import {
 import { ChartRadialSimple } from "@/components/ui/chart-radial";
 import { ListCard } from "@/components/list-card";
 import { DataTablePinning } from "@/components/data-table-pinning";
-import { useAccounts } from "@/hooks/account/useAccounts";
 import { useEffect, useRef, useState } from "react";
 import { apiEndpoints } from "@/config/api";
-import { useLocation } from "react-router-dom";
-import { LineChart } from "lucide-react";
+import { useLocation, useParams } from "react-router-dom";
 import { ChartLineMultiple } from "@/components/ui/line-chart";
 
 const columnDetailPreview = [
@@ -53,6 +51,7 @@ const columnDetailPreview = [
     }
 ]
 export default function LivePreviewDetailPage() {
+    const { id, sessionId } = useParams();
     const breadcrumbs = [
         {
             icon: IconIdBadge,
@@ -66,59 +65,64 @@ export default function LivePreviewDetailPage() {
     const location = useLocation();
     const socketRef = useRef(null);
 
-    const { data: accounts } = useAccounts();
     const [reports, setReports] = useState({});
 
     useEffect(() => {
-        const ws = new WebSocket(apiEndpoints.live.preview());
+        // === 1️⃣ LOG PARAM DAN URL ===
+        console.log("Params:", { id, sessionId });
+
+        const url = apiEndpoints.live.detail(id, sessionId);
+        console.log("Connecting to:", url);
+
+        // === 2️⃣ BUAT KONEKSI WEBSOCKET ===
+        const ws = new WebSocket(url);
         socketRef.current = ws;
 
         ws.onopen = () => {
-            console.log("WebSocket Connected");
+            console.log("✅ WebSocket Connected to", url);
         };
 
+        // === 3️⃣ HANDLE DATA DARI SERVER ===
         ws.onmessage = (event) => {
-            const realtimeData = JSON.parse(event.data);
-            const newReports = {};
+            try {
+                const data = JSON.parse(event.data);
+                console.log("📦 Raw object from WebSocket:", data);
 
-            realtimeData.forEach((item) => {
-                newReports[item.name] = item.reportLive; // by account name
-            });
+                // Pastikan object valid
+                if (!data || !data.name) {
+                    console.warn("⚠️ Data tidak valid:", data);
+                    return;
+                }
 
-            setReports((prev) => ({
-                ...prev,
-                ...newReports, // update data yang baru masuk
-            }));
+                // Update state reports
+                setReports(data)
+
+            } catch (err) {
+                console.error("❌ JSON parse error:", err, event.data);
+            }
         };
 
         ws.onerror = (error) => {
-            console.error("WebSocket error:", error);
+            console.error("⚠️ WebSocket Error:", error);
         };
 
         ws.onclose = (event) => {
-            console.log("WebSocket Closed");
-            console.warn(
-                "WebSocket Closed, code:",
-                event.code,
-                "reason:",
-                event.reason
-            );
+            console.warn("❌ WebSocket Closed:", event.code, event.reason);
         };
 
+        // === 4️⃣ BERSIHKAN KONEKSI SAAT UNMOUNT ===
         return () => {
-            ws.close(); // Cleanup saat unmount
+            console.log("🧹 Cleaning up WebSocket...");
+            ws.close();
         };
-    }, [location.pathname]);
+    }, [location.pathname, id, sessionId]);
 
-    const combinedData = accounts.map((acc) => ({
-        ...acc,
-        reportLive: reports[acc.name] || acc.reportLive || [], // real-time jika ada, fallback null/[]
-    }));
+    console.log("🧠 Combined Data:", reports);
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             <div className="w-full overflow-auto flex gap-2">
                 <ChartLineMultiple />
-                <ListCard />
+                <ListCard data={reports?.overview} name={reports?.name} />
             </div>
             <div className="flex gap-2 w-full mt-2">
                 <ChartRadialSimple />
@@ -126,7 +130,7 @@ export default function LivePreviewDetailPage() {
                     <h2 className="text-lg font-bold -mb-5 text-center">Product List</h2>
                     <DataTablePinning
                         columns={columnDetailPreview}
-                        data={combinedData}
+                        
                         pinning={["name"]}
                     />
                 </div>

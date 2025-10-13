@@ -185,7 +185,7 @@ export default function DashboardPage() {
 
       <DataTablePinning
         columns={tableConfig}
-        data={data.charts || []}
+        data={data?.charts || []}
       />
 
     </MainLayout>

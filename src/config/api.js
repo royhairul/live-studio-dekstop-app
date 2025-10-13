@@ -1,6 +1,5 @@
 export const baseUrl = import.meta.env.VITE_API_URL;
 export const baseWsUrl = import.meta.env.VITE_API_URL;
-const mockApi = import.meta.env.VITE_MOCK_API;
 
 export const apiEndpoints = {
   me: () => `${baseUrl}/auth/me`,
@@ -137,6 +136,7 @@ export const apiEndpoints = {
   // Live
   live: {
     preview: () => `${baseWsUrl}/live/shopee`,
+    detail: (id, sessionId) => `${baseUrl}/live/shopee/${id}/${sessionId}`,
   },
 
   dashboard: {
