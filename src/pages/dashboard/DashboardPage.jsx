@@ -44,19 +44,19 @@ const metricsConfig = [
 const chartConfig = {
   gmv: {
     label: "GMV",
-    color: "var(--color-chart-4)",
+    color: "#3818D9",
   },
   commission: {
     label: "Komisi",
-    color: "var(--color-chart-1)",
+    color: "#EE8D5B",
   },
   ads: {
     label: "Iklan + PPN",
-    color: "var(--color-chart-3)",
+    color: "#2E9",
   },
   income: {
     label: "Pendapatan",
-    color: "var(--color-chart-2)",
+    color: "#2E964C",
   },
 }
 
@@ -143,7 +143,7 @@ export default function DashboardPage() {
             <button
               key={key}
               onClick={() => handleSelectMetric(key)}
-              className={`p-0 transition-all rounded-xl hover:cursor-pointer ${isActive ? "ring-2 ring-offset-2 ring-blue-400" : ""}`}
+              className={`p-0 transition-all rounded-xl hover:cursor-pointer ${isActive ? "ring-2 ring-offset-2 ring-primary" : ""}`}
             >
               <StatCard
                 title={title}

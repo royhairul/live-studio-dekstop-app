@@ -13,10 +13,11 @@ import { useLocation, useParams } from "react-router-dom";
 import { ChartLineMultiple } from "@/components/ui/line-chart";
 
 const columnDetailPreview = [
+    // 🛍️ Produk + Harga
     {
         id: "title",
         accessorKey: "title",
-        header: () => <div className="pl-4 pr-8 font-semibold">Produk/Harga Jual</div>,
+        header: () => <div className="pl-4 pr-8 font-semibold">Produk</div>,
         cell: ({ getValue, row }) => {
             const fullTitle = getValue()
             const shortTitle =
@@ -31,26 +32,21 @@ const columnDetailPreview = [
 
             return (
                 <div className="pl-4 flex items-center gap-3 group">
-                    {/* Thumbnail */}
+                    {/* Gambar produk */}
                     <img
                         src={`https://down-id.img.susercontent.com/file/${row.original.coverImage}`}
                         alt={fullTitle}
                         className="w-10 h-10 rounded-md object-cover flex-shrink-0"
                     />
 
-                    {/* Text content */}
+                    {/* Nama + Harga */}
                     <div className="relative flex flex-col">
-                        {/* Short title with hover tooltip */}
                         <span className="text-sm font-medium text-gray-800 leading-tight">
                             {shortTitle}
                         </span>
+                        <span className="text-xs text-gray-500">{formattedPrice}</span>
 
-                        {/* Price */}
-                        <span className="text-xs text-gray-500">
-                            {formattedPrice}
-                        </span>
-
-                        {/* Tooltip */}
+                        {/* Tooltip judul lengkap */}
                         <div className="absolute hidden group-hover:block bg-gray-900 text-white text-xs rounded-md px-2 py-1 -top-8 left-0 whitespace-nowrap z-50">
                             {fullTitle}
                         </div>
@@ -59,36 +55,69 @@ const columnDetailPreview = [
             )
         },
     },
+
+    // 👁️ Klik Produk
+    {
+        id: "productClicks",
+        accessorKey: "productClicks",
+        header: () => <div className="pl-4 font-semibold">Klik Produk</div>,
+        cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+    },
+
+    // 📊 Persentase Klik (CTR)
     {
         id: "ctr",
         accessorKey: "ctr",
-        header: () => <div className="pl-4 pr-8 font-semibold">CTR</div>,
+        header: () => <div className="pl-4 font-semibold">Persentase Klik</div>,
         cell: ({ getValue }) => (
             <div className="pl-4">{(getValue() * 100).toFixed(1)}%</div>
         ),
     },
+
+    // 🛒 Tambah ke Keranjang (ATC)
+    {
+        id: "atc",
+        accessorKey: "atc",
+        header: () => <div className="pl-4 font-semibold">Tambah ke Keranjang</div>,
+        cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+    },
+
+    // 🧾 Pesanan Dibuat
     {
         id: "ordersCreated",
         accessorKey: "ordersCreated",
-        header: () => <div className="pl-4 pr-8 font-semibold">Pesanan</div>,
+        header: () => <div className="pl-4 font-semibold">Pesanan</div>,
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
+
+    // 📦 Produk Terjual
     {
-        id: "confirmedOrderCnt",
-        accessorKey: "confirmedOrderCnt",
-        header: () => <div className="pl-4 pr-8 font-semibold">Orders Paid</div>,
+        id: "itemSold",
+        accessorKey: "itemSold",
+        header: () => <div className="pl-4 font-semibold">Produk Terjual</div>,
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
+
+    // 💰 Total Penjualan (revenue)
     {
         id: "revenue",
         accessorKey: "revenue",
-        header: () => <div className="pl-4 pr-8 font-semibold">Revenue</div>,
+        header: () => <div className="pl-4 font-semibold">Penjualan</div>,
         cell: ({ getValue }) => (
-            <div className="pl-4">Rp {getValue()?.toLocaleString("id-ID")}</div>
+            <div className="pl-4">Rp{getValue()?.toLocaleString("id-ID")}</div>
+        ),
+    },
+
+    // 📈 Pesanan per Klik (COR)
+    {
+        id: "cor",
+        accessorKey: "cor",
+        header: () => <div className="pl-4 font-semibold">Pesanan per Klik</div>,
+        cell: ({ getValue }) => (
+            <div className="pl-4">{(getValue() * 100).toFixed(1)}%</div>
         ),
     },
 ]
-
 
 export default function LivePreviewDetailPage() {
     const { id, sessionId } = useParams();
@@ -111,7 +140,7 @@ export default function LivePreviewDetailPage() {
         // === 1️⃣ LOG PARAM DAN URL ===
         console.log("Params:", { id, sessionId });
 
-        const url = apiEndpoints.live.detail(id, sessionId);
+        const url = apiEndpoints.live.detail(id, sessionId) + "?productPageSize=100";
 
         // === 2️⃣ BUAT KONEKSI WEBSOCKET ===
         const ws = new WebSocket(url);
@@ -156,11 +185,11 @@ export default function LivePreviewDetailPage() {
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             <div className="w-full overflow-auto flex gap-2">
-                <ChartLineMultiple />
+                {/* <ChartLineMultiple /> */}
                 <ListCard data={reports?.overview} name={reports?.name} />
             </div>
             <div className="flex gap-2 w-full mt-2">
-                <ChartRadialSimple />
+                {/* <ChartRadialSimple /> */}
                 <div className="bg-white rounded-xl shadow-xl p-2 w-full overflow-auto">
                     <h2 className="text-lg font-bold -mb-5 text-center">Product List</h2>
                     <DataTablePinning

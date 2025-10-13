@@ -19,17 +19,29 @@ import { ChartContainer } from "@/components/ui/chart"
 import { formatShortNoRp, formatFull } from "@/helpers/formatIDR"
 
 const chartConfig = {
-    commission: { label: "Komisi", color: "var(--color-chart-1)" },
-    gmv: { label: "GMV", color: "var(--color-chart-4)" },
-    ads: { label: "Iklan + PPN", color: "var(--color-chart-3)" },
-    income: { label: "Pendapatan", color: "var(--color-chart-2)" },
+    gmv: {
+        label: "GMV",
+        color: "#3818D9",
+    },
+    commission: {
+        label: "Komisi",
+        color: "#EE8D5B",
+    },
+    ads: {
+        label: "Iklan + PPN",
+        color: "#2E9",
+    },
+    income: {
+        label: "Pendapatan",
+        color: "#2E964C",
+    },
 }
 
 const CustomCursor = ({ points, height, color }) => {
     if (!points || points.length === 0) return null
-    
+
     const { x } = points[0]
-    
+
     return (
         <line
             x1={x}
@@ -118,7 +130,7 @@ export function ChartLineLabel({
             </CardHeader>
 
             <CardContent className="px-2 sm:p-6 relative z-10">
-                <ChartContainer 
+                <ChartContainer
                     config={chartConfig}
                     className="aspect-auto h-[350px] w-full relative"
                 >
@@ -162,7 +174,7 @@ export function ChartLineLabel({
                             stroke={color}
                             strokeWidth={2.5}
                             dot={false}
-                            activeDot={{ 
+                            activeDot={{
                                 r: 6,
                                 fill: color,
                                 strokeWidth: 2,
