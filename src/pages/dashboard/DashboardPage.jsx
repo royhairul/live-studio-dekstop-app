@@ -31,7 +31,7 @@ const metricsConfig = [
     key: "ads",
     title: "Total Iklan + PPN",
     icon: "ad",
-    borderColor: "#2E9",
+    borderColor: "#DC143C",
   },
   {
     key: "income",
@@ -52,7 +52,7 @@ const chartConfig = {
   },
   ads: {
     label: "Iklan + PPN",
-    color: "#2E9",
+    color: "#DC143C",
   },
   income: {
     label: "Pendapatan",

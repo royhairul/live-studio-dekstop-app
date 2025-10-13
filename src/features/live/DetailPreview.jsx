@@ -191,7 +191,7 @@ export default function LivePreviewDetailPage() {
             <div className="flex gap-2 w-full mt-2">
                 {/* <ChartRadialSimple /> */}
                 <div className="bg-white rounded-xl shadow-xl p-2 w-full overflow-auto">
-                    <h2 className="text-lg font-bold -mb-5 text-center">Product List</h2>
+                    <h2 className="text-lg font-bold ">Product List</h2>
                     <DataTablePinning
                         columns={columnDetailPreview}
                         data={reports?.products?.list || []}

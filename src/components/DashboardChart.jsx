@@ -18,24 +18,6 @@ import {
 import { ChartContainer } from "@/components/ui/chart"
 import { formatShortNoRp, formatFull } from "@/helpers/formatIDR"
 
-const chartConfig = {
-    gmv: {
-        label: "GMV",
-        color: "#3818D9",
-    },
-    commission: {
-        label: "Komisi",
-        color: "#EE8D5B",
-    },
-    ads: {
-        label: "Iklan + PPN",
-        color: "#2E9",
-    },
-    income: {
-        label: "Pendapatan",
-        color: "#2E964C",
-    },
-}
 
 const CustomCursor = ({ points, height, color }) => {
     if (!points || points.length === 0) return null
@@ -76,13 +58,12 @@ const CustomLabel = ({ x, y, value, fillColor }) => {
                 rx={6}
                 ry={6}
                 fill={fillColor}
-                opacity={0.85}
             />
             <text
                 x={rectWidth / 2}
                 y={rectHeight / 2 + 4}
                 textAnchor="middle"
-                fill="#000"
+                fill="#fff"
                 fontSize={12}
                 fontWeight={500}
             >
@@ -92,6 +73,15 @@ const CustomLabel = ({ x, y, value, fillColor }) => {
     )
 }
 
+
+
+export function ChartLineLabel({
+    dataKey = "gmv",
+    chartData = [],
+    title = "Grafik Laporan",
+    chartConfig = {},
+}) {
+    const color = chartConfig[dataKey]?.color
 const CustomTooltip = ({ active, payload, label, dataKey }) => {
     if (active && payload && payload.length) {
         const item = payload[0].payload
@@ -113,14 +103,6 @@ const CustomTooltip = ({ active, payload, label, dataKey }) => {
 
     return null
 }
-
-export function ChartLineLabel({
-    dataKey = "gmv",
-    chartData = [],
-    title = "Grafik Laporan",
-}) {
-    const color = chartConfig[dataKey]?.color
-
     return (
         <Card className="bg-white text-gray-800 border-gray-100 h-max relative">
             <CardHeader className="relative z-10">
