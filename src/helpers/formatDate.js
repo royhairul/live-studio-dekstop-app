@@ -60,3 +60,22 @@ export const formatSince = (day) => {
     return `${day} hari sebelumnya`;
   }
 };
+
+// file: utils/formatters.js
+
+export const formatDurationToHHMMSS = (totalSeconds = 0) => {
+  if (isNaN(totalSeconds) || totalSeconds < 0) {
+    return "00:00:00";
+  }
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+
+  // Menambahkan '0' di depan untuk format dua digit
+  const paddedHours = String(hours).padStart(2, '0');
+  const paddedMinutes = String(minutes).padStart(2, '0');
+  const paddedSeconds = String(seconds).padStart(2, '0');
+
+  return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
+};
