@@ -1,321 +1,364 @@
 import MainLayout from "@/layouts/main-layout";
-import { DataTable } from "@/components/data-table";
 import { DataTablePinning } from "@/components/data-table-pinning";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { IconDots, IconHelp, IconReportMoney } from "@tabler/icons-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { DatePicker } from "@/components/Datepicker";
+import { IconArrowDown, IconArrowUp, IconFilter, IconReportMoney } from "@tabler/icons-react";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { apiEndpoints } from "@/config/api";
-import axios from "axios";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { differenceInDays, format } from "date-fns";
+import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
+import StatCard from "@/components/ui/stat-card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import DateRangeFilter from "@/features/perform/components/DateRangeFilter";
+import useDateRangeQuery from "@/features/perform/hooks/useDateRangeQuery";
+import { Coins, ShoppingCart } from "lucide-react";
+import MetricsSection from "@/components/MetricsSection";
 
-const columnReportDaily = [
+
+const columnReportPayout = [
   {
-    id: "name",
-    accessorKey: "name",
-    header: () => <div className="pl-4 pr-8 font-semibold">Akun</div>,
-    cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
+    id: "id_aff",
+    accessorKey: "id_aff",
+    header: () => <span className="font-semibold">ID Affiliate</span>,
+    cell: ({ getValue }) => <div className="pl-2">{getValue()}</div>,
+  },
+  {
+    id: "account_name",
+    accessorKey: "account_name",
+    header: () => <span className="font-semibold">Nama Akun</span>,
+    cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
   },
   {
     id: "date",
-    header: () => <div className="font-semibold">Waktu Sesi</div>,
-    accessorKey: "startTime",
+    accessorKey: "date",
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      return (
+        <div
+          className="flex items-center gap-1 cursor-pointer select-none"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+        >
+          <span className="font-semibold">Tanggal</span>
+          {isSorted === "asc" ? (
+            <IconArrowUp size={14} />
+          ) : isSorted === "desc" ? (
+            <IconArrowDown size={14} />
+          ) : (
+            <IconArrowDown size={14} className="opacity-30" />
+          )}
+        </div>
+      );
+    },
     cell: ({ getValue }) =>
-      new Date(getValue()).toLocaleString("id-ID", {
+      new Date(getValue()).toLocaleDateString("id-ID", {
         day: "2-digit",
         month: "short",
         year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
       }),
   },
   {
-    accessorKey: "duration",
-    header: "Durasi",
-    cell: ({ getValue }) => {
-      const ms = getValue();
-      // const seconds = Math.floor(ms / 1000) % 60;
-      const minutes = Math.floor(ms / (1000 * 60)) % 60;
-      const hours = Math.floor(ms / (1000 * 60 * 60));
-
-      if (minutes == 0) {
-        return `${hours} jam`;
-      } else {
-        return `${hours} jam ${minutes} menit`;
-      }
-    },
-  },
-  {
-    header: "Judul",
-    accessorKey: "title",
-    cell: ({ getValue }) => (
-      <span className="text-xs font-semibold">{getValue()}</span>
-    ),
-  },
-  {
-    header: () => (
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="flex gap-2 text-xs items-center">
-            Penonton Aktif
-            <IconHelp size={14} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="w-[150px]">
-          <p className="p-1 text-xs">
-            Penonton Livestream lebih dari 1 menit dalam periode yang tertentu.
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    ),
-    accessorKey: "engagedUv",
-  },
-  {
-    header: () => (
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="flex gap-2 text-xs items-center">
-            Total Penonton
-            <IconHelp size={14} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="w-[150px]">
-          <p>Jumlah total Penonton</p>
-        </TooltipContent>
-      </Tooltip>
-    ),
-    accessorKey: "viewers",
-  },
-  {
-    header: () => (
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="flex gap-2 text-xs items-center">
-            ATC
-            <IconHelp size={14} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="w-[150px]">
-          <p className="p-1 text-xs">Jumlah klik ke dalam keranjang.</p>
-        </TooltipContent>
-      </Tooltip>
-    ),
-    accessorKey: "atc",
-    cell: ({ getValue }) => (
-      <span className="text-xs font-semibold">{getValue()}</span>
-    ),
-  },
-  {
-    header: () => (
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="flex gap-2 text-xs items-center">
-            Pesanan
-            <IconHelp size={14} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="w-[150px]">
-          <p className="p-1 text-xs">
-            Jumlah pesanan dari sesi Livestream yang mencakup pesanan non-COD
-            yang telah dibayar dan pesanan COD yang telah dikonfirmasi untuk
-            pengiriman (termasuk pesanan yang dibatalkan dan dikembalikan).
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    ),
-    accessorKey: "confirmedOrders",
-    cell: ({ getValue }) => (
-      <span className="text-xs font-semibold">{getValue()}</span>
-    ),
-  },
-  {
-    header: () => (
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="flex gap-2 text-xs items-center">
-            Produk Terjual
-            <IconHelp size={14} />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent className="w-[150px]">
-          <p className="p-1 text-xs">
-            Jumlah produk dalam periode yang dipilih dari semua sesi Livestream
-            mencakup transaksi dalam 7 hari setelah mengklik tautan produk di
-            Livestream.
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    ),
-    accessorKey: "confirmedItemSold",
-    cell: ({ getValue }) => (
-      <span className="text-xs font-semibold">{getValue()}</span>
-    ),
-  },
-
-  {
-    accessorKey: "placedSales",
-    header: "Sales",
-    cell: ({ getValue }) =>
-      Number(getValue()).toLocaleString("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-      }),
-  },
-  {
-    accessorKey: "confirmedSales",
-    header: "Paid",
-    cell: ({ getValue }) =>
-      Number(getValue()).toLocaleString("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-      }),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
+    id: "amount",
+    accessorKey: "amount",
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <IconDots />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div
+          className="flex items-center gap-1 cursor-pointer select-none"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+        >
+          <span className="font-semibold">Pencairan</span>
+          {isSorted === "asc" ? (
+            <IconArrowUp size={14} />
+          ) : isSorted === "desc" ? (
+            <IconArrowDown size={14} />
+          ) : (
+            <IconArrowDown size={14} className="opacity-30" />
+          )}
+        </div>
       );
     },
+    cell: ({ getValue }) =>
+      Number(getValue()).toLocaleString("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+      }),
+    // memastikan sorting numerik, bukan string
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = Number(rowA.getValue(columnId));
+      const b = Number(rowB.getValue(columnId));
+      return a > b ? 1 : a < b ? -1 : 0;
+    },
+  },
+  {
+    id: "method",
+    accessorKey: "method",
+    header: ({ column }) => {
+      const current = column.getFilterValue();
+      const options = [undefined, "Bank Transfer", "ShopeePay"];
+      const next = options[(options.indexOf(current) + 1) % options.length];
+
+      return (
+        <div
+          className="flex flex-col cursor-pointer select-none group"
+          onClick={() => column.setFilterValue(next)}
+        >
+          <div className="flex items-center gap-1">
+            <span className="font-semibold">Metode Pembayaran</span>
+            <IconFilter
+              size={14}
+              className={`transition-all duration-150 ${current ? "text-blue-500" : "opacity-30 group-hover:opacity-60"
+                }`}
+            />
+          </div>
+
+          {current && (
+            <span className="text-[11px] text-gray-500 mt-[2px] font-medium">
+              {current}
+            </span>
+          )}
+        </div>
+      );
+    },
+    cell: ({ getValue }) => <span>{getValue()}</span>,
+    filterFn: (row, id, value) => {
+      if (!value) return true;
+      if (value === "Bank Transfer")
+        return row.getValue(id).includes("Bank Transfer");
+      return row.getValue(id) === value;
+    },
+  },
+  {
+    id: "status",
+    accessorKey: "status",
+    header: () => <span className="font-semibold">Status Pembayaran</span>,
+    cell: ({ getValue }) => {
+      const status = getValue();
+      const color =
+        status === "Selesai"
+          ? "text-green-600 bg-green-50"
+          : "text-yellow-600 bg-yellow-50";
+      return (
+        <span
+          className={`px-2 py-1 text-xs rounded-lg font-semibold ${color}`}
+        >
+          {status === "Selesai" ? "Terbayar" : status}
+        </span>
+      );
+    },
+  }
+
+
+];
+
+const metricsConfig = [
+  {
+    key: "commission_paid",
+    title: "Total Komisi Dibayar",
+    icon: ShoppingCart,
+    borderColor: "#3818D9",
+    gradient: "from-[#3818D9]/20 via-transparent to-transparent",
+    since: "Total Seluruh Komisi",
+    withChart: false,
+  },
+  {
+    key: "commission_unpaid",
+    title: "Total Komisi Belum Dibayar",
+    icon: Coins,
+    borderColor: "#EE8D5B",
+    gradient: "from-[#EE8D5B]/20 via-transparent to-transparent",
+    since: "Total Seluruh Komisi",
+    withChart: false,
+  },
+  {
+    key: "commission",
+    title: "Total Seluruh Komisi",
+    icon: Coins,
+    borderColor: "#2EE59D",
+    gradient: "from-[#2EE59D]/20 via-transparent to-transparent",
+    since: "Total Seluruh Komisi",
+    withChart: true,
+  },
+];
+
+const payoutData = [
+  {
+    id_aff: "AFF12345",
+    account_name: "ShopeeXpert_01",
+    date: "2025-10-01",
+    amount: 1250000,
+    method: "Bank Transfer - BCA",
+    status: "Selesai",
+  },
+  {
+    id_aff: "AFF67890",
+    account_name: "PartnerStore_88",
+    date: "2025-10-03",
+    amount: 890000,
+    method: "ShopeePay",
+    status: "Pending",
+  },
+  {
+    id_aff: "AFF99881",
+    account_name: "CreatorMarket_02",
+    date: "2025-09-28",
+    amount: 2145000,
+    method: "Bank Transfer - Mandiri",
+    status: "Gagal",
+  },
+  {
+    id_aff: "AFF43210",
+    account_name: "BestDeals_Indo",
+    date: "2025-10-05",
+    amount: 1560000,
+    method: "Bank Transfer - BNI",
+    status: "Selesai",
   },
 ];
 
 export default function FinanceDailyReportPage() {
-  const [dateRange, setDateRange] = useState({
-    from: new Date(), // hari ini default
-    to: new Date(),
+  const {
+    data,
+    isFetching,
+    handleApplyDateRange,
+    appliedRange,
+  } = useDateRangeQuery({
+    queryKey: ["perform-studio-detail"],
+    url: apiEndpoints.transaction.finance(),
+    range: getYesterdayRange(),
   });
-
-  const getTimeDim = (from, to) => {
-    const diffDays = differenceInDays(to, from);
-    if (diffDays <= 0) return "1d";
-    return `${diffDays}d`;
-  };
-
-  const toLocalDateString = (date) =>
-    new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-      .toISOString()
-      .split("T")[0];
-
-  const [appliedDateRange, setAppliedDateRange] = useState(dateRange);
-
-  const { data, isLoading, isError, refetch, isFetching, error } = useQuery({
-    queryKey: ["finance-daily-report", appliedDateRange],
-    queryFn: async () => {
-      const payload = {
-        page: 1,
-        pageSize: 100,
-        orderBy: "",
-        sort: "",
-        timeDim: getTimeDim(appliedDateRange.from, appliedDateRange.to),
-        endDate: toLocalDateString(appliedDateRange.to),
-      };
-      console.log(payload);
-      const res = await axios.post(apiEndpoints.finance.daily(), payload);
-      return res.data.data.flatMap((shop) =>
-        (shop.reportLive ?? []).map((item) => ({
-          name: shop.name,
-          ...item,
-        }))
-      );
-    },
-  });
-
-  const handleApplyClick = () => {
-    console.log("Button Terapkan diklik");
-    console.log("Tanggal dipilih:", dateRange.to);
-    console.log(data);
-    setAppliedDateRange(dateRange);
-    refetch();
-  };
 
   const breadcrumbs = [
     {
       icon: IconReportMoney,
-      label: "Keuangan",
-      url: "/finance/all",
+      label: "Transaksi",
+      url: "/transaksi/keuangan",
     },
     {
-      label: "Laporan Harian",
+      label: "Keuangan",
     },
   ];
 
+  const [selectedStudio, setSelectedStudio] = useState("all");
+  const [selectedAccount, setSelectedAccount] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
-      {/* Action Button */}
-      <div className="flex gap-2">
-        <DatePicker
-          withRange="true"
-          value={dateRange}
-          onChange={setDateRange}
-        />
-        <Button onClick={handleApplyClick} disabled={isFetching}>
-          {isFetching ? "Memuat..." : "Terapkan"}
-        </Button>
+      {/* Action Filters */}
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Filter Studio */}
+        <div className="flex flex-col">
+          <span className="text-xs text-primary font-medium mb-1">Studio</span>
+          <Select value={selectedStudio} onValueChange={setSelectedStudio}>
+            <SelectTrigger className="w-[150px] h-9 text-sm">
+              <SelectValue placeholder="Pilih Studio" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Studio</SelectItem>
+              <SelectItem value="Studio A">Studio A</SelectItem>
+              <SelectItem value="Studio B">Studio B</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Filter Akun */}
+        <div className="flex flex-col">
+          <span className="text-xs text-primary font-medium mb-1">Akun</span>
+          <Select value={selectedAccount} onValueChange={setSelectedAccount}>
+            <SelectTrigger className="w-[150px] h-9 text-sm">
+              <SelectValue placeholder="Pilih Akun" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Akun</SelectItem>
+              <SelectItem value="ShopeeXpert_01">ShopeeXpert_01</SelectItem>
+              <SelectItem value="PartnerStore_88">PartnerStore_88</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Filter Status */}
+        <div className="flex flex-col">
+          <span className="text-xs text-primary font-medium mb-1">Status</span>
+          <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+            <SelectTrigger className="w-[150px] h-9 text-sm">
+              <SelectValue placeholder="Pilih Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Status</SelectItem>
+              <SelectItem value="Selesai">Sudah Dibayar</SelectItem>
+              <SelectItem value="Pending">Menunggu Dibayar</SelectItem>
+              <SelectItem value="Validate">Sedang Divalidasi</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+
+        <div className="flex flex-1 justify-end">
+          <DateRangeFilter
+            dateRange={appliedRange}
+            onApply={handleApplyDateRange}
+            isLoading={isFetching}
+          />
+        </div>
       </div>
 
-      {/* Loading/Error Handler */}
-      {isLoading ? (
-        <div className="text-center py-8">Loading...</div>
-      ) : isError ? (
-        <>
-          {console.log(error)}
-          <div className="text-center py-8 text-red-500">
-            Terjadi kesalahan.
-          </div>
-        </>
-      ) : (
-        <DataTablePinning
-          columns={columnReportDaily}
-          data={data}
-          pinning={["name", "date"]}
-        />
-      )}
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+        {metricsConfig.map(({ key, title, icon, borderColor, gradient, since, withChart }) => {
+          const metric = data?.metrics?.[key] || {};
+          return (
+            <MetricsSection
+              key={key}
+              title={title}
+              value={
+                <TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-pointer">
+                        {formatShort(metric.total || 0)}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {formatFull(metric.total || 0)}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              }
+              icon={icon}
+              borderColor={borderColor}
+              since={since}
+              withChart={withChart}
+              data={data?.metrics}
+              gradient={gradient}
+            />
+          );
+        })}
+      </div>
+
+
+      {/* Data Table */}
+      <DataTablePinning
+        columns={columnReportPayout}
+        data={payoutData
+          .filter((row) =>
+            selectedStatus === "all" ? true : row.status === selectedStatus
+          )
+          .filter((row) =>
+            selectedAccount === "all"
+              ? true
+              : row.account_name === selectedAccount
+          )
+          .filter((row) =>
+            selectedStudio === "all" ? true : row.studio === selectedStudio
+          )}
+        pinning={["id_aff", "account_name"]}
+      />
     </MainLayout>
   );
 }

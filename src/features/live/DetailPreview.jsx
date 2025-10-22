@@ -137,9 +137,6 @@ export default function LivePreviewDetailPage() {
     const [reports, setReports] = useState({});
 
     useEffect(() => {
-        // === 1️⃣ LOG PARAM DAN URL ===
-        console.log("Params:", { id, sessionId });
-
         const url = apiEndpoints.live.detail(id, sessionId) + "?productPageSize=100";
 
         // === 2️⃣ BUAT KONEKSI WEBSOCKET ===
@@ -160,8 +157,16 @@ export default function LivePreviewDetailPage() {
                     return;
                 }
 
-                // Update state reports
-                setReports(data)
+                setReports(prev => ({
+                    ...prev,
+                    ...data,
+                    products: {
+                        ...prev.products,
+                        ...data.products,
+                        list: data.products?.list || prev.products?.list || [],
+                    }
+                }));
+
 
             } catch (err) {
                 console.error("❌ JSON parse error:", err, event.data);

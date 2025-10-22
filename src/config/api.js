@@ -128,9 +128,10 @@ export const apiEndpoints = {
   },
 
   // Finance
-  finance: {
-    daily: () => `${baseUrl}/finance/shopee`,
-    commission: () => `${baseUrl}/finance/shopee/commission`,
+  transaction: {
+    finance: () => `${baseUrl}/finance`,
+    products: () => `${baseUrl}/transaction`,
+    grouped: () => `${baseUrl}/transaction/grouped`,
   },
 
   // Live

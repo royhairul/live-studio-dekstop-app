@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Button } from "./ui/button"; // Asumsi path ini benar
+import { Button } from "./ui/button";
 import CountUp from "react-countup";
-import { formatDurationToHHMMSS } from "@/helpers/formatDate"; // Asumsi path ini benar
+import { formatDurationToHHMMSS } from "@/helpers/formatDate";
 
-// ============================================================================
-// 1. CUSTOM HOOK (Tidak perlu diubah, sudah benar)
-// Hook ini digunakan untuk "mengingat" nilai dari render sebelumnya.
-// ============================================================================
+
 function usePrevious(value) {
     const ref = useRef();
     useEffect(() => {
@@ -15,10 +12,6 @@ function usePrevious(value) {
     return ref.current;
 }
 
-// ============================================================================
-// 2. KOMPONEN STAT (Tidak perlu diubah, sudah benar dan pintar)
-// Komponen ini sudah bisa menangani animasi start/end secara mandiri.
-// ============================================================================
 function Stat({ label, value, prefix = "", suffix = "", decimals = 0 }) {
     const isEmpty =
         value === null ||
@@ -55,17 +48,12 @@ function Stat({ label, value, prefix = "", suffix = "", decimals = 0 }) {
     );
 }
 
-// ============================================================================
-// 3. KOMPONEN UTAMA (ListCard)
-// Logika pengambilan data dan tampilan utama ada di sini.
-// ============================================================================
+
 export function ListCard({ data = {}, name }) {
     const [orderFilter, setOrderFilter] = useState("placed");
     const stats = data || {};
 
-    // --- PERBAIKAN 1: Deklarasi Variabel Statistik ---
-    // Deklarasikan semua variabel secara langsung.
-    // Ini lebih mudah dibaca dan digunakan di dalam JSX.
+
     const gmv = orderFilter === "placed" ? stats.placedGmv ?? 0 : stats.confirmedGmv ?? 0;
     const orderCount = orderFilter === "placed" ? stats.placedOrder ?? 0 : stats.confirmedOrder ?? 0;
     const itemsSold = orderFilter === "placed" ? stats.placedItemsSold ?? 0 : stats.confirmedItemsSold ?? 0;
@@ -74,7 +62,6 @@ export function ListCard({ data = {}, name }) {
     const gpm = orderFilter === "placed" ? stats.gpm ?? 0 : stats.confirmedGpm ?? 0;
     const abs = orderFilter === "placed" ? stats.abs ?? 0 : stats.confirmedAbs ?? 0;
 
-    // Data yang tidak bergantung pada filter
     const viewers = stats.viewers ?? 0;
     const views = stats.views ?? 0;
     const ctr = stats.ctr ?? 0;
@@ -85,8 +72,6 @@ export function ListCard({ data = {}, name }) {
     const pcu = stats.pcu ?? 0;
     const avgViewTime = stats.avgViewTime ?? 0;
 
-    // --- PERBAIKAN 2: State "Sebelumnya" untuk GMV Utama ---
-    // Karena GMV utama tidak menggunakan komponen Stat, kita perlu `usePrevious` di sini.
     const prevGmv = usePrevious(gmv);
 
     return (
@@ -120,7 +105,7 @@ export function ListCard({ data = {}, name }) {
                 <h1 className={`text-3xl font-bold mt-1 ${gmv > 0 ? "text-primary" : "text-red-500"}`}>
                     <CountUp
                         prefix="Rp "
-                        start={prevGmv ?? 0} // Gunakan nilai sebelumnya
+                        start={prevGmv ?? 0}
                         end={gmv}
                         duration={1.5}
                         separator="."
@@ -131,8 +116,7 @@ export function ListCard({ data = {}, name }) {
 
             {/* Statistik Lengkap */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4">
-                {/* --- PERBAIKAN 3: Menggunakan Komponen Stat Secara Konsisten --- */}
-                {/* Teruskan nilai numerik agar bisa dianimasikan */}
+                
                 <Stat label="Dilihat" value={views} />
                 <Stat label="Penonton Saat Ini" value={viewers} />
                 <Stat label="Penonton Tertinggi (PCU)" value={pcu} />
@@ -144,7 +128,6 @@ export function ListCard({ data = {}, name }) {
                 <Stat label="Produk Terjual" value={itemsSold} />
                 <Stat label="Pembeli" value={buyers} />
 
-                {/* --- PERBAIKAN 4: Penanganan Data Non-Angka dan Persentase --- */}
                 <Stat label="Durasi Rata-Rata" value={formatDurationToHHMMSS(avgViewTime)} />
                 <Stat label="Persentase Klik (CTR)" value={ctr * 100} suffix="%" decimals={1} />
                 <Stat label="Pesanan per Klik (CO)" value={co * 100} suffix="%" decimals={1} />

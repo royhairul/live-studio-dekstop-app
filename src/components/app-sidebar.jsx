@@ -75,7 +75,7 @@ const items = [
         permission: PERMISSIONS.FINANCE.VIEW,
       },
       {
-        title: "Transaksi Produk",
+        title: "Produk",
         url: "/transaksi/produk",
         permission: PERMISSIONS.FINANCE.VIEW,
       },
