@@ -110,6 +110,7 @@ export default function FinanceDailyReportPage() {
   const [selectedStudio, setSelectedStudio] = useState("all");
   const [selectedAccount, setSelectedAccount] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+
   const {
     data,
     isFetching,
@@ -119,10 +120,12 @@ export default function FinanceDailyReportPage() {
     queryKey: ["perform-studio-detail"],
     url: apiEndpoints.transaction.products(),
     range: getYesterdayRange(),
+    extraParams: {
+      ...(selectedStatus !== "all" && { status: selectedStatus }),
+      ...(selectedStudio !== "all" && { studio: selectedStudio }),
+      ...(selectedAccount !== "all" && { account: selectedAccount }),
+    },
   });
-
-  console.log(data);
-
 
   const breadcrumbs = [
     {

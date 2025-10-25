@@ -30,6 +30,7 @@ export default function useDateRangeQuery({
     id = null,
     range = null,
     enabled = true,
+    extraParams = {},
 }) {
     const savedRange = (() => {
         try {
@@ -47,11 +48,16 @@ export default function useDateRangeQuery({
 
     const query = useQuery({
         queryKey: id
-            ? [...queryKey, id, appliedRange?.from, appliedRange?.to]
-            : [...queryKey, appliedRange?.from, appliedRange?.to],
+            ? [...queryKey, id, appliedRange?.from, appliedRange?.to, extraParams]
+            : [...queryKey, appliedRange?.from, appliedRange?.to, extraParams],
 
         queryFn: async () => {
-            const params = buildDateParams(appliedRange);
+            // Gabungkan tanggal + extra params
+            const params = {
+                ...buildDateParams(appliedRange),
+                ...extraParams,
+            };
+
             const res = await axios.get(url, { params });
             return res.data.data;
         },

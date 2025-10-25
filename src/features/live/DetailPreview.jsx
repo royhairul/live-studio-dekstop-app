@@ -4,13 +4,12 @@ import {
     IconIdBadge,
 } from "@tabler/icons-react";
 
-import { ChartRadialSimple } from "@/components/ui/chart-radial";
 import { ListCard } from "@/components/list-card";
 import { DataTablePinning } from "@/components/data-table-pinning";
 import { useEffect, useRef, useState } from "react";
 import { apiEndpoints } from "@/config/api";
 import { useLocation, useParams } from "react-router-dom";
-import { ChartLineMultiple } from "@/components/ui/line-chart";
+import SortableHeader from "@/components/SortableHeader";
 
 const columnDetailPreview = [
     // 🛍️ Produk + Harga
@@ -60,63 +59,66 @@ const columnDetailPreview = [
     {
         id: "productClicks",
         accessorKey: "productClicks",
-        header: () => <div className="pl-4 font-semibold">Klik Produk</div>,
+        header: ({ column }) => (
+            <SortableHeader column={column} title="Klik Produk" className="pl-4" />
+        ),
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
-
-    // 📊 Persentase Klik (CTR)
     {
         id: "ctr",
         accessorKey: "ctr",
-        header: () => <div className="pl-4 font-semibold">Persentase Klik</div>,
+        header: ({ column }) => (
+            <SortableHeader column={column} title="Persentase Klik" className="pl-4" />
+        ),
         cell: ({ getValue }) => (
             <div className="pl-4">{(getValue() * 100).toFixed(1)}%</div>
         ),
     },
-
-    // 🛒 Tambah ke Keranjang (ATC)
     {
         id: "atc",
         accessorKey: "atc",
-        header: () => <div className="pl-4 font-semibold">Tambah ke Keranjang</div>,
+        header: ({ column }) => (
+            <SortableHeader column={column} title="Tambah ke Keranjang" className="pl-4" />
+        ),
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
-
-    // 🧾 Pesanan Dibuat
     {
         id: "ordersCreated",
         accessorKey: "ordersCreated",
-        header: () => <div className="pl-4 font-semibold">Pesanan</div>,
+        header: ({ column }) => (
+            <SortableHeader column={column} title="Pesanan" className="pl-4" />
+        ),
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
-
-    // 📦 Produk Terjual
     {
         id: "itemSold",
         accessorKey: "itemSold",
-        header: () => <div className="pl-4 font-semibold">Produk Terjual</div>,
+        header: ({ column }) => (
+            <SortableHeader column={column} title="Produk Terjual" className="pl-4" />
+        ),
         cell: ({ getValue }) => <div className="pl-4">{getValue()}</div>,
     },
-
-    // 💰 Total Penjualan (revenue)
     {
         id: "revenue",
         accessorKey: "revenue",
-        header: () => <div className="pl-4 font-semibold">Penjualan</div>,
+        header: ({ column }) => (
+            <SortableHeader column={column} title="Penjualan" className="pl-4" />
+        ),
         cell: ({ getValue }) => (
             <div className="pl-4">Rp{getValue()?.toLocaleString("id-ID")}</div>
         ),
     },
-
-    // 📈 Pesanan per Klik (COR)
     {
         id: "cor",
         accessorKey: "cor",
-        header: () => <div className="pl-4 font-semibold">Pesanan per Klik</div>,
+        header: ({ column }) => (
+            <SortableHeader column={column} title="Pesanan per Klik" className="pl-4" />
+        ),
         cell: ({ getValue }) => (
             <div className="pl-4">{(getValue() * 100).toFixed(1)}%</div>
         ),
     },
+
 ]
 
 export default function LivePreviewDetailPage() {
@@ -139,7 +141,6 @@ export default function LivePreviewDetailPage() {
     useEffect(() => {
         const url = apiEndpoints.live.detail(id, sessionId) + "?productPageSize=100";
 
-        // === 2️⃣ BUAT KONEKSI WEBSOCKET ===
         const ws = new WebSocket(url);
         socketRef.current = ws;
 

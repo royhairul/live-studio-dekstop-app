@@ -191,18 +191,22 @@ export default function FinanceDailyReportPage() {
   const [selectedStudio, setSelectedStudio] = useState("all");
   const [selectedAccount, setSelectedAccount] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
-  
+
   const {
     data,
     isFetching,
     handleApplyDateRange,
     appliedRange,
   } = useDateRangeQuery({
-    queryKey: ["perform-studio-detail"],
+    queryKey: ["finance-report", selectedStatus, selectedStudio, selectedAccount],
     url: apiEndpoints.transaction.finance(),
     range: getYesterdayRange(),
+    extraParams: {
+      ...(selectedStatus !== "all" && { status: selectedStatus }),
+      ...(selectedStudio !== "all" && { studio: selectedStudio }),
+      ...(selectedAccount !== "all" && { account: selectedAccount }),
+    },
   });
-
 
   const breadcrumbs = [
     {
@@ -217,7 +221,7 @@ export default function FinanceDailyReportPage() {
 
   const { studio: studioList } = useStudios();
   const { data: accountList = [] } = useAccounts();
-  
+
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
       {/* Action Filters */}
@@ -267,9 +271,9 @@ export default function FinanceDailyReportPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Status</SelectItem>
-              <SelectItem value="Selesai">Sudah Dibayar</SelectItem>
-              <SelectItem value="Pending">Menunggu Dibayar</SelectItem>
-              <SelectItem value="Validate">Sedang Divalidasi</SelectItem>
+              <SelectItem value="Sudah Dibayar">Sudah Dibayar</SelectItem>
+              <SelectItem value="Menunggu Dibayar">Menunggu Dibayar</SelectItem>
+              <SelectItem value="Menunggu Validasi">Sedang Divalidasi</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -321,7 +325,7 @@ export default function FinanceDailyReportPage() {
       {/* Data Table */}
       <DataTablePinning
         columns={columnReportPayout}
-        data={data?.list
+        data={data?.list ?? []
           .filter((row) =>
             selectedStatus === "all" ? true : row.status === selectedStatus
           )
