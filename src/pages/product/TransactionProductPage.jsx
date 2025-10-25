@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { formatFull, formatShopeeIDR, formatShort } from "@/helpers/formatIDR";
 import { getYesterdayRange } from "@/helpers/formatDate";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DateRangeFilter from "@/features/perform/components/DateRangeFilter";
@@ -22,15 +22,15 @@ import { useAccounts } from "@/hooks/account/useAccounts";
 
 const columnReportProducts = [
   {
-    id: "id_aff",
-    accessorKey: "id_aff",
-    header: () => <span className="font-semibold">Rincian Pesanan</span>,
+    id: "id",
+    accessorKey: "id",
+    header: () => <span className="font-semibold">ID Pesanan</span>,
     cell: ({ getValue }) => <div className="pl-2">{getValue()}</div>,
   },
   {
     id: "account_name",
     accessorKey: "account_name",
-    header: () => <span className="font-semibold">Informasi Produk</span>,
+    header: () => <span className="font-semibold">Nama Akun</span>,
     cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
   },
   {
@@ -40,17 +40,16 @@ const columnReportProducts = [
     cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
   },
   {
-    id: "amount",
-    accessorKey: "amount",
+    id: "total_purchase",
+    accessorKey: "total_purchase",
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
-
       return (
         <div
           className="flex items-center gap-1 cursor-pointer select-none"
           onClick={() => column.toggleSorting(isSorted === "asc")}
         >
-          <span className="font-semibold">Komisi Pesanan</span>
+          <span className="font-semibold">Total Pembelian</span>
           {isSorted === "asc" ? (
             <IconArrowUp size={14} />
           ) : isSorted === "desc" ? (
@@ -61,20 +60,72 @@ const columnReportProducts = [
         </div>
       );
     },
-    cell: ({ getValue }) =>
-      Number(getValue()).toLocaleString("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-      }),
-    // memastikan sorting numerik, bukan string
+    cell: ({ getValue }) => <div>{formatShopeeIDR(getValue())}</div>,
     sortingFn: (rowA, rowB, columnId) => {
       const a = Number(rowA.getValue(columnId));
       const b = Number(rowB.getValue(columnId));
       return a > b ? 1 : a < b ? -1 : 0;
     },
-  }
+  },
+  {
+    id: "total_commission",
+    accessorKey: "total_commission",
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      return (
+        <div
+          className="flex items-center gap-1 cursor-pointer select-none"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+        >
+          <span className="font-semibold">Total Komisi</span>
+          {isSorted === "asc" ? (
+            <IconArrowUp size={14} />
+          ) : isSorted === "desc" ? (
+            <IconArrowDown size={14} />
+          ) : (
+            <IconArrowDown size={14} className="opacity-30" />
+          )}
+        </div>
+      );
+    },
+    cell: ({ getValue }) => <div>{formatShopeeIDR(getValue())}</div>,
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = Number(rowA.getValue(columnId));
+      const b = Number(rowB.getValue(columnId));
+      return a > b ? 1 : a < b ? -1 : 0;
+    },
+  },
+  // {
+  //   id: "total_commission_with_mcn",
+  //   accessorKey: "total_commission_with_mcn",
+  //   header: ({ column }) => {
+  //     const isSorted = column.getIsSorted();
+  //     return (
+  //       <div
+  //         className="flex items-center gap-1 cursor-pointer select-none"
+  //         onClick={() => column.toggleSorting(isSorted === "asc")}
+  //       >
+  //         <span className="font-semibold">Total Komisi MCN</span>
+  //         {isSorted === "asc" ? (
+  //           <IconArrowUp size={14} />
+  //         ) : isSorted === "desc" ? (
+  //           <IconArrowDown size={14} />
+  //         ) : (
+  //           <IconArrowDown size={14} className="opacity-30" />
+  //         )}
+  //       </div>
+  //     );
+  //   },
+  //   cell: ({ getValue }) => <div>{formatShopeeIDR(getValue())}</div>,
+  //   sortingFn: (rowA, rowB, columnId) => {
+  //     const a = Number(rowA.getValue(columnId));
+  //     const b = Number(rowB.getValue(columnId));
+  //     return a > b ? 1 : a < b ? -1 : 0;
+  //   },
+  // },
 ];
+
+
 
 const metricsConfig = [
   {
@@ -126,6 +177,9 @@ export default function FinanceDailyReportPage() {
       ...(selectedAccount !== "all" && { account: selectedAccount }),
     },
   });
+
+  console.log(data);
+
 
   const breadcrumbs = [
     {
@@ -208,7 +262,7 @@ export default function FinanceDailyReportPage() {
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
         {metricsConfig.map(({ key, title, icon, borderColor, gradient, since, withChart }) => {
-          const metric = data?.metric?.[key];
+          const metric = data?.metric?.[key] / 100000;
           return (
             <MetricsSection
               key={key}
@@ -254,7 +308,7 @@ export default function FinanceDailyReportPage() {
           .filter((row) =>
             selectedStudio === "all" ? true : row.studio === selectedStudio
           )}
-        pinning={["id_aff", "account_name"]}
+        pinning={["id", "account_name"]}
       />
     </MainLayout>
   );

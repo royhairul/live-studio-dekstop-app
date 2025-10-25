@@ -43,13 +43,14 @@ export function DataTablePinning({
   pinning = [],
   data = [],
   customButton = null,
+  manualPagination = false,
+  pageCount: controlledPageCount,
+  onPaginationChange: externalOnPaginationChange,
+  initialPagination = { pageIndex: 0, pageSize: 10 },
 }) {
   const memoData = React.useMemo(() => data, [data]);
   const memoColumns = React.useMemo(() => columns, [columns]);
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+  const [pagination, setPagination] = React.useState(initialPagination);
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -59,6 +60,19 @@ export function DataTablePinning({
     left: pinning,
     right: [],
   }));
+
+  const handlePaginationChange = React.useCallback((updater) => {
+    setPagination(old => {
+      const newState = typeof updater === 'function' ? updater(old) : updater;
+
+      // Jika ada external handler, panggil itu
+      if (externalOnPaginationChange) {
+        externalOnPaginationChange(newState);
+      }
+
+      return newState;
+    });
+  }, [externalOnPaginationChange]);
 
   const table = useReactTable({
     data: memoData,
@@ -72,7 +86,9 @@ export function DataTablePinning({
       columnPinning,
       pagination
     },
-    onPaginationChange: setPagination,
+    manualPagination,
+    pageCount: controlledPageCount ?? -1,
+    onPaginationChange: handlePaginationChange,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -83,6 +99,7 @@ export function DataTablePinning({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    // ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
   });
 
   const pinnedLeft = table.getState().columnPinning.left;

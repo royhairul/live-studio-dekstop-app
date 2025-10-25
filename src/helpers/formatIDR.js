@@ -40,3 +40,15 @@ export function formatFull(amount) {
     }).format(amount);
 }
 
+
+export const formatShopeeIDR = (value) => {
+    if (value == null || isNaN(value)) return "Rp0";
+    const adjustedValue = value / 100000;
+
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(adjustedValue);
+};

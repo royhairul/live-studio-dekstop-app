@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { formatFull, formatShort } from "@/helpers/formatIDR";
+import { formatFull, formatShopeeIDR, formatShort } from "@/helpers/formatIDR";
 import { getYesterdayRange } from "@/helpers/formatDate";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DateRangeFilter from "@/features/perform/components/DateRangeFilter";
@@ -83,13 +83,7 @@ const columnReportPayout = [
         </div>
       );
     },
-    cell: ({ getValue }) =>
-      Number(getValue()).toLocaleString("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-      }),
-    // memastikan sorting numerik, bukan string
+    cell: ({ getValue }) => <div>{formatShopeeIDR(getValue())}</div>,
     sortingFn: (rowA, rowB, columnId) => {
       const a = Number(rowA.getValue(columnId));
       const b = Number(rowB.getValue(columnId));
@@ -207,7 +201,7 @@ export default function FinanceDailyReportPage() {
       ...(selectedAccount !== "all" && { account: selectedAccount }),
     },
   });
-
+  
   const breadcrumbs = [
     {
       icon: IconReportMoney,
@@ -291,7 +285,7 @@ export default function FinanceDailyReportPage() {
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
         {metricsConfig.map(({ key, title, icon, borderColor, gradient, since, withChart }) => {
-          const metric = data?.metric?.[key];
+          const metric = data?.metric?.[key] / 100000;
           return (
             <MetricsSection
               key={key}

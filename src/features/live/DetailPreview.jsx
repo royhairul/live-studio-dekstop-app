@@ -6,7 +6,7 @@ import {
 
 import { ListCard } from "@/components/list-card";
 import { DataTablePinning } from "@/components/data-table-pinning";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiEndpoints } from "@/config/api";
 import { useLocation, useParams } from "react-router-dom";
 import SortableHeader from "@/components/SortableHeader";
@@ -137,37 +137,37 @@ export default function LivePreviewDetailPage() {
     const socketRef = useRef(null);
 
     const [reports, setReports] = useState({});
+    const [pagination, setPagination] = useState({
+        pageIndex: 0,
+        pageSize: 10,
+    });
 
-    useEffect(() => {
-        const url = apiEndpoints.live.detail(id, sessionId) + "?productPageSize=100";
+    const connectWebSocket = useCallback((page, pageSize) => {
+        if (socketRef.current) {
+            socketRef.current.close();
+        }
+
+        const url = apiEndpoints.live.detail(id, sessionId) +
+            `?productPageSize=${pageSize}&productPage=${page}`;
 
         const ws = new WebSocket(url);
         socketRef.current = ws;
 
         ws.onopen = () => {
-            console.log("✅ WebSocket Connected to", url);
+            console.log("✅ WebSocket Connected:", url);
         };
 
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                console.log("📦 Raw object from WebSocket:", data);
+                console.log("📦 Data from WebSocket:", data);
 
                 if (!data || !data.name) {
                     console.warn("⚠️ Data tidak valid:", data);
                     return;
                 }
 
-                setReports(prev => ({
-                    ...prev,
-                    ...data,
-                    products: {
-                        ...prev.products,
-                        ...data.products,
-                        list: data.products?.list || prev.products?.list || [],
-                    }
-                }));
-
+                setReports(data);
 
             } catch (err) {
                 console.error("❌ JSON parse error:", err, event.data);
@@ -182,30 +182,52 @@ export default function LivePreviewDetailPage() {
             console.warn("❌ WebSocket Closed:", event.code, event.reason);
         };
 
+        return ws;
+    }, [id, sessionId]);
+
+    // Initial connection dan reconnect saat pagination berubah
+    useEffect(() => {
+        const ws = connectWebSocket(
+            pagination.pageIndex + 1,
+            pagination.pageSize
+        );
+
         return () => {
             console.log("🧹 Cleaning up WebSocket...");
             ws.close();
         };
-    }, [location.pathname, id, sessionId]);
+    }, [connectWebSocket, pagination.pageIndex, pagination.pageSize]);
+
+    // Handler untuk pagination change dari table
+    const handlePaginationChange = (newPagination) => {
+        console.log("📄 Pagination changed:", newPagination);
+        setPagination(newPagination);
+    };
+
+    // Hitung total pages dari data
+    const pageCount = reports?.products?.total && pagination.pageSize
+        ? Math.ceil(reports.products.total / pagination.pageSize)
+        : 0;
 
     return (
         <MainLayout breadcrumbs={breadcrumbs}>
             <div className="w-full overflow-auto flex gap-2">
-                {/* <ChartLineMultiple /> */}
                 <ListCard data={reports?.overview} name={reports?.name} />
             </div>
             <div className="flex gap-2 w-full mt-2">
-                {/* <ChartRadialSimple /> */}
                 <div className="bg-white rounded-xl shadow-xl p-2 w-full overflow-auto">
-                    <h2 className="text-lg font-bold ">Product List</h2>
+                    <h2 className="text-lg font-bold">Product List</h2>
                     <DataTablePinning
                         columns={columnDetailPreview}
                         data={reports?.products?.list || []}
-                        pinning={["name"]}
+                        pinning={["title"]}
+                        manualPagination={true}
+                        pageCount={pageCount}
+                        initialPagination={pagination}
+                        onPaginationChange={handlePaginationChange}
                     />
                 </div>
             </div>
-
         </MainLayout>
     );
 }
