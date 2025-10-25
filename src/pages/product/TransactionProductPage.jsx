@@ -16,6 +16,8 @@ import DateRangeFilter from "@/features/perform/components/DateRangeFilter";
 import useDateRangeQuery from "@/features/perform/hooks/useDateRangeQuery";
 import { Coins, ShoppingCart } from "lucide-react";
 import MetricsSection from "@/components/MetricsSection";
+import { useStudios } from "@/hooks/studio/useStudios";
+import { useAccounts } from "@/hooks/account/useAccounts";
 
 
 const columnReportProducts = [
@@ -36,76 +38,6 @@ const columnReportProducts = [
     accessorKey: "tipe_commision",
     header: () => <span className="font-semibold">Tipe Komisi</span>,
     cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
-  },
-  {
-    id: "amount",
-    accessorKey: "amount",
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-
-      return (
-        <div
-          className="flex items-center gap-1 cursor-pointer select-none"
-          onClick={() => column.toggleSorting(isSorted === "asc")}
-        >
-          <span className="font-semibold">Total Pembelian</span>
-          {isSorted === "asc" ? (
-            <IconArrowUp size={14} />
-          ) : isSorted === "desc" ? (
-            <IconArrowDown size={14} />
-          ) : (
-            <IconArrowDown size={14} className="opacity-30" />
-          )}
-        </div>
-      );
-    },
-    cell: ({ getValue }) =>
-      Number(getValue()).toLocaleString("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-      }),
-    // memastikan sorting numerik, bukan string
-    sortingFn: (rowA, rowB, columnId) => {
-      const a = Number(rowA.getValue(columnId));
-      const b = Number(rowB.getValue(columnId));
-      return a > b ? 1 : a < b ? -1 : 0;
-    },
-  },
-  {
-    id: "amount",
-    accessorKey: "amount",
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-
-      return (
-        <div
-          className="flex items-center gap-1 cursor-pointer select-none"
-          onClick={() => column.toggleSorting(isSorted === "asc")}
-        >
-          <span className="font-semibold">Komisi Produk</span>
-          {isSorted === "asc" ? (
-            <IconArrowUp size={14} />
-          ) : isSorted === "desc" ? (
-            <IconArrowDown size={14} />
-          ) : (
-            <IconArrowDown size={14} className="opacity-30" />
-          )}
-        </div>
-      );
-    },
-    cell: ({ getValue }) =>
-      Number(getValue()).toLocaleString("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-      }),
-    // memastikan sorting numerik, bukan string
-    sortingFn: (rowA, rowB, columnId) => {
-      const a = Number(rowA.getValue(columnId));
-      const b = Number(rowB.getValue(columnId));
-      return a > b ? 1 : a < b ? -1 : 0;
-    },
   },
   {
     id: "amount",
@@ -146,7 +78,7 @@ const columnReportProducts = [
 
 const metricsConfig = [
   {
-    key: "commission_paid",
+    key: "total_purchase",
     title: "Total Pembelian Yang Dibuat",
     icon: ShoppingCart,
     borderColor: "#3818D9",
@@ -155,7 +87,7 @@ const metricsConfig = [
     withChart: false,
   },
   {
-    key: "commission_unpaid",
+    key: "total_commission_with_mcn",
     title: "Total Komisi Produk",
     icon: Coins,
     borderColor: "#EE8D5B",
@@ -164,7 +96,7 @@ const metricsConfig = [
     withChart: false,
   },
   {
-    key: "commission",
+    key: "total_commission",
     title: "Total Seluruh Pesanan",
     icon: Coins,
     borderColor: "#2EE59D",
@@ -174,42 +106,10 @@ const metricsConfig = [
   },
 ];
 
-const payoutData = [
-  {
-    id_aff: "AFF12345",
-    account_name: "ShopeeXpert_01",
-    date: "2025-10-01",
-    amount: 1250000,
-    method: "Bank Transfer - BCA",
-    status: "Selesai",
-  },
-  {
-    id_aff: "AFF67890",
-    account_name: "PartnerStore_88",
-    date: "2025-10-03",
-    amount: 890000,
-    method: "ShopeePay",
-    status: "Pending",
-  },
-  {
-    id_aff: "AFF99881",
-    account_name: "CreatorMarket_02",
-    date: "2025-09-28",
-    amount: 2145000,
-    method: "Bank Transfer - Mandiri",
-    status: "Gagal",
-  },
-  {
-    id_aff: "AFF43210",
-    account_name: "BestDeals_Indo",
-    date: "2025-10-05",
-    amount: 1560000,
-    method: "Bank Transfer - BNI",
-    status: "Selesai",
-  },
-];
-
 export default function FinanceDailyReportPage() {
+  const [selectedStudio, setSelectedStudio] = useState("all");
+  const [selectedAccount, setSelectedAccount] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const {
     data,
     isFetching,
@@ -217,9 +117,12 @@ export default function FinanceDailyReportPage() {
     appliedRange,
   } = useDateRangeQuery({
     queryKey: ["perform-studio-detail"],
-    url: apiEndpoints.transaction.finance(),
+    url: apiEndpoints.transaction.products(),
     range: getYesterdayRange(),
   });
+
+  console.log(data);
+
 
   const breadcrumbs = [
     {
@@ -232,9 +135,8 @@ export default function FinanceDailyReportPage() {
     },
   ];
 
-  const [selectedStudio, setSelectedStudio] = useState("all");
-  const [selectedAccount, setSelectedAccount] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const { studio: studioList } = useStudios();
+  const { data: accountList = [] } = useAccounts();
 
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
@@ -249,8 +151,11 @@ export default function FinanceDailyReportPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Studio</SelectItem>
-              <SelectItem value="Studio A">Studio A</SelectItem>
-              <SelectItem value="Studio B">Studio B</SelectItem>
+              {studioList?.map((studio) => (
+                <SelectItem key={studio.id} value={studio.id}>
+                  {studio.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -264,12 +169,14 @@ export default function FinanceDailyReportPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Akun</SelectItem>
-              <SelectItem value="ShopeeXpert_01">ShopeeXpert_01</SelectItem>
-              <SelectItem value="PartnerStore_88">PartnerStore_88</SelectItem>
+              {accountList?.map((acc) => (
+                <SelectItem key={acc.unique_id} value={acc.unique_id}>
+                  {acc.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
-
         {/* Filter Status */}
         <div className="flex flex-col">
           <span className="text-xs text-primary font-medium mb-1">Status Pesanan</span>
@@ -298,7 +205,7 @@ export default function FinanceDailyReportPage() {
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
         {metricsConfig.map(({ key, title, icon, borderColor, gradient, since, withChart }) => {
-          const metric = data?.metrics?.[key] || {};
+          const metric = data?.metric?.[key];
           return (
             <MetricsSection
               key={key}
@@ -308,11 +215,11 @@ export default function FinanceDailyReportPage() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span className="cursor-pointer">
-                        {formatShort(metric.total || 0)}
+                        {formatShort(metric || 0)}
                       </span>
                     </TooltipTrigger>
                     <TooltipContent>
-                      {formatFull(metric.total || 0)}
+                      {formatFull(metric || 0)}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -332,7 +239,7 @@ export default function FinanceDailyReportPage() {
       {/* Data Table */}
       <DataTablePinning
         columns={columnReportProducts}
-        data={payoutData
+        data={data?.list ?? []
           .filter((row) =>
             selectedStatus === "all" ? true : row.status === selectedStatus
           )

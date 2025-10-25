@@ -10,19 +10,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { formatFull, formatShort } from "@/helpers/formatIDR";
-import { formatSince, getYesterdayRange } from "@/helpers/formatDate";
-import StatCard from "@/components/ui/stat-card";
+import { getYesterdayRange } from "@/helpers/formatDate";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DateRangeFilter from "@/features/perform/components/DateRangeFilter";
 import useDateRangeQuery from "@/features/perform/hooks/useDateRangeQuery";
 import { Coins, ShoppingCart } from "lucide-react";
 import MetricsSection from "@/components/MetricsSection";
+import { useAccounts } from "@/hooks/account/useAccounts";
+import { useStudios } from "@/hooks/studio/useStudios";
 
 
 const columnReportPayout = [
   {
-    id: "id_aff",
-    accessorKey: "id_aff",
+    id: "account_id",
+    accessorKey: "account_id",
     header: () => <span className="font-semibold">ID Affiliate</span>,
     cell: ({ getValue }) => <div className="pl-2">{getValue()}</div>,
   },
@@ -33,8 +34,8 @@ const columnReportPayout = [
     cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
   },
   {
-    id: "date",
-    accessorKey: "date",
+    id: "order_date",
+    accessorKey: "order_date",
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       return (
@@ -61,8 +62,8 @@ const columnReportPayout = [
       }),
   },
   {
-    id: "amount",
-    accessorKey: "amount",
+    id: "commission",
+    accessorKey: "commission",
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
 
@@ -96,8 +97,8 @@ const columnReportPayout = [
     },
   },
   {
-    id: "method",
-    accessorKey: "method",
+    id: "payment_method",
+    accessorKey: "payment_method",
     header: ({ column }) => {
       const current = column.getFilterValue();
       const options = [undefined, "Bank Transfer", "ShopeePay"];
@@ -134,8 +135,8 @@ const columnReportPayout = [
     },
   },
   {
-    id: "status",
-    accessorKey: "status",
+    id: "payment_status",
+    accessorKey: "payment_status",
     header: () => <span className="font-semibold">Status Pembayaran</span>,
     cell: ({ getValue }) => {
       const status = getValue();
@@ -158,7 +159,7 @@ const columnReportPayout = [
 
 const metricsConfig = [
   {
-    key: "commission_paid",
+    key: "paid",
     title: "Total Komisi Dibayar",
     icon: ShoppingCart,
     borderColor: "#3818D9",
@@ -167,7 +168,7 @@ const metricsConfig = [
     withChart: false,
   },
   {
-    key: "commission_unpaid",
+    key: "pending",
     title: "Total Komisi Belum Dibayar",
     icon: Coins,
     borderColor: "#EE8D5B",
@@ -176,7 +177,7 @@ const metricsConfig = [
     withChart: false,
   },
   {
-    key: "commission",
+    key: "total",
     title: "Total Seluruh Komisi",
     icon: Coins,
     borderColor: "#2EE59D",
@@ -186,42 +187,11 @@ const metricsConfig = [
   },
 ];
 
-const payoutData = [
-  {
-    id_aff: "AFF12345",
-    account_name: "ShopeeXpert_01",
-    date: "2025-10-01",
-    amount: 1250000,
-    method: "Bank Transfer - BCA",
-    status: "Selesai",
-  },
-  {
-    id_aff: "AFF67890",
-    account_name: "PartnerStore_88",
-    date: "2025-10-03",
-    amount: 890000,
-    method: "ShopeePay",
-    status: "Pending",
-  },
-  {
-    id_aff: "AFF99881",
-    account_name: "CreatorMarket_02",
-    date: "2025-09-28",
-    amount: 2145000,
-    method: "Bank Transfer - Mandiri",
-    status: "Gagal",
-  },
-  {
-    id_aff: "AFF43210",
-    account_name: "BestDeals_Indo",
-    date: "2025-10-05",
-    amount: 1560000,
-    method: "Bank Transfer - BNI",
-    status: "Selesai",
-  },
-];
-
 export default function FinanceDailyReportPage() {
+  const [selectedStudio, setSelectedStudio] = useState("all");
+  const [selectedAccount, setSelectedAccount] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  
   const {
     data,
     isFetching,
@@ -232,6 +202,7 @@ export default function FinanceDailyReportPage() {
     url: apiEndpoints.transaction.finance(),
     range: getYesterdayRange(),
   });
+
 
   const breadcrumbs = [
     {
@@ -244,10 +215,9 @@ export default function FinanceDailyReportPage() {
     },
   ];
 
-  const [selectedStudio, setSelectedStudio] = useState("all");
-  const [selectedAccount, setSelectedAccount] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-
+  const { studio: studioList } = useStudios();
+  const { data: accountList = [] } = useAccounts();
+  
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
       {/* Action Filters */}
@@ -261,8 +231,11 @@ export default function FinanceDailyReportPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Studio</SelectItem>
-              <SelectItem value="Studio A">Studio A</SelectItem>
-              <SelectItem value="Studio B">Studio B</SelectItem>
+              {studioList?.map((studio) => (
+                <SelectItem key={studio.id} value={studio.id}>
+                  {studio.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -276,8 +249,11 @@ export default function FinanceDailyReportPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Akun</SelectItem>
-              <SelectItem value="ShopeeXpert_01">ShopeeXpert_01</SelectItem>
-              <SelectItem value="PartnerStore_88">PartnerStore_88</SelectItem>
+              {accountList?.map((acc) => (
+                <SelectItem key={acc.unique_id} value={acc.unique_id}>
+                  {acc.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -311,7 +287,7 @@ export default function FinanceDailyReportPage() {
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
         {metricsConfig.map(({ key, title, icon, borderColor, gradient, since, withChart }) => {
-          const metric = data?.metrics?.[key] || {};
+          const metric = data?.metric?.[key];
           return (
             <MetricsSection
               key={key}
@@ -321,11 +297,11 @@ export default function FinanceDailyReportPage() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span className="cursor-pointer">
-                        {formatShort(metric.total || 0)}
+                        {formatShort(metric || 0)}
                       </span>
                     </TooltipTrigger>
                     <TooltipContent>
-                      {formatFull(metric.total || 0)}
+                      {formatFull(metric || 0)}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -334,7 +310,7 @@ export default function FinanceDailyReportPage() {
               borderColor={borderColor}
               since={since}
               withChart={withChart}
-              data={data?.metrics}
+              data={data?.metric}
               gradient={gradient}
             />
           );
@@ -345,19 +321,19 @@ export default function FinanceDailyReportPage() {
       {/* Data Table */}
       <DataTablePinning
         columns={columnReportPayout}
-        data={payoutData
+        data={data?.list
           .filter((row) =>
             selectedStatus === "all" ? true : row.status === selectedStatus
           )
           .filter((row) =>
             selectedAccount === "all"
               ? true
-              : row.account_name === selectedAccount
+              : row.account_id === selectedAccount
           )
           .filter((row) =>
             selectedStudio === "all" ? true : row.studio === selectedStudio
           )}
-        pinning={["id_aff", "account_name"]}
+        pinning={["account_id", "account_name"]}
       />
     </MainLayout>
   );

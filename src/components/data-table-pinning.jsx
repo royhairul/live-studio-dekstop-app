@@ -46,7 +46,10 @@ export function DataTablePinning({
 }) {
   const memoData = React.useMemo(() => data, [data]);
   const memoColumns = React.useMemo(() => columns, [columns]);
-
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -67,7 +70,9 @@ export function DataTablePinning({
       rowSelection,
       globalFilter,
       columnPinning,
+      pagination
     },
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -85,7 +90,7 @@ export function DataTablePinning({
     let left = 0;
     for (const colId of pinnedLeft) {
       if (colId === id) break;
-      left += 150; // lebar tetap per kolom yang dipin
+      left += 150;
     }
     return `${left}px`;
   };
@@ -154,16 +159,16 @@ export function DataTablePinning({
                       className={cn(
                         "w-[150px] min-w-[150px] max-w-[150px]",
                         pinnedIndex !== -1 &&
-                          "sticky z-20 shadow-md bg-gray-50"
+                        "sticky z-20 shadow-md bg-gray-50"
                       )}
                       style={pinnedIndex !== -1 ? { left: leftValue } : {}}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
