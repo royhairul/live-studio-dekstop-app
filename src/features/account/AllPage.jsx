@@ -1,5 +1,4 @@
 import MainLayout from "@/layouts/main-layout";
-import { DataTable } from "@/components/data-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {

@@ -3,13 +3,11 @@ import MainLayout from "@/layouts/main-layout";
 import { Button } from "@/components/ui/button";
 import {
   IconCalendarCheck,
-  IconCalendarExclamation,
   IconCalendarX,
   IconDoorEnter,
   IconDoorExit,
   IconUsersGroup,
 } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
 import {
   Form,
   FormLabel,
@@ -21,23 +19,14 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { DatePicker } from "@/components/datepicker";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -50,10 +39,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { apiEndpoints } from "@/config/api";
 import { useAttendances } from "./hooks/useAttendances";
-import { checkoutSchema } from "./schema/checkout-schema";
 import { cn } from "@/lib/utils";
 import { useHosts } from "../hooks/useHosts";
 import { useStudios } from "@/hooks/studio/useStudios";
+import { checkoutSchema } from "./schema/checkout-schema";
 
 export default function HostAttendancePage() {
   const queryClient = useQueryClient();
@@ -83,7 +72,7 @@ export default function HostAttendancePage() {
     },
   });
   const formCheckOut = useForm({
-    // resolver: zodResolver(checkoutSchema),
+    resolver: zodResolver(checkoutSchema),
     defaultValues: {
       id: [],
     },
@@ -93,6 +82,7 @@ export default function HostAttendancePage() {
     formatInTimeZone(formCheckIn.watch("date"), "Asia/Jakarta", "y-MM-dd"),
     formCheckIn.watch("shift_id")
   );
+
   const breadcrumbs = [
     {
       icon: IconUsersGroup,
@@ -105,9 +95,8 @@ export default function HostAttendancePage() {
       axios.post(apiEndpoints.attendance.checkIn(), values),
     onSuccess: (response) => {
       const data = response.data.data;
-      toast.success(data["message"]);
 
-      console.warn(response);
+      toast.success(data["message"]);
 
       queryClient.invalidateQueries(["attendances"]);
 
@@ -117,28 +106,9 @@ export default function HostAttendancePage() {
     onError: (error) => {
       const errors = error.response.data.details;
 
-      console.log(errors);
-
-      const successedHost = errors.results
-        .filter(({ status }) => status === "success")
-        .map(({ host_name }) => host_name);
-
-      const failedHost = errors.results
-        .filter(({ status }) => status === "failed")
-        .map(({ host_name }) => host_name);
-
-      console.log(successedHost);
-
-      if (successedHost.length > 0) {
-        toast.success(`${successedHost.join(", ")} telah melakukan check-in`);
-      } else {
-        toast.error("Gagal check-in", {
-          description:
-            failedHost.length > 0
-              ? `\n${failedHost.join(", ")}  belum melakukan checkout`
-              : "",
-        });
-      }
+      toast.error("Gagal check-in", {
+        description: errors || "Terjadi kesalahan saat check-in",
+      });
     },
   });
 
@@ -146,30 +116,24 @@ export default function HostAttendancePage() {
     mutationFn: (values) =>
       axios.post(apiEndpoints.attendance.checkOut(), values),
     onSuccess: (response) => {
-      console.log("Data", response.data.data);
       const data = response.data.data;
       toast.success(data["message"]);
 
       queryClient.invalidateQueries(["attendances"]);
+      formCheckOut.reset();
     },
     onError: (error) => {
-      console.error(error);
-      const errorMsg = error.response?.data?.message || "Gagal check-out";
+      const errorMsg = error.response?.data?.details || "Gagal check-out";
       toast.error(errorMsg);
     },
   });
 
-  console.log(formCheckIn.formState.errors);
-  console.log(formCheckOut.formState.errors);
-
   const handleCheckIn = async (values) => {
-    console.log("Check In Values:", values);
     checkInMutation.mutate(values);
   };
 
   const handleCheckOut = async (values) => {
-    console.log("🧾 Check Out Values:", values);
-    // checkOutMutation.mutate(values);
+    checkOutMutation.mutate(values);
   }
 
   return (
