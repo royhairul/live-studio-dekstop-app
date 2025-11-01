@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { IconUsersGroup, IconClockPlus, IconSettings } from "@tabler/icons-react";
 import { useShifts } from "@/hooks/shift/useShifts";
 import { shiftColumns } from "@/components/tables/shifts-column";
+import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function ShiftAllPage() {
   const { data: shifts } = useShifts();
@@ -31,8 +32,10 @@ export default function ShiftAllPage() {
         </Button>
       </div>
 
-      {/* Table */}
-      <DataTable columns={shiftColumns} data={shifts} />
+      <DataTablePinning
+        columns={shiftColumns}
+        data={shifts || []}
+      />
     </MainLayout>
   );
 }

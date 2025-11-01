@@ -36,6 +36,7 @@ import {
 import { toast } from "sonner";
 import { useUsers } from "@/hooks/user/useUsers";
 import { deleteRequest } from "@/lib/useApi";
+import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function MUserAllPage() {
   const { users, refetch } = useUsers();
@@ -111,8 +112,7 @@ export default function MUserAllPage() {
               await refetch();
             } else {
               toast.error(
-                `Gagal menghapus user ${
-                  row.original.Username || "(Tanpa Nama)"
+                `Gagal menghapus user ${row.original.Username || "(Tanpa Nama)"
                 }`
               );
             }
@@ -181,7 +181,10 @@ export default function MUserAllPage() {
         <Button className="w-max">Export</Button>
       </div>
 
-      <DataTable columns={columns} data={users} />
+      <DataTablePinning
+        columns={columns}
+        data={users || []}
+      />
     </MainLayout>
   );
 }

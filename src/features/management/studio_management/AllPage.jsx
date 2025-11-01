@@ -2,23 +2,10 @@ import MainLayout from "@/layouts/main-layout";
 import { DataTable } from "@/components/data-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  IconArrowDown,
-  IconDots,
-  IconBrandShopee,
-  IconBrandTiktok,
-  IconDatabasePlus,
   IconId,
-  IconSettings,
   IconCategoryPlus,
-  IconEdit,
   IconPencil,
   IconTrash,
 } from "@tabler/icons-react";
@@ -38,6 +25,7 @@ import { useStudios } from "@/hooks/studio/useStudios";
 import { deleteRequest } from "@/lib/useApi";
 import { toast } from "sonner";
 import { apiEndpoints } from "@/config/api";
+import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function MStudioAllPage() {
   const { studio, refecth } = useStudios();
@@ -163,7 +151,10 @@ export default function MStudioAllPage() {
       </div>
 
       {/* Table */}
-      <DataTable columns={columns} data={studio} />
+      <DataTablePinning
+        columns={columns}
+        data={studio || []}
+      />
     </MainLayout>
   );
 }

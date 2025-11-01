@@ -1,5 +1,5 @@
-import FinanceDailyReportPage from "@/pages/finance/pages/daily-report-page";
-import TransactionProductPage from "@/pages/product/TransactionProductPage";
+import FinanceDailyReportPage from "@/features/transaction/daily-report-page";
+import TransactionProductPage from "@/features/transaction/TransactionProductPage";
 import { Route } from "react-router-dom";
 
 export const productRoutes = (

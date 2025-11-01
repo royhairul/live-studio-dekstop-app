@@ -1,4 +1,4 @@
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import AppRouter from "@/routes/app.route";
 import { AuthProvider } from "./auth/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,9 +10,9 @@ function App() {
   return (
     <QueryClientProvider client={queryCilent}>
       <AuthProvider>
-        <HashRouter>
+        <BrowserRouter>
           <AppRouter />
-        </HashRouter>
+        </BrowserRouter>
       </AuthProvider>
       <Toaster />
     </QueryClientProvider>

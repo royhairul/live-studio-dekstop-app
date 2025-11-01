@@ -1,15 +1,15 @@
-import AccountAllPage from "@/pages/account/AllPage";
-import AccountCreatePage from "@/pages/account/CreatePage";
-import HostAllPage from "@/pages/host/AllPage";
-import HostCreatePage from "@/pages/host/CreatePage";
-import HostDetailPage from "@/pages/host/DetailPage";
-import HostEditPage from "@/pages/host/EditPage";
-import MStudioAllPage from "@/pages/management/studio_management/AllPage";
-import MStudioCreatePage from "@/pages/management/studio_management/CreatePage";
-import MStudioEditPage from "@/pages/management/studio_management/EditPage";
-import MUserAllPage from "@/pages/management/user_management/AllPage";
-import MUserCreatePage from "@/pages/management/user_management/CreatePage";
-import MUserEditPage from "@/pages/management/user_management/EditPage";
+import AccountAllPage from "@/features/account/AllPage";
+import AccountCreatePage from "@/features/account/CreatePage";
+import HostAllPage from "@/features/host/AllPage";
+import HostCreatePage from "@/features/host/CreatePage";
+import HostDetailPage from "@/features/host/DetailPage";
+import HostEditPage from "@/features/host/EditPage";
+import MStudioAllPage from "@/features/management/studio_management/AllPage";
+import MStudioCreatePage from "@/features/management/studio_management/CreatePage";
+import MStudioEditPage from "@/features/management/studio_management/EditPage";
+import MUserAllPage from "@/features/management/user_management/AllPage";
+import MUserCreatePage from "@/features/management/user_management/CreatePage";
+import MUserEditPage from "@/features/management/user_management/EditPage";
 import { Route } from "react-router-dom";
 
 export const masterRoutes = (

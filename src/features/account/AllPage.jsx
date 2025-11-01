@@ -36,6 +36,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
+import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function AccountAllPage() {
   const { studio } = useStudios();
@@ -48,8 +49,8 @@ export default function AccountAllPage() {
   const filteredAccounts =
     selectedStudioId && selectedStudioId !== "all"
       ? accounts.filter(
-          (account) => String(account.studio_name) === selectedStudioId
-        )
+        (account) => String(account.studio_name) === selectedStudioId
+      )
       : accounts;
 
   const breadcrumbs = [
@@ -119,11 +120,10 @@ export default function AccountAllPage() {
         const platform = row.getValue("platform");
         return (
           <div
-            className={`flex items-center gap-2 px-2 p-1 w-max rounded font-medium text-xs ${
-              platform === "Shopee"
+            className={`flex items-center gap-2 px-2 p-1 w-max rounded font-medium text-xs ${platform === "Shopee"
                 ? "bg-amber-600/20 text-amber-600"
                 : "bg-black/20 text-black"
-            }`}
+              }`}
           >
             {platform === "Shopee" ? (
               <IconBrandShopee size={20} />
@@ -232,8 +232,10 @@ export default function AccountAllPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <DataTable columns={columns} data={filteredAccounts} />
+      <DataTablePinning
+        columns={columns}
+        data={filteredAccounts || []}
+      />
     </MainLayout>
   );
 }

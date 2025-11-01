@@ -1,14 +1,14 @@
 
-import HostScheduleCreatePage from "@/pages/host/schedule/CreateSchedulePage";
-import HostScheduleEditPage from "@/pages/host/schedule/EditSchedulePage";
-import ShiftAllPage from "@/pages/host/schedule/shift-management/AllPage";
-import ShiftCreatePage from "@/pages/host/schedule/shift-management/CreatePage";
-import ShiftEditPage from "@/pages/host/schedule/shift-management/EditPage";
-import HostScheduleSwitchPage from "@/pages/host/schedule/SwitchSchedulePage";
-import MRoleAllPage from "@/pages/management/role_management/AllPage";
-import MRoleCreatePage from "@/pages/management/role_management/CreatePage";
-import MRoleEditPage from "@/pages/management/role_management/EditPage";
-import HostSchedulePage from "@/pages/schedule/pages/SchedulePage";
+import HostScheduleCreatePage from "@/features/host/schedule/CreateSchedulePage";
+import HostScheduleEditPage from "@/features/host/schedule/EditSchedulePage";
+import ShiftAllPage from "@/features/host/schedule/shift-management/AllPage";
+import ShiftCreatePage from "@/features/host/schedule/shift-management/CreatePage";
+import ShiftEditPage from "@/features/host/schedule/shift-management/EditPage";
+import HostScheduleSwitchPage from "@/features/host/schedule/SwitchSchedulePage";
+import MRoleAllPage from "@/features/management/role_management/AllPage";
+import MRoleCreatePage from "@/features/management/role_management/CreatePage";
+import MRoleEditPage from "@/features/management/role_management/EditPage";
+import HostSchedulePage from "@/features/schedule/pages/SchedulePage";
 import { Route } from "react-router-dom";
 
 export const settingRoutes = (

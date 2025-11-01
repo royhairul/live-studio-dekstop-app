@@ -84,10 +84,12 @@ export function DataTablePinning({
       rowSelection,
       globalFilter,
       columnPinning,
-      pagination
+      pagination,
     },
     manualPagination,
-    pageCount: controlledPageCount ?? -1,
+    pageCount: manualPagination
+      ? controlledPageCount ?? -1 // hanya aktif di mode manual
+      : undefined, // biarkan otomatis
     onPaginationChange: handlePaginationChange,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -99,7 +101,6 @@ export function DataTablePinning({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    // ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
   });
 
   const pinnedLeft = table.getState().columnPinning.left;
@@ -113,7 +114,10 @@ export function DataTablePinning({
   };
 
   const currentPage = table.getState().pagination.pageIndex + 1;
-  const totalPages = table.getPageCount();
+  const totalPages = Math.max(
+    1,
+    Number.isFinite(table.getPageCount()) ? table.getPageCount() : 1
+  );
 
   return (
     <div className="w-full">
@@ -246,15 +250,11 @@ export function DataTablePinning({
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => table.previousPage()}
-                className={
-                  !table.getCanPreviousPage()
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }
+                className={!table.getCanPreviousPage() ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
 
-            {/* Halaman */}
+            {/* ✅ Render dinamis berdasarkan totalPages */}
             {[...Array(totalPages)].map((_, i) => {
               const page = i + 1;
               if (
@@ -272,10 +272,7 @@ export function DataTablePinning({
                     </PaginationLink>
                   </PaginationItem>
                 );
-              } else if (
-                page === currentPage - 2 ||
-                page === currentPage + 2
-              ) {
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
                 return <PaginationEllipsis key={page} />;
               }
               return null;
@@ -284,15 +281,12 @@ export function DataTablePinning({
             <PaginationItem>
               <PaginationNext
                 onClick={() => table.nextPage()}
-                className={
-                  !table.getCanNextPage()
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }
+                className={!table.getCanNextPage() ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
+
       </div>
     </div>
   );

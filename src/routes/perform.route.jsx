@@ -1,5 +1,3 @@
-import FinanceCommissionReportPage from "@/pages/finance/pages/commission-report-page";
-import FinanceDailyReportPage from "@/pages/finance/pages/daily-report-page";
 import HostDetailPerformPage from "@/features/perform/host/detail-page";
 import HostPerformPage from "@/features/perform/host/host-perform-page";
 import { Route } from "react-router-dom";
@@ -10,8 +8,6 @@ import TargetPage from "@/features/perform/target/pages/target-page";
 
 export const performRoutes = (
   <>
-    <Route path="/finance/daily-report" element={<FinanceDailyReportPage />} />
-    <Route path="/finance/commission-report" element={<FinanceCommissionReportPage />} />
     <Route path="/perform/studio" element={<StudioPerformPage />} />
     <Route path="/perform/studio/detail/:id" element={<StudioPerformDetailPage />} />
     <Route path="/perform/host" element={<HostPerformPage />} />

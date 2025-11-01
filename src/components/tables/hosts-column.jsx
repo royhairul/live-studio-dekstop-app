@@ -1,22 +1,10 @@
 import { IconPencil, IconTrash, IconListDetails } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
 import { Link } from "react-router-dom";
 import { createColumnHelper } from "@tanstack/react-table";
 import { ConfirmDeleteDialog } from "../confirm-delete-dialog";
-import { useDeleteHost } from "@/pages/host/hooks/useDeleteHost";
+import { useDeleteHost } from "@/features/host/hooks/useDeleteHost";
 
 const columnHelper = createColumnHelper();
 

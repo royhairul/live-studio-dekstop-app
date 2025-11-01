@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { useHosts } from "./hooks/useHosts";
 import { hostColumn } from "@/components/tables/hosts-column";
+import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function HostAllPage() {
   const { studio } = useStudios();
@@ -65,7 +66,10 @@ export default function HostAllPage() {
         </div>
       </div>
 
-      <DataTable columns={hostColumn} data={filteredHosts} />
+      <DataTablePinning
+        columns={hostColumn}
+        data={filteredHosts || []}
+      />
     </MainLayout>
   );
 }
