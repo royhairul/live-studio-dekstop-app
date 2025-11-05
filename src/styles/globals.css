@@ -58,19 +58,19 @@ article.ec-event-body {
 }
 
 @theme {
-  --color-background: oklch(0.145 0.034 301); /* #190B28 */
-  --color-foreground: oklch(0.985 0.005 259); /* #F7F8FE */
+  --color-background: oklch(0.145 0.034 301); 
+  --color-foreground: oklch(0.985 0.005 259); 
 
-  --color-card: oklch(0.205 0.02 301); /* Slightly lighter than background */
+  --color-card: oklch(0.205 0.02 301); 
   --color-card-foreground: oklch(0.985 0.005 259);
 
   --color-popover: oklch(0.205 0.02 301);
   --color-popover-foreground: oklch(0.985 0.005 259);
 
-  --color-primary: oklch(0.692 0.233 143); /* #07BB3B */
-  --color-primary-foreground: oklch(1 0 0); /* White */
+  --color-primary: oklch(0.692 0.233 143);
+  --color-primary-foreground: oklch(1 0 0);
 
-  --color-secondary: oklch(0.269 0.02 301); /* Optional shade */
+  --color-secondary: oklch(0.269 0.02 301);
   --color-secondary-foreground: oklch(0.985 0.005 259);
 
   --color-muted: oklch(0.269 0.01 301);

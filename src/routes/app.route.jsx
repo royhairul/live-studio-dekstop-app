@@ -12,13 +12,14 @@ import RegisterPage from "@/features/auth/pages/register-page";
 import { settingRoutes } from "./setting.route";
 import { masterRoutes } from "./master.route";
 import NotFound from "@/components/not-found";
+import App from "@/features/welcome/Welcome";
 
 export default function AppRouter() {
   const ProtectedRoute = () => {
     const token = localStorage.getItem("access_token");
 
     if (!token) {
-      return <Navigate to="/login" replace />;
+      return <Navigate to="/" replace />;
     }
 
     return <Outlet />;
@@ -26,7 +27,7 @@ export default function AppRouter() {
 
   return (
     <Routes>
-      <Route path="/" element={<LoginPage />} />
+      <Route path="/" element={<App />} />
 
       {/* Login */}
       <Route path="/login" element={<LoginPage />} />
