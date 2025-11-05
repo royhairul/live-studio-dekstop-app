@@ -2,7 +2,6 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import {
   IconSearch,
-  IconMenu2,
   IconHistory,
   IconBell,
   IconLogout,
@@ -46,40 +45,57 @@ export default function MainLayout({ breadcrumbs, children }) {
 
       <main className="p-4 flex-1 flex-col gap-4 bg-gray-100 overflow-auto transition-[width] duration-300 ease-in-out">
         {/* Topbar */}
-        <div className="w-full bg-white py-3 px-4 flex items-center rounded-md shadow-sm mb-4 gap-3">
-          <SidebarTrigger className="hidden lg:inline-flex bg-transparent hover:bg-accent/10 mr-2" />
+        <div className="w-full bg-white py-3 px-4 flex items-center rounded-md shadow-sm mb-4 gap-2">
+          <SidebarTrigger className="inline-flex bg-transparent hover:bg-accent/10" />
 
           {/* Breadcrumbs */}
-          <Breadcrumb className="flex-1 min-w-[200px]">
+          <Breadcrumb className="flex-1">
             <BreadcrumbList className="flex flex-wrap items-center gap-1">
-              {breadcrumbs.map((item, index) => {
-                const isLast = index === breadcrumbs.length - 1;
-                return (
-                  <React.Fragment key={index}>
+              <div className="flex md:hidden items-center gap-1">
+                {breadcrumbs.length > 0 && (() => {
+                  const last = breadcrumbs[breadcrumbs.length - 1];
+                  const Icon = last.icon;
+                  return (
                     <BreadcrumbItem>
-                      {isLast ? (
-                        <BreadcrumbPage className="flex items-center gap-1.5 font-semibold text-primary">
-                          {item.icon && <item.icon className="mr-1 inline" />}
-                          {item.label}
-                        </BreadcrumbPage>
-                      ) : (
-                        <BreadcrumbLink
-                          to={item.url}
-                          className="flex items-center gap-1.5 font-medium"
-                        >
-                          {item.icon && <item.icon className="mr-1 inline" />}
-                          {item.label}
-                        </BreadcrumbLink>
-                      )}
+                      <BreadcrumbPage className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                        {Icon && <Icon className="mr-1 inline" />}
+                        {last.label}
+                      </BreadcrumbPage>
                     </BreadcrumbItem>
-                    {!isLast && <BreadcrumbSeparator />}
-                  </React.Fragment>
-                );
-              })}
+                  );
+                })()}
+              </div>
+
+              <div className="hidden md:flex flex-wrap items-center gap-1">
+                {breadcrumbs.map((item, index) => {
+                  const isLast = index === breadcrumbs.length - 1;
+
+                  return (
+                    <React.Fragment key={index}>
+                      <BreadcrumbItem>
+                        {isLast ? (
+                          <BreadcrumbPage className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                            {item.icon && <item.icon className="mr-1 inline" />}
+                            {item.label}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink
+                            to={item.url}
+                            className="flex items-center gap-1.5 font-medium text-xs"
+                          >
+                            {item.icon && <item.icon className="mr-1 inline" />}
+                            {item.label}
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                      {!isLast && <BreadcrumbSeparator />}
+                    </React.Fragment>
+                  );
+                })}
+              </div>
             </BreadcrumbList>
           </Breadcrumb>
 
-          {/* Right Actions */}
           {/* Right Actions */}
           <div className="flex items-center gap-1.5 ml-auto">
             {/* Search hanya di desktop */}
@@ -137,11 +153,6 @@ export default function MainLayout({ breadcrumbs, children }) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-
-            {/* Sidebar trigger untuk mobile */}
-            <SidebarTrigger
-              className="inline-flex lg:hidden bg-transparent hover:bg-accent/10 h-8 w-8"
-            />
           </div>
 
         </div>

@@ -6,16 +6,14 @@ const months = [
 ];
 
 export function MonthYearSelect({
-    value, // string: "MonthName Year"
+    value, 
     onChange,
     yearRange = 5,
-    withDefault = false, // 👈 bedakan untuk filter atau form
+    withDefault = false, 
     defaultValue = `${months[new Date().getMonth()]} ${new Date().getFullYear()}`
 }) {
     const currentYear = new Date().getFullYear();
 
-    // kalau withDefault = true → fallback ke defaultValue
-    // kalau false → biarkan kosong (user harus pilih manual)
     const effectiveValue = value || (withDefault ? defaultValue : "");
 
     // parse hanya kalau ada value
@@ -38,7 +36,7 @@ export function MonthYearSelect({
                 value={monthIndex ? String(monthIndex) : ""}
                 onValueChange={(v) => handleChange(Number(v), year || currentYear)}
             >
-                <SelectTrigger className="w-full border-accent bg-transparent border p-2 rounded-sm hover:cursor-pointer">
+                <SelectTrigger className="w-40 sm:w-full border-accent bg-transparent border p-2 rounded-sm hover:cursor-pointer">
                     <SelectValue placeholder="Pilih bulan" />
                 </SelectTrigger>
                 <SelectContent>
@@ -55,7 +53,7 @@ export function MonthYearSelect({
                 value={year ? String(year) : ""}
                 onValueChange={(v) => handleChange(monthIndex || 1, Number(v))}
             >
-                <SelectTrigger className="border-accent border p-2 bg-transparent rounded-sm w-[180px] hover:cursor-pointer">
+                <SelectTrigger className="border-accent border p-2 bg-transparent rounded-sm w-20 sm:w-full hover:cursor-pointer">
                     <SelectValue placeholder="Pilih tahun" />
                 </SelectTrigger>
                 <SelectContent>

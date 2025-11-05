@@ -21,18 +21,12 @@ import {
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
-import { apiEndpoints, baseUrl } from "@/config/api";
 import { useStudios } from "@/hooks/studio/useStudios";
-import { toast } from "sonner";
-import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
 import { useCreateHost } from "./hooks/useCreateHost";
 
 export default function HostCreatePage() {
-  const { studio, error } = useStudios();
+  const { studio } = useStudios();
   const createHostMutation = useCreateHost();
 
   const formSchema = z.object({
@@ -69,7 +63,7 @@ export default function HostCreatePage() {
 
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
-      <div className="p-4 w-1/2 bg-white flex flex-col gap-4 rounded-lg shadow-md">
+      <div className="p-4 w:full sm:w-1/2 bg-white flex flex-col gap-4 rounded-lg shadow-md">
         <h2 className="font-semibold">Tambah Host Baru</h2>
 
         <Form {...form}>

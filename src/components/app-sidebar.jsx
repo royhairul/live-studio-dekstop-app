@@ -172,7 +172,7 @@ export function AppSidebar() {
   }, [location.pathname, filteredItems]);
 
   return (
-    <Sidebar className={"fixed top-0 left-0 z-50 w-64 h-full bg-white shadow-lg"}>
+    <Sidebar className={"fixed top-0 left-0 z-50 h-full bg-white shadow-lg"}>
       <SidebarHeader>
         <div className="flex items-center space-x-4 p-4">
           <Avatar>

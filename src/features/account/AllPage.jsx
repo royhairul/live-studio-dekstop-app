@@ -214,7 +214,7 @@ export default function AccountAllPage() {
 
         <div className="self-end">
           <Select value={selectedStudioId} onValueChange={setSelectedStudioId}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-34 sm:w-[180px]">
               <SelectValue placeholder="Semua Studio" />
             </SelectTrigger>
             <SelectContent>

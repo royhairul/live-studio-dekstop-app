@@ -7,7 +7,6 @@ export const liveRoutes = (
   <>
     <Route path="/live/preview" element={<LivePreviewPage />} />
     <Route path="/live/preview-detail/:id/:sessionId" element={<LivePreviewDetailPage />} />
-    {/* <Route path="/live/report" element={<LiveReportPage />} /> */}
     <Route path="/live/graph" element={<LiveGraphReportPage />} />
   </>
 );

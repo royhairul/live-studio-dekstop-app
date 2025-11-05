@@ -12,16 +12,20 @@ export default function DateRangeFilter({ onApply, isLoading, dateRange }) {
     };
 
     return (
-        <div className="flex gap-2 items-center">
+        <div className="flex sm:items-center gap-2 w-max">
             <DatePicker
-                withRange="true"
+                withRange={true}
                 value={draftRange}
                 onChange={setDraftRange}
-                className="w-full sm:w-auto"
             />
-            <Button onClick={handleApply} disabled={isLoading}>
+            <Button
+                onClick={handleApply}
+                disabled={isLoading}
+                className="w-max"
+            >
                 {isLoading ? "Memuat..." : "Terapkan"}
             </Button>
         </div>
+
     );
 }

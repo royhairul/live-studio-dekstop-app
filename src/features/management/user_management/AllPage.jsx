@@ -166,19 +166,18 @@ export default function MUserAllPage() {
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
       <div className="flex gap-2">
-        <Button variant="default" className="w-max" asChild>
+        <Button variant="default" className="w-30 sm:w-max" asChild>
           <Link to="/management/user/create">
             <IconUserPlus />
             Tambah User
           </Link>
         </Button>
-        <Button variant="default" className="w-max" asChild>
+        <Button variant="default" className="w-40 sm:w-max" asChild>
           <Link to="/setting/role">
             <IconFlag />
             Management Role
           </Link>
         </Button>
-        <Button className="w-max">Export</Button>
       </div>
 
       <DataTablePinning

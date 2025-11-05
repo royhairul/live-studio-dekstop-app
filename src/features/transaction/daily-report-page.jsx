@@ -224,7 +224,7 @@ export default function FinanceDailyReportPage() {
         <div className="flex flex-col">
           <span className="text-xs text-primary font-medium mb-1">Studio</span>
           <Select value={selectedStudio} onValueChange={setSelectedStudio}>
-            <SelectTrigger className="w-[150px] h-9 text-sm">
+            <SelectTrigger className="w-34 sm:w-[150px] h-9 text-sm">
               <SelectValue placeholder="Pilih Studio" />
             </SelectTrigger>
             <SelectContent>
@@ -242,7 +242,7 @@ export default function FinanceDailyReportPage() {
         <div className="flex flex-col">
           <span className="text-xs text-primary font-medium mb-1">Akun</span>
           <Select value={selectedAccount} onValueChange={setSelectedAccount}>
-            <SelectTrigger className="w-[150px] h-9 text-sm">
+            <SelectTrigger className="w-34 sm:w-[150px] h-9 text-sm">
               <SelectValue placeholder="Pilih Akun" />
             </SelectTrigger>
             <SelectContent>
@@ -260,7 +260,7 @@ export default function FinanceDailyReportPage() {
         <div className="flex flex-col">
           <span className="text-xs text-primary font-medium mb-1">Status</span>
           <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-            <SelectTrigger className="w-[150px] h-9 text-sm">
+            <SelectTrigger className="w-34 sm:w-[150px] h-9 text-sm">
               <SelectValue placeholder="Pilih Status" />
             </SelectTrigger>
             <SelectContent>
@@ -331,7 +331,7 @@ export default function FinanceDailyReportPage() {
           .filter((row) =>
             selectedStudio === "all" ? true : row.studio === selectedStudio
           )}
-        pinning={["account_id", "account_name"]}
+        pinning={["account_id"]}
       />
     </MainLayout>
   );

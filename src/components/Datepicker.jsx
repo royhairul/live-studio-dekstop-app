@@ -62,7 +62,7 @@ export function DatePicker({
         <Button
           variant="outline"
           className={cn(
-            "bg-secondary w-[240px] justify-start text-left font-normal text-white",
+            "bg-secondary w-42 sm:w-auto justify-start text-left font-normal text-white",
             !selectedDate && "text-white"
           )}
         >

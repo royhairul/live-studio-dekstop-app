@@ -50,17 +50,17 @@ export default function HostAttendancePage() {
   const { data: attendances } = useAttendances();
   const { data: shifts } = useShifts();
   const { studio } = useStudios();
-  const [selectedHosts, setSelectedHosts] = useState([]);
+  const [ setSelectedHosts] = useState([]);
   const [selectedAttendances, setSelectedAttendances] = useState([]);
 
-  const getSelectedHostNames = () => {
-    if (!hosts) return "";
-    return hosts
-      .flat()
-      .filter((host) => selectedHosts.includes(host.id))
-      .map((host) => host.name)
-      .join(", ");
-  };
+  // const getSelectedHostNames = () => {
+  //   if (!hosts) return "";
+  //   return hosts
+  //     .flat()
+  //     .filter((host) => selectedHosts.includes(host.id))
+  //     .map((host) => host.name)
+  //     .join(", ");
+  // };
 
   const formCheckIn = useForm({
     resolver: zodResolver(checkinSchema),
@@ -78,10 +78,10 @@ export default function HostAttendancePage() {
     },
   });
 
-  const { data: scheduledHosts = [] } = useScheduledHosts(
-    formatInTimeZone(formCheckIn.watch("date"), "Asia/Jakarta", "y-MM-dd"),
-    formCheckIn.watch("shift_id")
-  );
+  // const { data: scheduledHosts = [] } = useScheduledHosts(
+  //   formatInTimeZone(formCheckIn.watch("date"), "Asia/Jakarta", "y-MM-dd"),
+  //   formCheckIn.watch("shift_id")
+  // );
 
   const breadcrumbs = [
     {
@@ -132,7 +132,7 @@ export default function HostAttendancePage() {
     checkInMutation.mutate(values);
   };
 
-  const handleCheckOut = async (values) => {
+  const handleCheckOut = async (values) => {    
     checkOutMutation.mutate(values);
   }
 

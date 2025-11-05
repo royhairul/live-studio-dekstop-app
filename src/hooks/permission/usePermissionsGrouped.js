@@ -3,12 +3,14 @@ import { getRequest } from "@/lib/useApi";
 import { useEffect, useState } from "react";
 
 export const usePermissionGrouped = () => {
-  const [permissions, setPermissions] = useState({});
+  const [permissions, setPermissions] = useState([]); 
+  const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const { status, result, error } = await getRequest(
           apiEndpoints.permission.grouped()
         );
@@ -20,11 +22,13 @@ export const usePermissionGrouped = () => {
         }
       } catch (error) {
         setError(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  return { permissions, error };
+  return { permissions, loading, error };
 };

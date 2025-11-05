@@ -280,7 +280,7 @@ export default function LivePreviewPage() {
       <DataTablePinning
         columns={columnReportDaily}
         data={combinedData}
-        pinning={["name", "status"]}
+        pinning={["name"]}
       />
     </MainLayout>
   );

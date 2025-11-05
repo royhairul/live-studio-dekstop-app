@@ -20,7 +20,7 @@ import { DataTablePinning } from "@/components/data-table-pinning";
 export default function HostAllPage() {
   const { studio } = useStudios();
   const [selectedStudioId, setSelectedStudioId] = useState("all");
-  const { data: hosts, refetch } = useHosts();
+  const { data: hosts } = useHosts();
 
   const filteredHosts =
     selectedStudioId !== "all"
@@ -42,8 +42,6 @@ export default function HostAllPage() {
             Tambah Host
           </Link>
         </Button>
-        <Button>Export</Button>
-
         <div className="flex-1" />
 
         <div className="self-end">
@@ -51,7 +49,7 @@ export default function HostAllPage() {
             value={selectedStudioId}
             onValueChange={(value) => setSelectedStudioId(value)}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-34 sm:w-[180px]">
               <SelectValue placeholder="Pilih Studio" />
             </SelectTrigger>
             <SelectContent>

@@ -1,30 +1,36 @@
 import { apiEndpoints } from "@/config/api";
 import { getRequest } from "@/lib/useApi";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useRolesById = (id) => {
-  const [roles, setRoles] = useState([]);
+  const [roles, setRoles] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const { status, result, error } = await getRequest(
-        apiEndpoints.role.show(id)
-      );
-
-      if (status) {
-        setRoles(result.data);
-      } else {
-        setError(error);
-      }
-    } catch (error) {
-      setError(error);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const { status, result, error } = await getRequest(
+          apiEndpoints.role.show(id)
+        );
 
-  return { roles, error, refetch: fetchData };
+        if (status) {
+          setRoles(result.data);
+        } else {
+          setError(error);
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
+
+  return { roles, loading, error };
 };

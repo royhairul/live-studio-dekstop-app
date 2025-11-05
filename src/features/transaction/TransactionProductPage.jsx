@@ -308,7 +308,7 @@ export default function FinanceDailyReportPage() {
           .filter((row) =>
             selectedStudio === "all" ? true : row.studio === selectedStudio
           )}
-        pinning={["id", "account_name"]}
+        pinning={["account_name"]}
       />
     </MainLayout>
   );
