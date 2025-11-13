@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect, use } from "react";
 import { apiEndpoints, baseUrl } from "@/config/api";
-import { DatePicker } from "@/components/datepicker";
+import { DatePicker } from "@/components/Datepicker";
 import { toast } from "sonner";
 import { postRequest } from "@/lib/useApi";
 import { formatTime } from "@/helpers/formatTime";

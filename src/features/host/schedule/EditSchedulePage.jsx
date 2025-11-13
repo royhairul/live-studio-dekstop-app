@@ -25,7 +25,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { baseUrl } from "@/config/api";
-import { DatePicker } from "@/components/datepicker";
+import { DatePicker } from "@/components/Datepicker";
 
 export default function HostScheduleEditPage() {
   const navigate = useNavigate();
