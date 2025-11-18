@@ -1,8 +1,8 @@
 import { apiEndpoints } from "@/config/api";
-import { postRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 
 export const createRole = async (payload) => {
-  const { status, result, errors } = await postRequest(
+  const { status, result, errors } = await apiSecure.post(
     apiEndpoints.role.create(),
     payload
   );

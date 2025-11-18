@@ -4,21 +4,23 @@ const defaultHeaders = {
   "Content-Type": "application/json",
 };
 
+/* ============================================
+   Get Authorization Header for Secure Requests
+============================================= */
 const getAuthHeader = () => {
   const token = localStorage.getItem("access_token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-async function apiRequest(
-  URL,
-  { method = "GET", payload = null, headers = {}, auth = false } = {}
-) {
+/* ============================================
+   Core Fetch Handler (dipakai oleh public & secure)
+============================================= */
+async function coreFetch(URL, { method = "GET", payload = null, headers = {} } = {}) {
   try {
     const options = {
       method,
       headers: {
         ...defaultHeaders,
-        ...(auth ? getAuthHeader() : {}),
         ...headers,
       },
     };
@@ -28,29 +30,53 @@ async function apiRequest(
     }
 
     const response = await fetch(URL, options);
-    const json = await response.json();
+
+    let json;
+    try {
+      json = await response.json();
+    } catch {
+      json = null; // handle empty body or HTML pages
+    }
 
     return {
-      status: response.ok,
-      result: json,
+      ok: response.ok,
+      status: response.status,
+      data: json,
     };
   } catch (error) {
-    console.error("Fetch API Error: ", error);
+    console.error("Fetch Error:", error);
+
     return {
+      ok: false,
       status: HttpStatusCode.BadRequest,
-      errors: error,
+      error,
     };
   }
 }
 
-export const getRequest = (URL, options = {}) =>
-  apiRequest(URL, { ...options, method: "GET" });
+/* ============================================
+        API PUBLIC (tanpa token)
+============================================= */
+export const apiPublic = {
+  get: (URL) => coreFetch(URL),
+  post: (URL, payload) => coreFetch(URL, { method: "POST", payload }),
+  put: (URL, payload) => coreFetch(URL, { method: "PUT", payload }),
+  delete: (URL) => coreFetch(URL, { method: "DELETE" }),
+};
 
-export const postRequest = (URL, payload, options = {}) =>
-  apiRequest(URL, { ...options, method: "POST", payload });
+/* ============================================
+        API SECURE (dengan token otomatis)
+============================================= */
+export const apiSecure = {
+  get: (URL) =>
+    coreFetch(URL, { headers: getAuthHeader() }),
 
-export const putRequest = (URL, payload, options = {}) =>
-  apiRequest(URL, { ...options, method: "PUT", payload });
+  post: (URL, payload) =>
+    coreFetch(URL, { method: "POST", payload, headers: getAuthHeader() }),
 
-export const deleteRequest = (URL, options = {}) =>
-  apiRequest(URL, { ...options, method: "DELETE" });
+  put: (URL, payload) =>
+    coreFetch(URL, { method: "PUT", payload, headers: getAuthHeader() }),
+
+  delete: (URL) =>
+    coreFetch(URL, { method: "DELETE", headers: getAuthHeader() }),
+};

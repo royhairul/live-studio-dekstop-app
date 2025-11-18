@@ -1,5 +1,5 @@
 import { apiEndpoints } from "@/config/api";
-import { getRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useCallback, useEffect, useState } from "react";
 
 export const useUsers = () => {
@@ -8,7 +8,7 @@ export const useUsers = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const { status, result, error } = await getRequest(
+      const { status, result, error } = await apiSecure.get(
         apiEndpoints.superadmin.index(),
         { auth: true }
       );

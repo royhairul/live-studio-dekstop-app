@@ -1,5 +1,5 @@
 import { apiEndpoints } from "@/config/api";
-import { getRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useEffect, useState } from "react";
 
 export const useHostsGroupedByStudio = (selectedStudioId) => {
@@ -9,7 +9,7 @@ export const useHostsGroupedByStudio = (selectedStudioId) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { status, result, errors } = await getRequest(
+        const { status, result, errors } = await apiSecure.get(
           apiEndpoints.host.groupedByStudio()
         );
         if (status) {

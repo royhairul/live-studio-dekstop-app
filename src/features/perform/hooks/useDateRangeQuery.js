@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
 const STORAGE_KEY = "customRange";
 
 const formatDate = (date) =>
@@ -32,6 +31,7 @@ export default function useDateRangeQuery({
     enabled = true,
     extraParams = {},
 }) {
+    const token = localStorage.getItem("access_token");
     const savedRange = (() => {
         try {
             const raw = sessionStorage.getItem(STORAGE_KEY);
@@ -52,13 +52,20 @@ export default function useDateRangeQuery({
             : [...queryKey, appliedRange?.from, appliedRange?.to, extraParams],
 
         queryFn: async () => {
-            // Gabungkan tanggal + extra params
+            // Gabungan tanggal + extra params
             const params = {
                 ...buildDateParams(appliedRange),
                 ...extraParams,
             };
+            const headers = token
+                ? { Authorization: `Bearer ${token}` }
+                : {};
 
-            const res = await axios.get(url, { params });
+            const res = await axios.get(url, {
+                headers,
+                params,
+            });
+            
             return res.data.data;
         },
         enabled: !!appliedRange && enabled && (id ? !!id : true),

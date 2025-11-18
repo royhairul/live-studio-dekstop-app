@@ -19,9 +19,9 @@ import { usePermissionGrouped } from "@/hooks/permission/usePermissionsGrouped";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { putRequest } from "@/lib/useApi";
 import { apiEndpoints } from "@/config/api";
 import { useRolesById } from "@/hooks/role/useRoleById";
+import { apiSecure } from "@/lib/useApi";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Role name is required." }),
@@ -78,7 +78,7 @@ export default function MRoleEditPage() {
 
   const handleEdit = async (values) => {
     try {
-      const { status } = await putRequest(
+      const { status } = await apiSecure.put(
         apiEndpoints.role.edit(id),
         values
       );

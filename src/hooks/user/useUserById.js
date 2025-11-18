@@ -1,5 +1,5 @@
 import { apiEndpoints } from "@/config/api";
-import { getRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useCallback, useEffect, useState } from "react";
 
 export const useUserById = (id) => {
@@ -12,7 +12,7 @@ export const useUserById = (id) => {
 
     setLoading(true);
     try {
-      const { status, result, error } = await getRequest(
+      const { status, result, error } = await apiSecure.get(
         apiEndpoints.superadmin.show(id),
         {
           auth: true,

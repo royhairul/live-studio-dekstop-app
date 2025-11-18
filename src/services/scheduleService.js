@@ -1,9 +1,9 @@
 import { apiEndpoints } from "@/config/api";
-import { postRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 
 export const createSchedule = async (payload) => {
   try {
-    const { status, result, error } = postRequest(
+    const { status, result, error } = apiSecure.post(
       apiEndpoints.schedule.create(),
       payload
     );

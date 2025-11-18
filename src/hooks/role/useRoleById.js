@@ -1,5 +1,5 @@
 import { apiEndpoints } from "@/config/api";
-import { getRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useEffect, useState } from "react";
 
 export const useRolesById = (id) => {
@@ -11,7 +11,7 @@ export const useRolesById = (id) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { status, result, error } = await getRequest(
+        const { status, result, error } = await apiSecure.get(
           apiEndpoints.role.show(id)
         );
 

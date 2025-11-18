@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { apiEndpoints } from "@/config/api";
-import { postRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { toast } from "sonner";
 
 export default function MStudioCreatePage() {
@@ -57,7 +57,7 @@ export default function MStudioCreatePage() {
 
   const handleCreate = async (values) => {
     try {
-      const { status, result, errors } = await postRequest(
+      const { status, result, errors } = await apiSecure.post(
         apiEndpoints.studio.create(),
         values
       );

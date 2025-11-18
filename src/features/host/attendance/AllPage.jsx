@@ -32,17 +32,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useShifts } from "@/hooks/shift/useShifts";
 import { formatTime } from "@/helpers/formatTime";
-import { useScheduledHosts } from "@/hooks/host-schedule/useScheduledHosts";
-import { formatInTimeZone } from "date-fns-tz";
 import { checkinSchema } from "./schema/checkin-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { apiEndpoints } from "@/config/api";
 import { useAttendances } from "./hooks/useAttendances";
 import { cn } from "@/lib/utils";
 import { useHosts } from "../hooks/useHosts";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { checkoutSchema } from "./schema/checkout-schema";
+import { apiSecure } from "@/lib/useApi";
 
 export default function HostAttendancePage() {
   const queryClient = useQueryClient();
@@ -92,7 +90,7 @@ export default function HostAttendancePage() {
 
   const checkInMutation = useMutation({
     mutationFn: (values) =>
-      axios.post(apiEndpoints.attendance.checkIn(), values),
+      apiSecure.post(apiEndpoints.attendance.checkIn(), values),
     onSuccess: (response) => {
       const data = response.data.data;
 
@@ -114,7 +112,7 @@ export default function HostAttendancePage() {
 
   const checkOutMutation = useMutation({
     mutationFn: (values) =>
-      axios.post(apiEndpoints.attendance.checkOut(), values),
+      apiSecure.post(apiEndpoints.attendance.checkOut(), values),
     onSuccess: (response) => {
       const data = response.data.data;
       toast.success(data["message"]);

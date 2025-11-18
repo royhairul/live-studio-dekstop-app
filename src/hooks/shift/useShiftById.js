@@ -1,5 +1,5 @@
 import { apiEndpoints } from "@/config/api";
-import { getRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useCallback, useEffect, useState } from "react";
 
 export const useShiftById = (id) => {
@@ -8,7 +8,7 @@ export const useShiftById = (id) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const { status, result, errors } = await getRequest(
+      const { status, result, errors } = await apiSecure.get(
         apiEndpoints.shift.show(id)
       );
 

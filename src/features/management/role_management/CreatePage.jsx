@@ -19,7 +19,7 @@ import { usePermissionGrouped } from "@/hooks/permission/usePermissionsGrouped";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { postRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { apiEndpoints } from "@/config/api";
 
 export default function MRoleCreatePage() {
@@ -63,7 +63,7 @@ export default function MRoleCreatePage() {
     console.log(values);
     try {
       // await createRole(values);
-      const { status, result, errors } = await postRequest(
+      const { status, result, errors } = await apiSecure.post(
         apiEndpoints.role.create(),
         values
       );

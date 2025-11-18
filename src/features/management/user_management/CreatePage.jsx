@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import { apiEndpoints } from "@/config/api";
 import { toast } from "sonner";
-import { postRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { useRoles } from "@/hooks/role/useRoles";
 
@@ -89,7 +89,7 @@ export default function MUserCreatePage() {
     }
 
     try {
-      const { status, result, errors } = await postRequest(
+      const { status, result, errors } = await apiSecure.post(
         apiEndpoints.superadmin.create(),
         values,
         { auth: true }

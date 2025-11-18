@@ -14,10 +14,10 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { apiEndpoints, baseUrl } from "@/config/api";
-import { putRequest } from "@/lib/useApi";
+import { apiEndpoints } from "@/config/api";
 import { toast } from "sonner";
 import axios from "axios";
+import { apiSecure } from "@/lib/useApi";
 
 export default function MStudioEditPage() {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ export default function MStudioEditPage() {
   const handleUpdate = async (values) => {
     console.log(values);
     try {
-      const { status, result } = await putRequest(
+      const { status, result } = await apiSecure.put(
         apiEndpoints.studio.edit(id),
         values
       );

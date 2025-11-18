@@ -1,17 +1,14 @@
 import { apiEndpoints } from "@/config/api";
-import { getRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import Cookies from "js-cookie";
 import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
-import { get } from "svelte/store";
 
 const AuthContext = createContext();
 
@@ -25,14 +22,13 @@ export const AuthProvider = ({ children }) => {
     if (!token) return null;
 
     try {
-      const response = await axios.get(apiEndpoints.me(), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log(response.data.data);
+      const response = await apiSecure.get(apiEndpoints.me());
       
       return response.data.data;
       
     } catch (error) {
+      console.log(error);
+      
       if (error.response?.status === 401) {
         logout();
       }

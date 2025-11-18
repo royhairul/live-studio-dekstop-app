@@ -13,10 +13,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteRequest } from "@/lib/useApi";
 import { apiEndpoints } from "@/config/api";
 import { toast } from "sonner";
 import { useShiftById } from "@/hooks/shift/useShiftById";
+import { apiSecure } from "@/lib/useApi";
 
 export const shiftColumns = [
   {
@@ -81,7 +81,7 @@ export const shiftColumns = [
 
       const handleDelete = async () => {
         try {
-          const { status, result } = await deleteRequest(
+          const { status, result } = await apiSecure.delete(
             apiEndpoints.studio.delete(row.original.id)
           );
 

@@ -22,7 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useStudios } from "@/hooks/studio/useStudios";
-import { deleteRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { toast } from "sonner";
 import { apiEndpoints } from "@/config/api";
 import { DataTablePinning } from "@/components/data-table-pinning";
@@ -82,7 +82,7 @@ export default function MStudioAllPage() {
       cell: ({ row }) => {
         const handleDelete = async () => {
           try {
-            const { status, result } = await deleteRequest(
+            const { status, result } = await apiSecure.delete(
               apiEndpoints.studio.delete(row.original.id)
             );
 

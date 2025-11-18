@@ -48,7 +48,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/ui/collapsible";
-import { deleteRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { toast } from "sonner";
 
 export default function MRoleAllPage() {
@@ -117,7 +117,7 @@ export default function MRoleAllPage() {
       cell: ({ row }) => {
         const handleDelete = async () => {
           try {
-            const { status, result } = await deleteRequest(
+            const { status, result } = await apiSecure.delete(
               apiEndpoints.role.delete(row.original.id)
             );
             if (!status) toast.error("Gagal menghapus studio");

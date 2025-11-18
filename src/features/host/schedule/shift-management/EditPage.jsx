@@ -15,11 +15,11 @@ import { z } from "zod";
 import { useNavigate, useParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { apiEndpoints, baseUrl } from "@/config/api";
+import { apiEndpoints } from "@/config/api";
 import { useShiftById } from "@/hooks/shift/useShiftById";
 import { formatTime } from "@/helpers/formatTime";
-import { putRequest } from "@/lib/useApi";
 import { toast } from "sonner";
+import { apiSecure } from "@/lib/useApi";
 
 export default function ShiftEditPage() {
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ export default function ShiftEditPage() {
 
   const handleEdit = async (values) => {
     try {
-      const { status, result, errors } = await putRequest(
+      const { status, result, errors } = await apiSecure.put(
         apiEndpoints.shift.edit(id),
         values
       );

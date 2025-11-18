@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useUsers } from "@/hooks/user/useUsers";
-import { deleteRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function MUserAllPage() {
@@ -99,7 +99,7 @@ export default function MUserAllPage() {
       cell: ({ row }) => {
         const handleDelete = async () => {
           try {
-            const { status, result } = await deleteRequest(
+            const { status, result } = await apiSecure.delete(
               apiEndpoints.superadmin.delete(row.original.ID),
               { auth: true }
             );

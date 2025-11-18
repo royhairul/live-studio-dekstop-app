@@ -28,7 +28,7 @@ import { toast } from "sonner";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { useUserById } from "@/hooks/user/useUserById";
 import { useRoles } from "@/hooks/role/useRoles";
-import { putRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 
 const formSchema = z.object({
   role: z.coerce.number().min(1, { message: "Role wajib dipilih." }),
@@ -113,7 +113,7 @@ export default function MUserEditPage() {
     }
 
     try {
-      const { status, result } = await putRequest(
+      const { status, result } = await apiSecure.put(
         apiEndpoints.superadmin.edit(id),
         values,
         { auth: true }

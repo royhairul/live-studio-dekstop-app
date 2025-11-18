@@ -1,5 +1,5 @@
 import { apiEndpoints } from "@/config/api";
-import { getRequest } from "@/lib/useApi";
+import { apiSecure } from "@/lib/useApi";
 import { useEffect, useState } from "react";
 
 export const usePermissions = () => {
@@ -9,7 +9,7 @@ export const usePermissions = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { status, result, error } = getRequest(
+        const { status, result, error } = apiSecure.get(
           apiEndpoints.permission.index()
         );
 
