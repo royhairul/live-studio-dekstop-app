@@ -36,6 +36,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import { DataTablePinning } from "@/components/data-table-pinning";
+import { apiSecure } from "@/lib/useApi";
 
 export default function AccountAllPage() {
   const { studio } = useStudios();
@@ -145,7 +146,7 @@ export default function AccountAllPage() {
         const deleteAccountMutation = useMutation({
           mutationKey: ["accounts"],
           mutationFn: async (id) =>
-            axios.delete(apiEndpoints.account.delete(id)),
+            apiSecure.delete(apiEndpoints.account.delete(id)),
           onSuccess: () => {
             toast.success("Berhasil menghapus account");
             queryClient.invalidateQueries(["accounts"]);

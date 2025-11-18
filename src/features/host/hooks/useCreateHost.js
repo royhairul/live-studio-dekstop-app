@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api";
+import { apiSecure } from "@/lib/useApi";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -8,7 +8,7 @@ export function useCreateHost() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (values) => axios.post(apiEndpoints.host.create(), values),
+    mutationFn: (values) => apiSecure.post(apiEndpoints.host.create(), values),
     onSuccess: async (response) => {
       const res = response.data;
       toast.success("Buat Host", { description: res.message });

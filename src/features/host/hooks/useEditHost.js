@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api";
+import { apiSecure } from "@/lib/useApi";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -9,7 +9,7 @@ export function useEditHost(id) {
 
   return useMutation({
     mutationKey: ["host", id],
-    mutationFn: (values) => axios.put(apiEndpoints.host.edit(id), values),
+    mutationFn: (values) => apiSecure.put(apiEndpoints.host.edit(id), values),
     onSuccess: async (response) => {
       const res = response.data;
       toast.success("Edit Host", { description: res.message });

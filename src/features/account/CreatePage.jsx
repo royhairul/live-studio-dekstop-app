@@ -28,7 +28,7 @@ import {
 import { useStudios } from "@/hooks/studio/useStudios";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { apiSecure } from "@/lib/useApi";
 
 export default function AccountCreatePage() {
   const { studio } = useStudios();
@@ -63,7 +63,7 @@ export default function AccountCreatePage() {
 
   const createAccountMutation = useMutation({
     mutationFn: async (values) => {
-      const { status, result } = await axios.post(
+      const { status, result } = await apiSecure.post(
         apiEndpoints.account.create(),
         values
       );

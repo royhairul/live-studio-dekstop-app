@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +18,7 @@ import { formatDateTarget } from "@/helpers/formatDate";
 import { MonthYearSelect } from "../month-year-select";
 import CurrencyInput from "../Input-number";
 import { DatePicker } from "../date-input";
+import { apiSecure } from "@/lib/useApi";
 
 export function DialogTambahData({
     title,
@@ -29,9 +29,7 @@ export function DialogTambahData({
     schema = null,
 }) {
     const [formData, setFormData] = useState({});
-    const [open, setOpen] = useState(false);
-    console.log("formData", formData);
-    
+    const [open, setOpen] = useState(false);    
     const queryClient = useQueryClient();
 
     const handleChange = (name, value) => {
@@ -43,7 +41,7 @@ export function DialogTambahData({
 
     const mutation = useMutation({
         mutationFn: async (values) => {
-            const { data } = await axios.post(endpoint(), values);
+            const { data } = await apiSecure.post(endpoint(), values);
             return data;
         },
         onSuccess: (result) => {

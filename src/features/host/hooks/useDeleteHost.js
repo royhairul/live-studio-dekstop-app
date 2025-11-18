@@ -1,13 +1,13 @@
 import { apiEndpoints } from "@/config/api";
+import { apiSecure } from "@/lib/useApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
 
 export function useDeleteHost() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => axios.delete(apiEndpoints.host.delete(id)),
+    mutationFn: (id) => apiSecure.delete(apiEndpoints.host.delete(id)),
     onSuccess: (response) => {
       const res = response.data;
       toast.success("Hapus Host", { description: res.message });

@@ -1,7 +1,7 @@
 import { useAuth } from "@/auth/AuthContext";
 import { apiEndpoints } from "@/config/api";
+import { apiPublic } from "@/lib/useApi";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -10,7 +10,7 @@ export function useLogin() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (values) => axios.post(apiEndpoints.auth.login(), values),
+    mutationFn: (values) => apiPublic.post(apiEndpoints.auth.login(), values),
     onSuccess: async (response, variables) => {
       const data = response.data.data;
       

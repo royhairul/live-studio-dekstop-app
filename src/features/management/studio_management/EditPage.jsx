@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { IconSettings, IconUsersGroup } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { use, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,13 +16,10 @@ import {
 } from "@/components/ui/form";
 import { apiEndpoints } from "@/config/api";
 import { toast } from "sonner";
-import axios from "axios";
 import { apiSecure } from "@/lib/useApi";
 
 export default function MStudioEditPage() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState([]);
   const { id } = useParams();
 
   const formSchema = z.object({
@@ -57,9 +54,8 @@ export default function MStudioEditPage() {
     try {
       // Fetch data for the specific studio
       async function fetchStudioData() {
-        const res = await axios.get(apiEndpoints.studio.show(id));
+        const res = await apiSecure.get(apiEndpoints.studio.show(id));
         const studioData = res.data.data;
-        console.log("Studio Data:", studioData);
 
         if (studioData) {
           form.reset({

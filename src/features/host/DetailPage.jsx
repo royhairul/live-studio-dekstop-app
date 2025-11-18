@@ -1,62 +1,29 @@
 import MainLayout from "@/layouts/main-layout";
 import { DataTable } from "@/components/data-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  IconUsersGroup,
-  IconUserPlus,
-  IconPencil,
-  IconTrash,
   IconCalendarCheck,
   IconCalendarX,
   IconId,
 } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
-import { apiEndpoints, baseUrl } from "@/config/api";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useStudios } from "@/hooks/studio/useStudios";
-import { useHosts } from "@/hooks/host/useHosts";
+import { useMemo } from "react";
+import { apiEndpoints  } from "@/config/api";
 import { useHostById } from "@/hooks/host/useHostById";
-import { useUserById } from "@/hooks/user/useUserById";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { format } from "date-fns-tz";
 import { formatTime } from "@/helpers/formatTime";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { apiSecure } from "@/lib/useApi";
 
 export default function HostDetailPage() {
-  const { studio } = useStudios();
-  const [selectedStudioId, setSelectedStudioId] = useState("all");
-  const { hosts, refetch } = useHosts();
-
   const { id } = useParams();
   const { host } = useHostById(id);
 
-  const { user } = useUserById(host.ID);
-
-  const { data: attendances, error } = useQuery({
+  const { data: attendances } = useQuery({
     queryKey: ["attendances"],
     queryFn: async () => {
-      const res = await axios.get(apiEndpoints.attendance.index());
+      const res = await apiSecure.get(apiEndpoints.attendance.index());
       return res.data;
     },
     select: (data) => data?.data ?? [],

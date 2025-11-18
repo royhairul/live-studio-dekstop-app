@@ -23,7 +23,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import axios from "axios";
+import { apiPublic } from "@/lib/useApi";
 
 export default function VerifyTokenPage() {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export default function VerifyTokenPage() {
 
       try {
         setLoading(true);
-        const result = await axios.post(apiEndpoints.auth.verifyOTP(), values, {
+        const result = await apiPublic.post(apiEndpoints.auth.verifyOTP(), values, {
           headers: {
             "Content-Type": "application/json",
           },

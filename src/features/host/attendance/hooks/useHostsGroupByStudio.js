@@ -1,12 +1,12 @@
 import { apiEndpoints } from "@/config/api";
+import { apiSecure } from "@/lib/useApi";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 export const useHostsGroupedByStudio = () => {
   return useQuery({
     queryKey: ["hosts"],
     queryFn: async () => {
-      const res = await axios.get(apiEndpoints.host.groupedByStudio());
+      const res = await apiSecure.get(apiEndpoints.host.groupedByStudio());
       return res.data.data;
     },
     initialData: [],

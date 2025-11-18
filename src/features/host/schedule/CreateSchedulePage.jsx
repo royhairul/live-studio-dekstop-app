@@ -29,8 +29,8 @@ import { DatePicker } from "@/components/Datepicker";
 import { toast } from "sonner";
 import { formatTime } from "@/helpers/formatTime";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useStudios } from "@/hooks/studio/useStudios";
+import { apiSecure } from "@/lib/useApi";
 
 export default function HostScheduleCreatePage() {
   const navigate = useNavigate();
@@ -109,17 +109,10 @@ export default function HostScheduleCreatePage() {
     fetchDataShift();
   }, []);
 
-  function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // bulan mulai 0
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  }
 
   const createScheduleMutation = useMutation({
     mutationFn: async (values) =>
-      await axios.post(apiEndpoints.schedule.create(), values),
+      await apiSecure.post(apiEndpoints.schedule.create(), values),
     onSuccess: (res) => {
       const response = res.data;
       if (res.status === 201) {

@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/config/api";
+import { apiPublic } from "@/lib/useApi";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -8,7 +8,7 @@ export function useRegister() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (values) => axios.post(apiEndpoints.auth.register(), values),
+    mutationFn: (values) => apiPublic.post(apiEndpoints.auth.register(), values),
     onSuccess: async () => {
 
       toast.success("Register Success", { description: "Welcome to LINCY" });

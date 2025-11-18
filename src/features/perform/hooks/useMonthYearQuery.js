@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { apiSecure } from "@/lib/useApi";
 
 export default function useMonthYearQuery({ queryKey, url, enabled = true }) {
     const now = new Date();
@@ -19,7 +19,7 @@ export default function useMonthYearQuery({ queryKey, url, enabled = true }) {
                 year: Number(year),
             };
 
-            const res = await axios.get(url, { params });
+            const res = await apiSecure.get(url, { params });
 
             return res.data?.data ?? [];
         },
