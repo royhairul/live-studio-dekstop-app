@@ -57,10 +57,12 @@ export default function MStudioCreatePage() {
 
   const handleCreate = async (values) => {
     try {
-      const { status, result, errors } = await apiSecure.post(
+      const res = await apiSecure.post(
         apiEndpoints.studio.create(),
         values
       );
+      const { status, data: result, errors } = res;
+      
       if (status) {
         toast.success(result["message"]);
         navigate("/management/studio");

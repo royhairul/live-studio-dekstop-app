@@ -63,10 +63,13 @@ export default function AccountCreatePage() {
 
   const createAccountMutation = useMutation({
     mutationFn: async (values) => {
-      const { status, result } = await apiSecure.post(
+      const res = await apiSecure.post(
         apiEndpoints.account.create(),
         values
       );
+      console.log(res);
+      
+      const { status, data: result } = res;
 
       if (!status) {
         throw new Error(result.errors || "Gagal menambahkan akun.");

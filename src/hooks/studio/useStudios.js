@@ -8,12 +8,16 @@ export const useStudios = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const { status, result, error } = await apiSecure.get(
+      const res = await apiSecure.get(
         apiEndpoints.studio.index()
       );
 
+      console.log(res);
+
+      const { status, data, error } = res;
+
       if (status) {
-        setStudio(result.data);
+        setStudio(data.data);
       } else {
         setError(error);
       }

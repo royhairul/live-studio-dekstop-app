@@ -71,24 +71,24 @@ export default function MStudioEditPage() {
   }, []);
 
   const handleUpdate = async (values) => {
-    console.log(values);
     try {
-      const { status, result } = await apiSecure.put(
+      const res = await apiSecure.put(
         apiEndpoints.studio.edit(id),
         values
       );
+      const { status, data: result } = res;
 
       if (status) {
         toast.success(result["message"]);
         setTimeout(() => {
-          navigate("/setting/studio-management");
-        }, 3000);
+          navigate("/management/studio");
+        }, 1000);
       } else {
         toast.error(result["message"]);
       }
     } catch (error) {
       console.error("Update Studio error:", error);
-      toast.error(result["message"]);
+      // toast.error(result["message"]);
     }
   };
 

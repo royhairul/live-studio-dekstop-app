@@ -8,9 +8,13 @@ export const useRoles = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const { status, result, error } = await apiSecure.get(
+      const res = await apiSecure.get(
         apiEndpoints.role.index()
       );
+
+      console.log(res);
+
+      const { status, data: result, error } = res;
 
       if (status) {
         setRoles(result.data);
