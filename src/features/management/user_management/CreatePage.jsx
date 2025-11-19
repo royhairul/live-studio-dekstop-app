@@ -1,7 +1,7 @@
 import MainLayout from "@/layouts/main-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconSettings } from "@tabler/icons-react";
+import { IconId, IconSettings } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { z } from "zod";
@@ -30,7 +30,7 @@ import { useStudios } from "@/hooks/studio/useStudios";
 import { useRoles } from "@/hooks/role/useRoles";
 
 const formSchema = z.object({
-  role: z.coerce.number().min(1, { message: "Role wajib dipilih." }),
+  roleid: z.coerce.number().min(1, { message: "Role wajib dipilih." }),
   email: z.string().email({ message: "Email tidak valid." }),
   name: z.string().min(4, { message: "Nama minimal 4 karakter." }),
   username: z.string().min(4, { message: "Username minimal 4 karakter." }),
@@ -43,12 +43,11 @@ export default function MUserCreatePage() {
   const navigate = useNavigate();
   const { studio } = useStudios();
   const { roles } = useRoles();
-  const token = localStorage.getItem("access_token");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      role: "",
+      roleid: "",
       email: "",
       username: "",
       password: "",
@@ -58,7 +57,7 @@ export default function MUserCreatePage() {
     },
   });
 
-  const watchRole = form.watch("role");
+  const watchRole = form.watch("roleid");
   const selectedRole = roles.find((r) => r.id === Number(watchRole));
   const isHost = selectedRole?.name.toLowerCase() === "host";
 
@@ -73,7 +72,7 @@ export default function MUserCreatePage() {
   }, [watchName, form]);
 
   const handleSubmit = async (values) => {
-    console.log(values);
+    console.log("Submitting values:", values);
     if (isHost) {
       if (!values.studio_id || Number(values.studio_id) === 0) {
         form.setError("studio_id", {
@@ -89,17 +88,16 @@ export default function MUserCreatePage() {
     }
 
     try {
-      const { status, result, errors } = await apiSecure.post(
+      const { status, data: result } = await apiSecure.post(
         apiEndpoints.superadmin.create(),
-        values,
-        { auth: true }
+        values
       );
 
       console.log(result);
 
       if (status) {
         toast.success(result.message);
-        navigate("/setting/user-management");
+        navigate("/management/user");
       } else {
         toast.error(result.message || "Gagal membuat user baru.");
       }
@@ -110,9 +108,13 @@ export default function MUserCreatePage() {
   };
 
   const breadcrumbs = [
-    { icon: IconSettings, label: "Setting", url: "/account/all" },
-    { label: "User Management", url: "/setting/user-management" },
-    { label: "Buat User" },
+    {
+      icon: IconId,
+      label: "Master",
+      url: "/management/user",
+    },
+    { label: "Daftar Pengguna", url: "/management/user" },
+    { label: "Buat Pengguna" },
   ];
 
   return (
@@ -128,7 +130,7 @@ export default function MUserCreatePage() {
             {/* Role */}
             <FormField
               control={form.control}
-              name="role"
+              name="roleid"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Role</FormLabel>
@@ -263,8 +265,8 @@ export default function MUserCreatePage() {
                         <SelectContent>
                           <SelectGroup>
                             {studio.map((item) => (
-                              <SelectItem key={item.ID} value={String(item.ID)}>
-                                {item.Name}
+                              <SelectItem key={item.id} value={String(item.id)}>
+                                {item.name}
                               </SelectItem>
                             ))}
                           </SelectGroup>

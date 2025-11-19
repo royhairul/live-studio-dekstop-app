@@ -24,7 +24,8 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
-import { baseUrl } from "@/config/api";
+import { apiEndpoints, baseUrl } from "@/config/api";
+import { apiSecure } from "@/lib/useApi";
 
 export default function ShiftCreatePage() {
   const navigate = useNavigate();
@@ -73,20 +74,12 @@ export default function ShiftCreatePage() {
   ];
 
   const handleCreateShift = async (values) => {
-    console.log(JSON.stringify(values));
     try {
-      const response = await fetch(`${baseUrl}/shift`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
+      const response = await apiSecure.post(apiEndpoints.shift.create(), values);
       if (response.ok) {
         navigate("/setting/shift");
       } else {
-        const errorData = await response.json();
+        const errorData = response.data.error;
         console.error("Error creating shift:", errorData);
       }
     } catch (error) {

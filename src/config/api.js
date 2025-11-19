@@ -1,6 +1,7 @@
 export const baseUrl = import.meta.env.VITE_API_URL;
 
 export const baseWsUrl = import.meta.env.VITE_API_URL;
+const token = localStorage.getItem("access_token")
 
 export const apiEndpoints = {
   me: () => `${baseUrl}/auth/me`,
@@ -137,8 +138,8 @@ export const apiEndpoints = {
 
   // Live
   live: {
-    preview: () => `${baseWsUrl}/live/shopee`,
-    detail: (id, sessionId) => `${baseUrl}/live/shopee/${id}/${sessionId}`,
+    preview: () => `${baseWsUrl}/live/shopee?token=${token}`,
+    detail: (id, sessionId) => `${baseUrl}/live/shopee/${id}/${sessionId}?token=${token}`,
   },
 
   dashboard: {

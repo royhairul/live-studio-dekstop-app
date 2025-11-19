@@ -8,10 +8,10 @@ export const useShiftById = (id) => {
 
   const fetchData = useCallback(async () => {
     try {
-      const { status, result, errors } = await apiSecure.get(
+      const { status, data: result, error: errors } = await apiSecure.get(
         apiEndpoints.shift.show(id)
       );
-
+      
       if (status) {
         const data = result?.data || [];
         setShift(data);

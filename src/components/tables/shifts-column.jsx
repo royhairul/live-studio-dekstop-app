@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { apiEndpoints } from "@/config/api";
 import { toast } from "sonner";
-import { useShiftById } from "@/hooks/shift/useShiftById";
 import { apiSecure } from "@/lib/useApi";
+import { useShifts } from "@/hooks/shift/useShifts";
 
 export const shiftColumns = [
   {
@@ -77,12 +77,12 @@ export const shiftColumns = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { refetch } = useShiftById();
+      const { refetch } = useShifts();
 
       const handleDelete = async () => {
         try {
-          const { status, result } = await apiSecure.delete(
-            apiEndpoints.studio.delete(row.original.id)
+          const { status, data: result } = await apiSecure.delete(
+            apiEndpoints.shift.delete(row.original.id)
           );
 
           if (!status) toast.error("Gagal menghapus studio");

@@ -78,10 +78,12 @@ export default function ShiftEditPage() {
 
   const handleEdit = async (values) => {
     try {
-      const { status, result, errors } = await apiSecure.put(
+      const res = await apiSecure.put(
         apiEndpoints.shift.edit(id),
         values
       );
+
+      const { status, data: result } = res;
 
       if (status) {
         toast.success(result["message"]);

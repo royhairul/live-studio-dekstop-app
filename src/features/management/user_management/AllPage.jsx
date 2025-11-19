@@ -40,9 +40,8 @@ import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function MUserAllPage() {
   const { users, refetch } = useUsers();
-
   console.log(users);
-
+  
   const breadcrumbs = [
     {
       icon: IconId,
@@ -78,20 +77,16 @@ export default function MUserAllPage() {
       enableHiding: false,
     },
     {
-      header: "ID",
-      accessorKey: "ID", // Sesuaikan dengan format data
-    },
-    {
       header: "Username",
-      accessorKey: "Username",
+      accessorKey: "name",
     },
     {
       header: "Email",
-      accessorKey: "Email",
+      accessorKey: "email",
     },
     {
       header: "Role",
-      accessorKey: "Role.name",
+      accessorKey: "role",
     },
     {
       id: "actions",
@@ -99,7 +94,7 @@ export default function MUserAllPage() {
       cell: ({ row }) => {
         const handleDelete = async () => {
           try {
-            const { status, result } = await apiSecure.delete(
+            const { status, data: result } = await apiSecure.delete(
               apiEndpoints.superadmin.delete(row.original.ID),
               { auth: true }
             );

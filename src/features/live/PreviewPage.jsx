@@ -265,8 +265,6 @@ export default function LivePreviewPage() {
     ...acc,
     reportLive: reports[acc.name] || acc.reportLive || [], // real-time jika ada, fallback null/[]
   }));
-
-  console.log(combinedData);
   
   const breadcrumbs = [
     {

@@ -8,9 +8,8 @@ export const useUsers = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const { status, result, error } = await apiSecure.get(
-        apiEndpoints.superadmin.index(),
-        { auth: true }
+      const { status, data: result, error } = await apiSecure.get(
+        apiEndpoints.superadmin.index()
       );
 
       if (status) {

@@ -6,7 +6,7 @@ export const useShifts = () => {
   return useQuery({
     queryKey: ["shifts"],
     queryFn: async () => {
-      const res = await apiSecure.get(apiEndpoints.shift.index());      
+      const res = await apiSecure.get(apiEndpoints.shift.index());            
       return res.data.data;
     },
     initialData: [],
