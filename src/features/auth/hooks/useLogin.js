@@ -12,8 +12,16 @@ export function useLogin() {
   return useMutation({
     mutationFn: (values) => apiPublic.post(apiEndpoints.auth.login(), values),
     onSuccess: async (response, variables) => {
-      const data = response.data.data;
       
+
+      if (response.ok === false) {
+        toast.error("Login Error", {
+          description: response.data?.error || "Login tidak valid",
+        });
+        return;
+      }
+
+      const data = response.data;
       login(data.accessToken);
 
       if (variables.rememberMe) {
@@ -27,12 +35,14 @@ export function useLogin() {
       navigate("/dashboard");
     },
     onError: (error) => {
+      console.log(error);
+
       let errorMsg = "Terjadi kesalahan. Silahkan coba lagi.";
 
       if (!error.response) {
         errorMsg = "Tidak dapat terhubung dengan server.";
       } else {
-        errorMsg = error.response?.data?.message || "Failed to login";
+        errorMsg = error.response?.data?.error || "Failed to login";
       }
 
       toast.error("Login Error", {

@@ -1,34 +1,14 @@
 import MainLayout from "@/layouts/main-layout";
-import { DataTable } from "@/components/data-table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  IconArrowDown,
-  IconDots,
-  IconBrandShopee,
-  IconBrandTiktok,
-  IconDatabasePlus,
-  IconId,
   IconSettings,
-  IconCategoryPlus,
-  IconEdit,
   IconPencil,
   IconTrash,
   IconFlagPlus,
-  IconDotsCircleHorizontal,
-  IconDotsDiagonal,
-  IconDotsVertical,
   IconSelector,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import { apiEndpoints, baseUrl } from "@/config/api";
+import { apiEndpoints } from "@/config/api";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -70,7 +50,7 @@ export default function MRoleAllPage() {
   const columns = [
     {
       header: "ID",
-      accessorKey: "ID",
+      accessorKey: "id",
     },
     {
       header: "Nama Role",

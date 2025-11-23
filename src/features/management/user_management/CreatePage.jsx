@@ -93,8 +93,6 @@ export default function MUserCreatePage() {
         values
       );
 
-      console.log(result);
-
       if (status) {
         toast.success(result.message);
         navigate("/management/user");

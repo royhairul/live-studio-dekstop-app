@@ -135,7 +135,6 @@ const items = [
 
 export function AppSidebar() {
   const { user } = useAuth();
-  
   const location = useLocation();
 
   const filteredItems = useMemo(() => {
@@ -174,11 +173,7 @@ export function AppSidebar() {
   return (
     <Sidebar className={"fixed top-0 left-0 z-50 h-full bg-white shadow-lg"}>
       <SidebarHeader>
-        <div className="flex items-center space-x-4 p-4">
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+        <div className="flex items-center space-x-4 py-4">
           <div className="flex flex-col">
             <p className="text-xs text-muted-foreground">Welcome,</p>
             <p className="text-lg font-medium">{user?.name || "Guest"}</p>
