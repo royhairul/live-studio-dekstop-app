@@ -12,7 +12,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: (values) => apiPublic.post(apiEndpoints.auth.login(), values),
     onSuccess: async (response, variables) => {
-      const data = response.data;
+      const data = response.data.data;
 
       login(data.accessToken);
 
