@@ -12,8 +12,8 @@ export function useLogin() {
   return useMutation({
     mutationFn: (values) => apiPublic.post(apiEndpoints.auth.login(), values),
     onSuccess: async (response, variables) => {
-      const data = response.data.data;
-      
+      const data = response.data;
+
       login(data.accessToken);
 
       if (variables.rememberMe) {
@@ -29,10 +29,14 @@ export function useLogin() {
     onError: (error) => {
       let errorMsg = "Terjadi kesalahan. Silahkan coba lagi.";
 
-      if (!error.response) {
+      // Network error (server down, DNS error, CORS blocked, dll)
+      if (error.status === 0) {
         errorMsg = "Tidak dapat terhubung dengan server.";
-      } else {
-        errorMsg = error.response?.data?.message || "Failed to login";
+      }
+
+      // Error dari backend (error.data.message)
+      else if (error.data?.error) {
+        errorMsg = error.data.error;
       }
 
       toast.error("Login Error", {
