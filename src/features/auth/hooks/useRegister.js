@@ -15,9 +15,7 @@ export function useRegister() {
 
       navigate("/login");
     },
-    onError: (error) => {
-      console.log(error);
-      
+    onError: (error) => {      
       let errorMsg = "An error occurred. Please try again.";
 
       if (!error.response) {

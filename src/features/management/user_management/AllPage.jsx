@@ -1,5 +1,4 @@
 import MainLayout from "@/layouts/main-layout";
-import { DataTable } from "@/components/data-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,17 +10,7 @@ import {
   IconId,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useEffect, useState } from "react";
-import { apiEndpoints, baseUrl } from "@/config/api";
-import { jwtDecode } from "jwt-decode";
+import { apiEndpoints } from "@/config/api";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,9 +28,7 @@ import { apiSecure } from "@/lib/useApi";
 import { DataTablePinning } from "@/components/data-table-pinning";
 
 export default function MUserAllPage() {
-  const { users, refetch } = useUsers();
-  console.log(users);
-  
+  const { users, refetch } = useUsers();  
   const breadcrumbs = [
     {
       icon: IconId,
@@ -95,11 +82,9 @@ export default function MUserAllPage() {
         const handleDelete = async () => {
           try {
             const { status, data: result } = await apiSecure.delete(
-              apiEndpoints.superadmin.delete(row.original.ID),
+              apiEndpoints.superadmin.delete(row.original.id),
               { auth: true }
             );
-
-            console.log(result);
 
             if (status) {
               toast.success(result["message"]);
@@ -107,7 +92,7 @@ export default function MUserAllPage() {
               await refetch();
             } else {
               toast.error(
-                `Gagal menghapus user ${row.original.Username || "(Tanpa Nama)"
+                `Gagal menghapus user ${row.original.name || "(Tanpa Nama)"
                 }`
               );
             }
@@ -136,7 +121,7 @@ export default function MUserAllPage() {
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     User{" "}
-                    <strong>{row.original.Username || "(Tanpa Nama)"}</strong>{" "}
+                    <strong>{row.original.name || "(Tanpa Nama)"}</strong>{" "}
                     akan dihapus.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

@@ -91,10 +91,8 @@ const handleResend = async () => {
     });
 
     if (result.ok) {
-      console.log("success");
       toast.success("OTP has resend to your email.");
     } else {
-      console.log("error");
       toast.error("Failed to resend OTP");
       const data = await result.json();
       form.setError("email", {

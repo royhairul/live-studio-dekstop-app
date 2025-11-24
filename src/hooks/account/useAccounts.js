@@ -6,13 +6,8 @@ export const useAccounts = () => {
   return useQuery({
     queryKey: ["accounts"],
     queryFn: async () => {
-      const res = await apiSecure.get(apiEndpoints.account.index());
-      console.log(res);
-      
+      const res = await apiSecure.get(apiEndpoints.account.index());      
       return res.data.data;
-    },
-    onSuccess: (data) => {
-      console.log("Fetched accounts:", data);
     },
     initialData: [],
   });

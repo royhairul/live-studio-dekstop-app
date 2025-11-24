@@ -60,8 +60,6 @@ export default function HostEditPage() {
         phone: host.phone,
         studio_id: String(host.studio_id),
       });
-
-      console.log("studio", String(host.studio_id));
     }
   }, [host, studio, form]);
 
@@ -81,7 +79,6 @@ export default function HostEditPage() {
   ];
 
   const handleEditHost = (values) => {
-    console.log("Form Values:", values);
     editHostMutation.mutate(values);
   };
 

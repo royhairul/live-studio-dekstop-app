@@ -90,7 +90,7 @@ export default function HostScheduleCreatePage() {
         setHost(data);
         setStudio(resources);
       } catch (error) {
-        console.log("Fetch error:", error);
+        new Error("Fetch error:", error);
       }
     }
 
@@ -101,7 +101,7 @@ export default function HostScheduleCreatePage() {
         const data = json.data || [];
         setShift(data);
       } catch (error) {
-        console.log("Fetch error:", error);
+        new Error("Fetch error:", error);
       }
     }
 
@@ -116,7 +116,6 @@ export default function HostScheduleCreatePage() {
     onSuccess: (res) => {
       const response = res.data;
       if (res.status === 201) {
-        console.log("Response data:", response);
         toast.success("Buat Jadwal Baru", {
           description: response["message"],
           descriptionClassName: "capitalize",
@@ -124,7 +123,7 @@ export default function HostScheduleCreatePage() {
         navigate("/setting/schedule");
       } else {
         toast.error(response["error"]);
-        console.error("Error creating host:", response.errors);
+        new Error("Error creating schedule:", response["error"]);
       }
     },
     onError: (error) => {
@@ -139,7 +138,6 @@ export default function HostScheduleCreatePage() {
   });
 
   const handleCreateSchedule = async (values) => {
-    console.log("Form values:", values);
     createScheduleMutation.mutate(values);
   };
 

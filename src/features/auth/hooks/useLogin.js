@@ -27,8 +27,6 @@ export function useLogin() {
       navigate("/dashboard");
     },
     onError: (error) => {
-      console.log(error);
-
       let errorMsg = "Terjadi kesalahan. Silahkan coba lagi.";
 
       // Network error (server down, DNS error, CORS blocked, dll)

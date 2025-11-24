@@ -178,9 +178,6 @@ export default function FinanceDailyReportPage() {
     },
   });
 
-  console.log(data);
-
-
   const breadcrumbs = [
     {
       icon: IconReportMoney,

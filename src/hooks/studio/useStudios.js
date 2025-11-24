@@ -11,9 +11,6 @@ export const useStudios = () => {
       const res = await apiSecure.get(
         apiEndpoints.studio.index()
       );
-
-      console.log(res);
-
       const { status, data, error } = res;
 
       if (status) {

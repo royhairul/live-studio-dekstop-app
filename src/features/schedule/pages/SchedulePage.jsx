@@ -145,8 +145,6 @@ export default function HostSchedulePage() {
           8: "#C2185B", // Pink
         };
 
-        console.log(data);
-
         const events = data.map((event) => ({
           start:
             event.date.split("T")[0] +

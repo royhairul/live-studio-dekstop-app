@@ -84,9 +84,7 @@ export default function MStudioAllPage() {
           try {
             const res = await apiSecure.delete(
               apiEndpoints.studio.delete(row.original.id)
-            );
-            console.log(res);
-            
+            );            
 
             const { status, data: result } = res;
             if (!status) toast.error("Gagal menghapus studio");

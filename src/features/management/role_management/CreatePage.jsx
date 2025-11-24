@@ -60,7 +60,6 @@ export default function MRoleCreatePage() {
 
 
   const handleCreate = async (values) => {
-    console.log(values);
     try {
       // await createRole(values);
       const { status, result, errors } = await apiSecure.post(

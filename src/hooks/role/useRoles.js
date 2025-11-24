@@ -11,9 +11,6 @@ export const useRoles = () => {
       const res = await apiSecure.get(
         apiEndpoints.role.index()
       );
-
-      console.log(res);
-
       const { status, data: result, error } = res;
 
       if (status) {

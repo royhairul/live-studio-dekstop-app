@@ -38,8 +38,6 @@ export default function MRoleEditPage() {
   // Fetch data
   const { permissions: dataPermissions, loading: permissionsLoading } = usePermissionGrouped();
   const { roles, loading: rolesLoading } = useRolesById(id);
-
-  console.log(roles);
   
   const breadcrumbs = [
     {

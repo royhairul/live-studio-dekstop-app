@@ -66,9 +66,7 @@ export default function AccountCreatePage() {
       const res = await apiSecure.post(
         apiEndpoints.account.create(),
         values
-      );
-      console.log(res);
-      
+      );      
       const { status, data: result } = res;
 
       if (!status) {

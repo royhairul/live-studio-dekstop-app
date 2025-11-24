@@ -1,7 +1,6 @@
 import MainLayout from "@/layouts/main-layout";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { IconSettings, IconUsersGroup } from "@tabler/icons-react";
+import { IconSettings } from "@tabler/icons-react";
 import {
   Form,
   FormLabel,
@@ -20,24 +19,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
-import { date, z } from "zod";
+import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { baseUrl } from "@/config/api";
-import { DatePicker } from "@/components/Datepicker";
 import { toast } from "sonner";
-import { set } from "date-fns";
 
 export default function HostScheduleSwitchPage() {
   const navigate = useNavigate();
   const [host, setHost] = useState([]);
   const [selectedHostId, setSelectedHostId] = useState("");
   const [hostSchedules, setHostSchedules] = useState([]);
-  const [selectedScheduleId, setSelectedScheduleId] = useState("");
   const [studio, setStudio] = useState([]);
   const [shift, setShift] = useState([]);
-  const [date, setDate] = useState({ from: new Date(), to: new Date() });
   const [targetSelectedHostId, setTargetSelectedHostId] = useState("");
   const [targetHostSchedules, setTargetHostSchedules] = useState([]);
 
@@ -92,6 +87,7 @@ export default function HostScheduleSwitchPage() {
       const minutes = date.getMinutes().toString().padStart(2, "0");
       return `${hours}:${minutes}`;
     } catch (e) {
+      new Error("Invalid date format:", e);
       return "";
     }
   }
@@ -113,7 +109,7 @@ export default function HostScheduleSwitchPage() {
         setHost(data);
         setStudio(resources);
       } catch (error) {
-        console.log("Fetch error:", error);
+        new Error("Fetch error:", error);
       }
     }
 
@@ -149,7 +145,6 @@ export default function HostScheduleSwitchPage() {
         }));
 
         setHostSchedules(formattedSchedules);
-        console.log("Fetched host schedules:", formattedSchedules);
       } catch (error) {
         console.error("Error fetching host schedules:", error);
       }
@@ -181,13 +176,6 @@ export default function HostScheduleSwitchPage() {
     fetchTargetSchedules();
   }, [targetSelectedHostId]);
 
-  function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // bulan mulai 0
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  }
 
   const handleSwitchSchedule = async (values) => {
     try {

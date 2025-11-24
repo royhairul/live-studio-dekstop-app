@@ -72,7 +72,6 @@ export default function MUserCreatePage() {
   }, [watchName, form]);
 
   const handleSubmit = async (values) => {
-    console.log("Submitting values:", values);
     if (isHost) {
       if (!values.studio_id || Number(values.studio_id) === 0) {
         form.setError("studio_id", {
