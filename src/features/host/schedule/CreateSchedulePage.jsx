@@ -23,21 +23,30 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
-import { apiEndpoints, baseUrl } from "@/config/api";
+import { apiEndpoints } from "@/config/api";
 import { DatePicker } from "@/components/Datepicker";
 import { toast } from "sonner";
 import { formatTime } from "@/helpers/formatTime";
 import { useMutation } from "@tanstack/react-query";
 import { useStudios } from "@/hooks/studio/useStudios";
 import { apiSecure } from "@/lib/useApi";
+import { useShifts } from "@/hooks/shift/useShifts";
+import { useHostsGroupedByStudio } from "@/hooks/host/useHostsGroupedByStudio";
 
 export default function HostScheduleCreatePage() {
   const navigate = useNavigate();
-  const [host, setHost] = useState([]);
-  const [studio, setStudio] = useState([]);
-  const [shift, setShift] = useState([]);
   const { studio: studioMain } = useStudios();
+  const { data: shiftMain } = useShifts();
+  const { data: rawHosts = [] } = useHostsGroupedByStudio();
+
+  const hostGrouped = rawHosts.map((item) => ({
+    id: item.studio_id,
+    title: item.studio_name,
+    children: item.hosts.map((h) => ({
+      id: h.id,
+      title: h.name,
+    })),
+  }));
 
   const formSchema = z.object({
     host_id: z.string(),
@@ -72,42 +81,6 @@ export default function HostScheduleCreatePage() {
       label: "Tambah Jadwal",
     },
   ];
-
-  useEffect(() => {
-    async function fetchDataHost() {
-      try {
-        const res = await fetch(`${baseUrl}/host/group-by-studio`);
-        const json = await res.json();
-        const data = json.data;
-        const resources = data.map(({ studio_id, studio_name, hosts }) => ({
-          id: studio_id, // pakai nama studio sebagai ID (bisa disesuaikan)
-          title: studio_name,
-          children: hosts.map((host) => ({
-            id: host.id,
-            title: host.name,
-          })),
-        }));
-        setHost(data);
-        setStudio(resources);
-      } catch (error) {
-        new Error("Fetch error:", error);
-      }
-    }
-
-    async function fetchDataShift() {
-      try {
-        const res = await fetch(`${baseUrl}/shift`);
-        const json = await res.json();
-        const data = json.data || [];
-        setShift(data);
-      } catch (error) {
-        new Error("Fetch error:", error);
-      }
-    }
-
-    fetchDataHost();
-    fetchDataShift();
-  }, []);
 
 
   const createScheduleMutation = useMutation({
@@ -165,7 +138,7 @@ export default function HostScheduleCreatePage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {studio.map((group) => (
+                        {hostGrouped?.map((group) => (
                           <SelectGroup key={group.id} heading={group.title}>
                             <SelectLabel>{group.title}</SelectLabel>
                             {group.children.map((hostItem) => (
@@ -200,7 +173,7 @@ export default function HostScheduleCreatePage() {
                       </FormControl>
                       <SelectContent>
                         <SelectGroup>
-                          {shift.map((item) => (
+                          {shiftMain.map((item) => (
                             <SelectItem
                               key={String(item.id)}
                               value={String(item.id)}

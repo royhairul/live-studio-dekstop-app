@@ -9,9 +9,10 @@ export const useHostsGroupedByStudio = (selectedStudioId) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { status, result, errors } = await apiSecure.get(
+        const { status, data: result, errors } = await apiSecure.get(
           apiEndpoints.host.groupedByStudio()
         );
+        
         if (status) {
           // let rawData = result.data || {};
           // let data = [];

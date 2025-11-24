@@ -1,28 +1,18 @@
-import { useRef, useEffect, useState, Children, use } from "react";
+import { useRef, useEffect, useState } from "react";
 import MainLayout from "@/layouts/main-layout";
-import { DataTable } from "@/components/data-table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
-  IconUsersGroup,
   IconCalendarPlus,
-  IconClock2,
-  IconClockPlus,
-  IconClockCog,
   IconSwitchHorizontal,
   IconSettings,
 } from "@tabler/icons-react";
-import { Link, useNavigate } from "react-router-dom";
-import { baseUrl } from "@/config/api";
+import { Link } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet";
 import {
   AlertDialog,
@@ -40,18 +30,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { deleteSchedule } from "@/services/scheduleService";
+import { useHostsGroupedByStudio } from "@/hooks/host/useHostsGroupedByStudio";
 
 export default function HostSchedulePage() {
   const calendarRef = useRef(null);
   const calendarInstanceRef = useRef(null);
-  const [studio, setStudio] = useState([]);
   const [events, setEvents] = useState([]);
-  const [host, setHost] = useState([]);
-  const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const { data: rawHosts = [] } = useHostsGroupedByStudio();
 
-  const [shift, setShift] = useState([]);
-  const [date, setDate] = useState({ from: new Date(), to: new Date() });
+  const hostGrouped = rawHosts.map((item) => ({
+    id: item.studio_id,
+    title: item.studio_name,
+    children: item.hosts.map((h) => ({
+      id: h.id,
+      title: h.name,
+    })),
+  }));
 
   const formSchema = z.object({
     host_id: z.coerce.number().min(1, { message: "Host is required." }),
@@ -79,26 +74,6 @@ export default function HostSchedulePage() {
     },
   ];
 
-  useEffect(() => {
-    fetch(`${baseUrl}/host/group-by-studio`)
-      .then((res) => res.json())
-      .then((response) => {
-        const data = response.data;
-        const resources = data.map(({ studio_id, studio_name, hosts }) => ({
-          id: studio_id, // pakai nama studio sebagai ID (bisa disesuaikan)
-          title: studio_name,
-          children: hosts.map((host) => ({
-            id: host.id,
-            title: host.name,
-          })),
-        }));
-
-        setStudio(resources);
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-      });
-  }, []);
 
   function formatTime(dateTimeStr) {
     if (!dateTimeStr) return "";
@@ -109,68 +84,11 @@ export default function HostSchedulePage() {
       const minutes = date.getMinutes().toString().padStart(2, "0");
       return `${hours}:${minutes}`;
     } catch (e) {
+      new Error("Invalid date format", e);
       return "";
     }
   }
 
-  useEffect(() => {
-    async function fetchDataShift() {
-      try {
-        const res = await fetch(`${baseUrl}/shift`);
-        const json = await res.json();
-        const data = json.data || [];
-        setShift(data);
-      } catch (error) {
-        console.log("Fetch error:", error);
-      }
-    }
-
-    fetchDataShift();
-  }, []);
-
-  useEffect(() => {
-    fetch(`${baseUrl}/schedule`)
-      .then((res) => res.json())
-      .then((response) => {
-        const data = response.data || [];
-
-        const shiftColors = {
-          1: "#D32F2F", // Red
-          2: "#1976D2", // Blue
-          3: "#388E3C", // Green
-          4: "#FBC02D", // Yellow
-          5: "#7B1FA2", // Purple
-          6: "#F57C00", // Orange
-          7: "#00796B", // Teal
-          8: "#C2185B", // Pink
-        };
-
-        const events = data.map((event) => ({
-          start:
-            event.date.split("T")[0] +
-            " " +
-            formatTime(event.start_time.slice(0, 16).replace("T", " ")),
-          end:
-            event.date.split("T")[0] +
-            " " +
-            formatTime(event.end_time.slice(0, 16).replace("T", " ")),
-          resourceId: event.host_id,
-          title: `${event.shift_name} - ${event.host_name}`,
-          color: shiftColors[event.shift_id] || "#B29DD9", // Warna default, bisa disesuaikan
-          extendedProps: {
-            date: event.date.split("T")[0], // Ambil tanggal dari start_time
-            scheduleId: event.id,
-            shiftId: event.shift_id,
-            hostId: event.host_id,
-            hostName: event.host_name,
-            rawData: event,
-          },
-        }));
-
-        setEvents(events);
-      })
-      .catch((err) => console.error(err));
-  }, []);
 
   useEffect(() => {
     const container = document.getElementById("table-schedule");
@@ -189,7 +107,7 @@ export default function HostSchedulePage() {
           center: "",
           end: "resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth",
         },
-        resources: studio,
+        resources: hostGrouped,
         scrollTime: `${new Date(new Date().getTime() - 10 * 60 * 1000)
           .toTimeString()
           .slice(0, 8)}`,
@@ -209,7 +127,7 @@ export default function HostSchedulePage() {
       calendarInstanceRef.current.destroy?.(); // gunakan destroy milik instance
       calendarInstanceRef.current = null;
     }
-  }, [studio, events]);
+  }, [hostGrouped, events]);
 
   useEffect(() => {
     if (selectedEvent) {
