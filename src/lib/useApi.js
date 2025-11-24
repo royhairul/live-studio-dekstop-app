@@ -15,7 +15,10 @@ const getAuthHeader = () => {
 /* ============================================
    Core Fetch Handler (dipakai oleh public & secure)
 ============================================= */
-async function coreFetch(URL, { method = "GET", payload = null, headers = {} } = {}) {
+async function coreFetch(
+  URL,
+  { method = "GET", payload = null, headers = {} } = {}
+) {
   try {
     const options = {
       method,
@@ -35,21 +38,30 @@ async function coreFetch(URL, { method = "GET", payload = null, headers = {} } =
     try {
       json = await response.json();
     } catch {
-      json = null; // handle empty body or HTML pages
+      json = null;
     }
 
+    // ⛔ Jika bukan 2xx → THROW agar masuk React Query onError
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        data: json,
+        message: json?.error || json?.message || "Request failed",
+      };
+    }
+
+    // ✔ Success
     return {
-      ok: response.ok,
+      ok: true,
       status: response.status,
       data: json,
     };
   } catch (error) {
-    console.error("Fetch Error:", error);
-
-    return {
-      ok: false,
-      status: HttpStatusCode.BadRequest,
-      error,
+    // ⛔ Lempar lagi supaya React Query menangkapnya
+    throw {
+      status: error.status || HttpStatusCode.BadRequest,
+      message: error.message || "Network error",
+      data: error.data || null,
     };
   }
 }
@@ -68,8 +80,7 @@ export const apiPublic = {
         API SECURE (dengan token otomatis)
 ============================================= */
 export const apiSecure = {
-  get: (URL) =>
-    coreFetch(URL, { headers: getAuthHeader() }),
+  get: (URL) => coreFetch(URL, { headers: getAuthHeader() }),
 
   post: (URL, payload) =>
     coreFetch(URL, { method: "POST", payload, headers: getAuthHeader() }),
