@@ -148,7 +148,7 @@ export default function LivePreviewDetailPage() {
         }
 
         const url = apiEndpoints.live.detail(id, sessionId) +
-            `?productPageSize=${pageSize}&productPage=${page}`;
+            `&productPageSize=${pageSize}&productPage=${page}`;
 
         const ws = new WebSocket(url);
         socketRef.current = ws;

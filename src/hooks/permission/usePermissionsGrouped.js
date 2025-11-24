@@ -11,7 +11,7 @@ export const usePermissionGrouped = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const { status, result, error } = await apiSecure.get(
+        const { status, data: result, error } = await apiSecure.get(
           apiEndpoints.permission.grouped()
         );
 
