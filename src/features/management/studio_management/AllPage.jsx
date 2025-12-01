@@ -65,10 +65,6 @@ export default function MStudioAllPage() {
       enableHiding: false,
     },
     {
-      header: "ID Studio",
-      accessorKey: "id",
-    },
-    {
       header: "Nama Studio",
       accessorKey: "name",
     },

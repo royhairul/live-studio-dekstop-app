@@ -88,10 +88,6 @@ export default function AccountAllPage() {
       enableHiding: false,
     },
     {
-      header: "ID Akun",
-      accessorKey: "id",
-    },
-    {
       header: "Nama Akun",
       accessorKey: "name",
     },

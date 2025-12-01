@@ -49,10 +49,6 @@ export default function MRoleAllPage() {
 
   const columns = [
     {
-      header: "ID",
-      accessorKey: "id",
-    },
-    {
       header: "Nama Role",
       accessorKey: "name",
     },

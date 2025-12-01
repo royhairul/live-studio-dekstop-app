@@ -42,10 +42,6 @@ export const shiftColumns = [
     enableHiding: false,
   },
   {
-    header: "ID",
-    accessorKey: "id",
-  },
-  {
     header: "Shift",
     accessorKey: "name",
   },

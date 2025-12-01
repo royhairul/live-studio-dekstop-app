@@ -22,12 +22,6 @@ import { useStudios } from "@/hooks/studio/useStudios";
 
 const columnReportPayout = [
   {
-    id: "account_id",
-    accessorKey: "account_id",
-    header: () => <span className="font-semibold">ID Affiliate</span>,
-    cell: ({ getValue }) => <div className="pl-2">{getValue()}</div>,
-  },
-  {
     id: "account_name",
     accessorKey: "account_name",
     header: () => <span className="font-semibold">Nama Akun</span>,
@@ -200,7 +194,7 @@ export default function FinanceDailyReportPage() {
       ...(selectedStudio !== "all" && { studio: selectedStudio }),
       ...(selectedAccount !== "all" && { account: selectedAccount }),
     },
-  });
+  });  
   
   const breadcrumbs = [
     {
