@@ -37,7 +37,35 @@ const columnReportPayout = [
           className="flex items-center gap-1 cursor-pointer select-none"
           onClick={() => column.toggleSorting(isSorted === "asc")}
         >
-          <span className="font-semibold">Tanggal</span>
+          <span className="font-semibold text-xs">Tanggal Pemesanan</span>
+          {isSorted === "asc" ? (
+            <IconArrowUp size={14} />
+          ) : isSorted === "desc" ? (
+            <IconArrowDown size={14} />
+          ) : (
+            <IconArrowDown size={14} className="opacity-30" />
+          )}
+        </div>
+      );
+    },
+    cell: ({ getValue }) =>
+      new Date(getValue()).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+  },
+  {
+    id: "validation_date",
+    accessorKey: "validation_date",
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      return (
+        <div
+          className="flex items-center gap-1 cursor-pointer select-none"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+        >
+          <span className="font-semibold text-xs">Tanggal Validasi</span>
           {isSorted === "asc" ? (
             <IconArrowUp size={14} />
           ) : isSorted === "desc" ? (
@@ -66,7 +94,7 @@ const columnReportPayout = [
           className="flex items-center gap-1 cursor-pointer select-none"
           onClick={() => column.toggleSorting(isSorted === "asc")}
         >
-          <span className="font-semibold">Pencairan</span>
+          <span className="font-semibold text-xs">Pencairan</span>
           {isSorted === "asc" ? (
             <IconArrowUp size={14} />
           ) : isSorted === "desc" ? (
@@ -98,7 +126,7 @@ const columnReportPayout = [
           onClick={() => column.setFilterValue(next)}
         >
           <div className="flex items-center gap-1">
-            <span className="font-semibold">Metode Pembayaran</span>
+            <span className="font-semibold text-xs">Metode Pembayaran</span>
             <IconFilter
               size={14}
               className={`transition-all duration-150 ${current ? "text-blue-500" : "opacity-30 group-hover:opacity-60"
@@ -107,7 +135,7 @@ const columnReportPayout = [
           </div>
 
           {current && (
-            <span className="text-[11px] text-gray-500 mt-[2px] font-medium">
+            <span className="text-[10px] text-gray-500 mt-[2px] font-medium">
               {current}
             </span>
           )}
@@ -123,9 +151,37 @@ const columnReportPayout = [
     },
   },
   {
+    id: "payment_date",
+    accessorKey: "payment_date",
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      return (
+        <div
+          className="flex items-center gap-1 cursor-pointer select-none"
+          onClick={() => column.toggleSorting(isSorted === "asc")}
+        >
+          <span className="font-semibold text-xs">Tanggal Pembayaran</span>
+          {isSorted === "asc" ? (
+            <IconArrowUp size={14} />
+          ) : isSorted === "desc" ? (
+            <IconArrowDown size={14} />
+          ) : (
+            <IconArrowDown size={14} className="opacity-30" />
+          )}
+        </div>
+      );
+    },
+    cell: ({ getValue }) =>
+      new Date(getValue()).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+  },
+  {
     id: "payment_status",
     accessorKey: "payment_status",
-    header: () => <span className="font-semibold">Status Pembayaran</span>,
+    header: () => <span className="font-semibold text-xs">Status Pembayaran</span>,
     cell: ({ getValue }) => {
       const status = getValue();
       const color =
@@ -194,8 +250,10 @@ export default function FinanceDailyReportPage() {
       ...(selectedStudio !== "all" && { studio: selectedStudio }),
       ...(selectedAccount !== "all" && { account: selectedAccount }),
     },
-  });  
-  
+  });
+
+  console.log("data", data);
+
   const breadcrumbs = [
     {
       icon: IconReportMoney,

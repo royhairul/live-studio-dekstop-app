@@ -6,9 +6,9 @@ import {
 
 import { ListCard } from "@/components/list-card";
 import { DataTablePinning } from "@/components/data-table-pinning";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiEndpoints } from "@/config/api";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import SortableHeader from "@/components/SortableHeader";
 
 const columnDetailPreview = [
@@ -133,7 +133,6 @@ export default function LivePreviewDetailPage() {
             label: "Detail",
         },
     ];
-    const location = useLocation();
     const socketRef = useRef(null);
 
     const [reports, setReports] = useState({});
@@ -188,15 +187,14 @@ export default function LivePreviewDetailPage() {
     // Initial connection dan reconnect saat pagination berubah
     useEffect(() => {
         const ws = connectWebSocket(
-            pagination.pageIndex + 1,
-            pagination.pageSize
+            1, 999999
         );
 
         return () => {
             console.log("🧹 Cleaning up WebSocket...");
             ws.close();
         };
-    }, [connectWebSocket, pagination.pageIndex, pagination.pageSize]);
+    }, [connectWebSocket]);
 
     // Handler untuk pagination change dari table
     const handlePaginationChange = (newPagination) => {
@@ -221,7 +219,7 @@ export default function LivePreviewDetailPage() {
                         columns={columnDetailPreview}
                         data={reports?.products?.list || []}
                         pinning={["title"]}
-                        manualPagination={true}
+                        manualPagination={false}
                         pageCount={pageCount}
                         initialPagination={pagination}
                         onPaginationChange={handlePaginationChange}
