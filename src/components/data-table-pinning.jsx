@@ -45,12 +45,11 @@ export function DataTablePinning({
   customButton = null,
   manualPagination = false,
   pageCount: controlledPageCount,
-  onPaginationChange: externalOnPaginationChange,
-  initialPagination = { pageIndex: 0, pageSize: 10 },
+  onPaginationChange,
+  state: externalState = {}
 }) {
   const memoData = React.useMemo(() => data, [data]);
   const memoColumns = React.useMemo(() => columns, [columns]);
-  const [pagination, setPagination] = React.useState(initialPagination);
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -61,18 +60,10 @@ export function DataTablePinning({
     right: [],
   }));
 
-  const handlePaginationChange = React.useCallback((updater) => {
-    setPagination(old => {
-      const newState = typeof updater === 'function' ? updater(old) : updater;
+  const handlePaginationChange = (updater) => {
+    if (onPaginationChange) onPaginationChange(updater)
+  }
 
-      // Jika ada external handler, panggil itu
-      if (externalOnPaginationChange) {
-        externalOnPaginationChange(newState);
-      }
-
-      return newState;
-    });
-  }, [externalOnPaginationChange]);
 
   const table = useReactTable({
     data: memoData,
@@ -84,7 +75,7 @@ export function DataTablePinning({
       rowSelection,
       globalFilter,
       columnPinning,
-      pagination,
+      pagination: externalState.pagination,
     },
     manualPagination,
     pageCount: manualPagination
@@ -257,7 +248,10 @@ export function DataTablePinning({
               <PaginationPrevious
                 onClick={() => table.previousPage()}
                 className={!table.getCanPreviousPage() ? "pointer-events-none opacity-50" : ""}
-              />
+              >
+                Sebelumnya
+              </PaginationPrevious>
+
             </PaginationItem>
 
             {/* ✅ Render dinamis berdasarkan totalPages */}
