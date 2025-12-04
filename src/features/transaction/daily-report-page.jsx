@@ -171,12 +171,22 @@ const columnReportPayout = [
         </div>
       );
     },
-    cell: ({ getValue }) =>
-      new Date(getValue()).toLocaleDateString("id-ID", {
+    cell: ({ getValue }) => {
+      const value = getValue();
+
+      if (!value) return "-";
+
+      const date = new Date(value);
+
+      if (isNaN(date.getTime())) return "-";
+
+      return date.toLocaleDateString("id-ID", {
         day: "2-digit",
         month: "short",
         year: "numeric",
-      }),
+      });
+    },
+
   },
   {
     id: "payment_status",
@@ -251,8 +261,6 @@ export default function FinanceDailyReportPage() {
       ...(selectedAccount !== "all" && { account: selectedAccount }),
     },
   });
-
-  console.log("data", data);
 
   const breadcrumbs = [
     {

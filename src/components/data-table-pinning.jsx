@@ -113,11 +113,13 @@ export function DataTablePinning({
     return `${left}px`;
   };
 
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
+
+  const total = table.getFilteredRowModel().rows.length;
   const currentPage = table.getState().pagination.pageIndex + 1;
-  const totalPages = Math.max(
-    1,
-    Number.isFinite(table.getPageCount()) ? table.getPageCount() : 1
-  );
+  const totalPages = table.getPageCount();
+
 
   return (
     <div className="w-full">
@@ -240,10 +242,14 @@ export function DataTablePinning({
 
       {/* Pagination */}
       <div className="flex flex-col items-center justify-between sm:flex-row py-4 text-sm text-gray-500 gap-3">
-        <div>
-          {table.getFilteredSelectedRowModel().rows.length} dari{" "}
-          {table.getFilteredRowModel().rows.length} data dipilih.
+
+        <div className="text-sm text-gray-500">
+          Menampilkan {pageIndex * pageSize + 1}-
+          {Math.min((pageIndex + 1) * pageSize, total)}
+          {" "}dari{" "}
+          {total} data.
         </div>
+
 
         <Pagination>
           <PaginationContent>

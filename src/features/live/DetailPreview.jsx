@@ -196,11 +196,6 @@ export default function LivePreviewDetailPage() {
         };
     }, [connectWebSocket]);
 
-    // Handler untuk pagination change dari table
-    const handlePaginationChange = (newPagination) => {
-        console.log("📄 Pagination changed:", newPagination);
-        setPagination(newPagination);
-    };
 
     // Hitung total pages dari data
     const pageCount = reports?.products?.total && pagination.pageSize
@@ -221,8 +216,8 @@ export default function LivePreviewDetailPage() {
                         pinning={["title"]}
                         manualPagination={false}
                         pageCount={pageCount}
-                        initialPagination={pagination}
-                        onPaginationChange={handlePaginationChange}
+                        state={{ pagination }}       
+                        onPaginationChange={setPagination}  
                     />
                 </div>
             </div>
