@@ -51,7 +51,7 @@ const columnReportPayout = [
     cell: ({ getValue }) => {
       const value = getValue();
 
-      if (!value) return "-";
+      if (value === "") return "-";
 
       const date = new Date(value);
 
@@ -88,7 +88,7 @@ const columnReportPayout = [
     cell: ({ getValue }) => {
       const value = getValue();
 
-      if (!value) return "-";
+      if (value === "") return "-";
 
       const date = new Date(value);
 
@@ -192,7 +192,7 @@ const columnReportPayout = [
     cell: ({ getValue }) => {
       const value = getValue();
 
-      if (!value) return "-";
+      if (value === "") return "-";
 
       const date = new Date(value);
 
@@ -213,14 +213,14 @@ const columnReportPayout = [
     cell: ({ getValue }) => {
       const status = getValue();
       const color =
-        status === "Selesai"
+        status === "Sudah Dibayar"
           ? "text-green-600 bg-green-50"
           : "text-yellow-600 bg-yellow-50";
       return (
         <span
           className={`px-2 py-1 text-xs rounded-lg font-semibold ${color}`}
         >
-          {status === "Selesai" ? "Terbayar" : status}
+          {status === "Sudah Dibayar" ? "Sudah Dibayar" : status}
         </span>
       );
     },
