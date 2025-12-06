@@ -80,7 +80,25 @@ export const apiPublic = {
         API SECURE (dengan token otomatis)
 ============================================= */
 export const apiSecure = {
-  get: (URL) => coreFetch(URL, { headers: getAuthHeader() }),
+  get: (URL, config = {}) => {
+    const { params, headers } = config;
+
+    // Build query string
+    const query = params
+      ? "?" + new URLSearchParams(params).toString()
+      : "";
+
+    const finalUrl = URL + query;
+
+    return coreFetch(finalUrl, {
+      method: "GET",
+      headers: {
+        ...getAuthHeader(),
+        ...(headers || {}),
+      },
+    });
+  },
+
 
   post: (URL, payload) =>
     coreFetch(URL, { method: "POST", payload, headers: getAuthHeader() }),
