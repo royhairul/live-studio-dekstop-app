@@ -33,40 +33,40 @@ const columnReportProducts = [
     header: () => <span className="font-semibold">Nama Akun</span>,
     cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
   },
-  {
-    id: "tipe_commision",
-    accessorKey: "tipe_commision",
-    header: () => <span className="font-semibold">Tipe Komisi</span>,
-    cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
-  },
-  {
-    id: "total_purchase",
-    accessorKey: "total_purchase",
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      return (
-        <div
-          className="flex items-center gap-1 cursor-pointer select-none"
-          onClick={() => column.toggleSorting(isSorted === "asc")}
-        >
-          <span className="font-semibold">Total Pembelian</span>
-          {isSorted === "asc" ? (
-            <IconArrowUp size={14} />
-          ) : isSorted === "desc" ? (
-            <IconArrowDown size={14} />
-          ) : (
-            <IconArrowDown size={14} className="opacity-30" />
-          )}
-        </div>
-      );
-    },
-    cell: ({ getValue }) => <div>{formatShopeeIDR(getValue())}</div>,
-    sortingFn: (rowA, rowB, columnId) => {
-      const a = Number(rowA.getValue(columnId));
-      const b = Number(rowB.getValue(columnId));
-      return a > b ? 1 : a < b ? -1 : 0;
-    },
-  },
+  // {
+  //   id: "tipe_commision",
+  //   accessorKey: "tipe_commision",
+  //   header: () => <span className="font-semibold">Tipe Komisi</span>,
+  //   cell: ({ getValue }) => <span className="font-semibold">{getValue()}</span>,
+  // },
+  // {
+  //   id: "total_purchase",
+  //   accessorKey: "total_purchase",
+  //   header: ({ column }) => {
+  //     const isSorted = column.getIsSorted();
+  //     return (
+  //       <div
+  //         className="flex items-center gap-1 cursor-pointer select-none"
+  //         onClick={() => column.toggleSorting(isSorted === "asc")}
+  //       >
+  //         <span className="font-semibold">Total Pembelian</span>
+  //         {isSorted === "asc" ? (
+  //           <IconArrowUp size={14} />
+  //         ) : isSorted === "desc" ? (
+  //           <IconArrowDown size={14} />
+  //         ) : (
+  //           <IconArrowDown size={14} className="opacity-30" />
+  //         )}
+  //       </div>
+  //     );
+  //   },
+  //   cell: ({ getValue }) => <div>{formatShopeeIDR(getValue())}</div>,
+  //   sortingFn: (rowA, rowB, columnId) => {
+  //     const a = Number(rowA.getValue(columnId));
+  //     const b = Number(rowB.getValue(columnId));
+  //     return a > b ? 1 : a < b ? -1 : 0;
+  //   },
+  // },
   {
     id: "total_commission",
     accessorKey: "total_commission",
@@ -177,6 +177,9 @@ export default function FinanceDailyReportPage() {
       ...(selectedAccount !== "all" && { account: selectedAccount }),
     },
   });
+
+  // console.log(data);
+  
 
   const breadcrumbs = [
     {

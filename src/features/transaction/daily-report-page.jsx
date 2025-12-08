@@ -135,7 +135,7 @@ const columnReportPayout = [
     accessorKey: "payment_method",
     header: ({ column }) => {
       const current = column.getFilterValue();
-      const options = [undefined, "Bank Transfer", "ShopeePay"];
+      const options = [undefined, "Transfer Bank", "ShopeePay"];
       const next = options[(options.indexOf(current) + 1) % options.length];
 
       return (
