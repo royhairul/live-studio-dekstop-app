@@ -196,11 +196,6 @@ export default function LivePreviewDetailPage() {
         };
     }, [connectWebSocket]);
 
-    useEffect(() => {
-        console.log("DataTablePinning MOUNT");
-        return () => console.warn("DataTablePinning UNMOUNT");
-    }, []);
-
     // Hitung total pages dari data
     const pageCount = reports?.products?.total && pagination.pageSize
         ? Math.ceil(reports.products.total / pagination.pageSize)
@@ -214,7 +209,7 @@ export default function LivePreviewDetailPage() {
             <div className="flex gap-2 w-full mt-2">
                 <div className="bg-white rounded-xl shadow-xl p-2 w-full overflow-auto">
                     <h2 className="text-lg font-bold">Product List</h2>
-                    <DataTablePinning
+                    { reports?.products?.list &&  <DataTablePinning
                         columns={columnDetailPreview}
                         data={reports?.products?.list || []}
                         pinning={[""]}
@@ -222,7 +217,7 @@ export default function LivePreviewDetailPage() {
                         pageCount={pageCount}
                         state={{ pagination }}
                         onPaginationChange={setPagination}
-                    />
+                    />}
 
                 </div>
             </div>
